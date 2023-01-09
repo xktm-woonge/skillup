@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SIGN UP</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="signup-wrapper">
+        <h1>Sign Up</h1>
+        <form action="" method="post" id="signup-form">
+            {% csrf_token %}       
+            <input type="text" name="userID" placeholder="ID">
+            <input type="password" name="userPW" placeholder="PASSWORD">
+            <input type="text" name="lastName" placeholder="LAST NAME">
+            <input type="text" name="firstName" placeholder="FIRST NAME">
+            <input type="text" name="email" placeholder="EMAIL">
+            <input type="submit" value="Sign Up">
+        </form>
+    </div>
+</body>
+</html>
