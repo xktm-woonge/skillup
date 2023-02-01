@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ChatBot</title>
+    <link rel="stylesheet" href="{% static 'css/chatbot.css' %}">
+    <script src="https://kit.fontawesome.com/77ad8525ff.js" crossorigin="anonymous"></script>
+
+</head>
+<body>
+    {% if not user.is_authenticated  %}
+    <script type="text/javascript">
+        alert("로그인이 필요합니다.");
+        location.href = '{% url "login:login" %}';
+    </script>
+    {% else %}
+    <div id="chat_list">
+        <input type="button" value="LOGOUT" id='btn_logout' onclick="location.href='{% url 'login:logout' %}'">
+    </div>
+    <div id='chat_form'>
+        <form action='chatting/' method="post" id='chatting'>
+           {% csrf_token %}
+            <div class='chat_top'>CHATBOT</div>
+            <div class='chat_body'>
+            {% comment %} <div class="user_icon"><i class="fa-thin fa-circle-user"></i></div>
+                <div class='user_text'>유저입니다. 안녕하십니까</div>
+                <div class="bot_icon"><i class="fa-soild fa-robot"></i></div>
+                <div class='bot_text'>봇입니다.  중</div> {% endcomment %}
+                {% for message in messages %}
+                    {% if message.speaker == 'chatbot' %}
+                    <div class='bot_text'>
+                    {% else %}
+                    <div class='user_text'>
+                    {% endif %}
+                {{message.chat_text}}</div>
+                {% endfor %}
+            </div>
+            <div class='chat_bottom'>
+                <input type="text" name="userTxt" id="" placeholder>
+                <input type="submit" value="SEND" from='chatting'>
+            </div>
+        </form>
+    </div>
+    {% comment %} <div id="online_user">zxczxczxc</div> {% endcomment %}
+    {% endif %}
+</body>
+</html>
