@@ -1,0 +1,118 @@
+:root{
+    --box-height:800px;
+}
+*{
+    padding: 0;
+    margin: 0;
+    border: 0;
+}
+body{
+    font-size: 14px;
+    font-family: 'Roboto', sans-serif;
+    height: 100vh;
+}
+#chatting_section{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: flex-start;
+    background-color: red;
+}
+#chat_list{
+    width: 30%;
+    min-width: 320px;
+    max-width: 500px;
+    height: 100%;
+    background-color: rgb(241, 194, 241);
+    overflow-y: scroll;
+}
+#chat_form{
+    width: 50%;
+    min-width: calc(100%-(500px+420px));
+    height: 100%;
+}
+#user_frends{
+    width: 20%;
+    min-width: 380px;
+    max-width: 420px;
+    height: 100%;
+    background-color: black;
+}
+.chat_form__top{
+    position: absolute;
+    height: 5%;
+    top: 0;    
+    text-align: center;
+    font-size: 24px;
+    color: #6a24de;
+    margin-bottom: 10px;
+}
+.chat_form__body{
+    overflow:auto;
+    position: absolute;
+    float: right;
+    height: 90%;
+    top: 5%;
+    background-color: #efddff;
+    scroll-behavior: auto;
+}
+.chat_form__bottom{
+    position: absolute;
+    float: right;
+    height: 5%;
+    bottom: 0;
+    margin-top: 10px;
+    background-color: none;
+}
+.chat_bottom>input[type="text"]{
+    height: 100%;
+    width: 79%;
+    float: left;
+}
+.chat_bottom>input[type="submit"]{
+    height: 100%;
+    width: 20%;
+    float: right;
+}
+.user_text{
+    position: relative;
+    /* overflow: hidden; */
+    max-width: 50%;
+    width: 50%;
+    height: auto;
+    float: right;
+    margin: 10px;
+    box-sizing: content-box;
+    border: 2px solid black;
+    background-color: #b87de9;
+}
+.user_icon{
+    float: right;
+}
+.bot_icon{
+    float: left;
+}
+.bot_text{
+    position: relative;
+    /* overflow: hidden; */
+    max-width: 50%;
+    width: 50%;
+    height: auto;
+    float: left;
+    margin: 10px;
+    border: 2px solid black;
+    background-color: #daaffd;
+}
+#btn_logout{
+    position: relative;
+    float: right;
+}
+
+#online_user{
+    color: white;
+    position: absolute;
+    width: 20%;
+    height: 100%;
+    float: right;
+    background-color: black;
+}
