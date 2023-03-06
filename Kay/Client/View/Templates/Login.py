@@ -44,12 +44,12 @@ class LoginWindow(QWidget):
         # 移动窗口
         self.move(x, y)
 
-
     def login(self):
         username = self.username.text()
         password = self.password.text()
 
         # 在这里可以添加登录逻辑
+
 
 if __name__ == '__main__':
     app = QApplication([])

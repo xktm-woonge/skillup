@@ -1,7 +1,10 @@
 import sys
-from PyQt5.QtWidgets import QApplication
-from client_model import Client
-from client_view import ChatWindow
+from PyQt5.QtCore import QThread, pyqtSignal
+
+from pathlib import Path
+sys.path.append(str(Path(__file__).parents[1]))
+from Client.Model.client_model import Client
+from Client.View.Templates.chatting import ChatWindow
 
 class ChatController:
     def __init__(self, host, port):
@@ -15,6 +18,7 @@ class ChatController:
         message = self.view.message_input.text()
         self.client_thread.send_message(message)
         self.view.clear_message_input()
+
 
 class ClientThread(QThread):
     message_received = pyqtSignal(str)
