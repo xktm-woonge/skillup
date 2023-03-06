@@ -30,38 +30,6 @@ class LoginWindow(QWidget):
 
         self.setLayout(layout)
 
-        # # 设置字体
-        # font = QFont()
-        # font.setPointSize(12)
-
-        # # 创建布局
-        # layout = QVBoxLayout()
-
-        # # 创建标签和文本框
-        # label1 = QLabel('用户名')
-        # label1.setFont(font)
-        # self.username = QLineEdit()
-        # self.username.setFont(font)
-        # layout.addWidget(label1)
-        # layout.addWidget(self.username)
-
-        # label2 = QLabel('密码')
-        # label2.setFont(font)
-        # self.password = QLineEdit()
-        # self.password.setEchoMode(QLineEdit.Password)
-        # self.password.setFont(font)
-        # layout.addWidget(label2)
-        # layout.addWidget(self.password)
-
-        # # 创建登录按钮
-        # self.loginButton = QPushButton('登录')
-        # self.loginButton.setFont(font)
-        # self.loginButton.clicked.connect(self.login)
-        # layout.addWidget(self.loginButton)
-
-        # # 设置布局
-        # self.setLayout(layout)
-
     def center(self):
         # 获取屏幕的矩形
         screenRect = QDesktopWidget().screenGeometry()
