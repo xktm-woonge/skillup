@@ -1,5 +1,7 @@
+import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLineEdit, QPushButton, QLabel, QDesktopWidget
 from PyQt5.QtGui import QFont
+from PyQt5.QtCore import QFile
 
 class LoginWindow(QWidget):
     def __init__(self):
@@ -56,3 +58,8 @@ if __name__ == '__main__':
     loginWindow = LoginWindow()
     loginWindow.show()
     app.exec_()
+
+    qss_file = QFile('../Static/login.qss')
+    qss_file.open(QFile.ReadOnly | QFile.Text)
+    style_sheet = qss_file.readAll()
+    loginWindow.setStyleSheet(str(style_sheet, encoding='utf-8'))

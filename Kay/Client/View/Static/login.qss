@@ -1,9 +1,11 @@
-*{
+qss = """
+QWidget {
     padding: 0;
     margin: 0;
     border:none;
 }
-body{
+"""
+/* body{
     font-size: 14px;
     font-family: 'Roboto', sans-serif;
 }
@@ -83,4 +85,5 @@ body{
 }
 .input-pass-text{
     color: green;
-}
+} */
+"""
