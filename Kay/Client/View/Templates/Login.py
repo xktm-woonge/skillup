@@ -2,6 +2,7 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLineEdit, QPushButton, QLabel, QDesktopWidget
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import QFile
+import os
 
 class LoginWindow(QWidget):
     def __init__(self):
@@ -12,6 +13,8 @@ class LoginWindow(QWidget):
         # 메인창 위치
         self.setGeometry(0, 0, 400, 600)
         self.center()
+        
+        self.set_style()
 
         layout = QVBoxLayout()
 
@@ -52,14 +55,15 @@ class LoginWindow(QWidget):
 
         # 在这里可以添加登录逻辑
 
+    def set_style(self):
+        qss_file = QFile('./Client/View/Static/login.qss')
+        qss_file.open(QFile.ReadOnly | QFile.Text)
+        style_sheet = qss_file.readAll()
+        self.setStyleSheet(str(style_sheet, encoding='utf-8'))
+
 
 if __name__ == '__main__':
     app = QApplication([])
     loginWindow = LoginWindow()
     loginWindow.show()
     app.exec_()
-
-    qss_file = QFile('../Static/login.qss')
-    qss_file.open(QFile.ReadOnly | QFile.Text)
-    style_sheet = qss_file.readAll()
-    loginWindow.setStyleSheet(str(style_sheet, encoding='utf-8'))
