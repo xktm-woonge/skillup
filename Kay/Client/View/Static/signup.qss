@@ -1,11 +1,18 @@
 QWidget {
     background-color: white;
-    padding: 40px;
     position: absolute;
     border-radius: 5%;
 }
 
-#label_login {
+#btn_register {
+    width: 100%;
+    color: #fff;
+    font-size: 16px;
+    background-color: #6a24fe;
+    margin: 10px;
+}
+
+#label_signup {
     font-size: 24px;
     color: #6a24fe;
     margin-bottom: 20px;
@@ -20,10 +27,7 @@ QWidget {
     background-color: #e5e7eb;
 }
 
-QPushButton {
-    width: 100%;
-    color: #fff;
-    font-size: 16px;
-    background-color: #6a24fe;
-    margin: 10px;
+#notice {
+    height: 48px;
+    margin-left: 10px;
 }

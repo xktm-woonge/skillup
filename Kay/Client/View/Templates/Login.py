@@ -1,41 +1,56 @@
-import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLineEdit, QPushButton, QLabel, QDesktopWidget
-from PyQt5.QtGui import QFont
-from PyQt5.QtCore import QFile
 import os
+from PyQt5.QtCore import QFile
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLineEdit, QLabel, QDesktopWidget
+
+try:
+    from Templates import *
+except ImportError:
+    import sys
+    from pathlib import Path
+    sys.path.append(str(Path(__file__).parents[1]))
+
+    from Templates import *
 
 class LoginWindow(QWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        BUTTON_HEIGHT = 80
 
         self.setWindowTitle('Chatting')
 
         # 메인창 위치
         self.setGeometry(0, 0, 400, 600)
-        self.center()
+        self.setFixedSize(400, 600)
+        self._moveToCenter()
         
-        self.set_style()
-
         layout = QVBoxLayout()
 
         label_login = QLabel("LOGIN")
+        label_login.setObjectName("label_login")
         layout.addWidget(label_login)
 
-        self.lineedit_id = QLineEdit()
-        self.lineedit_id.setPlaceholderText("ID")
-        layout.addWidget(self.lineedit_id)
-        self.lineedit_pwd = QLineEdit()
-        self.lineedit_pwd.setPlaceholderText("PASSWORD")
-        layout.addWidget(self.lineedit_pwd)
+        self.lineEdit_id = QLineEdit()
+        self.lineEdit_id.setObjectName("lineEdit")
+        self.lineEdit_id.setPlaceholderText("ID")
+        layout.addWidget(self.lineEdit_id)
 
-        button_login = QPushButton("LOGIN")
-        layout.addWidget(button_login)
-        button_signup = QPushButton("SIGNUP")
-        layout.addWidget(button_signup)
+        self.lineEdit_pwd = QLineEdit()
+        self.lineEdit_pwd.setObjectName("lineEdit")
+        self.lineEdit_pwd.setPlaceholderText("PASSWORD")
+        layout.addWidget(self.lineEdit_pwd)
 
+        self.btn_login = HoverButton("LOGIN")
+        self.btn_login.setFixedHeight(BUTTON_HEIGHT)
+        layout.addWidget(self.btn_login)
+        self.btn_register = HoverButton("REGISTER")
+        self.btn_register.setFixedHeight(BUTTON_HEIGHT)
+        layout.addWidget(self.btn_register)
+
+        self._setStyle()
         self.setLayout(layout)
 
-    def center(self):
+    def _moveToCenter(self):
         # 获取屏幕的矩形
         screenRect = QDesktopWidget().screenGeometry()
 
@@ -49,14 +64,11 @@ class LoginWindow(QWidget):
         # 移动窗口
         self.move(x, y)
 
-    def login(self):
-        username = self.username.text()
-        password = self.password.text()
+    def _setStyle(self):
+        current_path = os.path.dirname(os.path.abspath(__file__))
+        os.chdir(current_path)
 
-        # 在这里可以添加登录逻辑
-
-    def set_style(self):
-        qss_file = QFile('./Client/View/Static/login.qss')
+        qss_file = QFile('../Static/login.qss')
         qss_file.open(QFile.ReadOnly | QFile.Text)
         style_sheet = qss_file.readAll()
         self.setStyleSheet(str(style_sheet, encoding='utf-8'))
