@@ -13,8 +13,8 @@ except ImportError:
     from Templates import *
 
 class RegisterWindow(QWidget):
-    def __init__(self, parent=None):
-        super().__init__(parent)
+    def __init__(self):
+        super().__init__()
 
         BUTTON_HEIGHT = 80
         ID_NOTICE = "영문으로 시작하는 영문, 숫자 조합 6~20자리"

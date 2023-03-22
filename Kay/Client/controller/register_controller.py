@@ -1,6 +1,6 @@
 
 from PyQt5.QtCore import QObject, pyqtSlot
-from PyQt5.QtWidgets import QLineEdit, QMessageBox
+from PyQt5.QtWidgets import QLineEdit, QMessageBox, QApplication
 import re
 import smtplib
 import random
@@ -11,13 +11,13 @@ from Controller import *
 import login_controller
 
 class RegisterController(QObject):
-    def __init__(self, parent=None):
+    def __init__(self, window:RegisterWindow):
         super().__init__()
-        # self.login_window = LoginWindow()
-        self.register_window = RegisterWindow(parent)
-        self.register_window.show()
+        self.register_window = window
+        # self.register_window = registerView
         # self.email = self.register_window.lineEdit_send_email.text()
         self.register_window.btn_back.clicked.connect(self.show_login_window)
+        # self.register_window.show()
         # self.register_window.btn_send_email.clicked.connect(self.send_verifyCode)
 
     @pyqtSlot()
@@ -26,11 +26,16 @@ class RegisterController(QObject):
         for lineEdit in lineEdits:
             lineEdit.clear()
 
-        x = self.register_window.pos().x()
-        y = self.register_window.pos().y()
+        # x = self.register_window.pos().x()
+        # y = self.register_window.pos().y()
+        # self.register_window.hide()
+        # self.login_window.move(x, y)
+        self.login_window = LoginWindow()
+        # self.register_window.close()
+        self.login_controller = login_controller.LoginController(self.login_window)
+        self.login_window.show()
         self.register_window.hide()
-        self.login_window.move(x, y)
-        login_controller.LoginController()
+        # self.login_window.show()
 
 #     @pyqtSlot()
 #     def send_verifyCode(self):
