@@ -5,12 +5,12 @@ sys.path.append(str(Path(__file__).parents[1]))
 
 from View.Templates.login import LoginWindow
 from View.Templates.register import RegisterWindow
-import login_controller
-import register_controller
+from login_controller import LoginController
+from register_controller import RegisterController
 
 __all__ = [
     "LoginWindow",
     "RegisterWindow",
-    "login_controller",
-    "register_controller"
+    "LoginController",
+    "RegisterController"
 ]

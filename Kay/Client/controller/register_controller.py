@@ -8,9 +8,10 @@ from email.mime.text import MIMEText
 from email.header import Header
 
 from Controller import *
-import login_controller
 
 class RegisterController(QObject):
+    login_controller = None
+
     def __init__(self, window:RegisterWindow):
         super().__init__()
         self.register_window = window
@@ -30,11 +31,13 @@ class RegisterController(QObject):
         # y = self.register_window.pos().y()
         # self.register_window.hide()
         # self.login_window.move(x, y)
-        self.login_window = LoginWindow()
-        # self.register_window.close()
-        self.login_controller = login_controller.LoginController(self.login_window)
+        self.register_window.close()
+
+        if not RegisterController.login_controller:
+            self.login_window = LoginWindow()
+            # self.register_window.close()
+            RegisterController.login_controller = LoginController(self.login_window)
         self.login_window.show()
-        self.register_window.hide()
         # self.login_window.show()
 
 #     @pyqtSlot()

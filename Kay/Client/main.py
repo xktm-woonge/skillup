@@ -9,7 +9,10 @@ if __name__ == '__main__':
     app = QApplication([])
     loginWindow = LoginWindow()
     loginController = LoginController(loginWindow)
-    registerView = RegisterWindow()
-    registerController = RegisterController(registerView)
-    # loginView.show()
+    registerWindow = RegisterWindow()
+    LoginController.register_controller = RegisterController(registerWindow)
+    RegisterController.login_controller = loginController
+    # registerView = RegisterWindow()
+    # registerController = RegisterController(registerView)
+    loginWindow.show()
     app.exec_()
