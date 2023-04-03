@@ -12,7 +12,7 @@ if __name__ == '__main__':
     registerWindow = RegisterWindow()
     LoginController.register_controller = RegisterController(registerWindow)
     RegisterController.login_controller = loginController
-    # registerView = RegisterWindow()
-    # registerController = RegisterController(registerView)
+    registerView = RegisterWindow()
+    registerController = RegisterController(registerView)
     loginWindow.show()
     app.exec_()
