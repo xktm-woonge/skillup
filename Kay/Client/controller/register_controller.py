@@ -80,8 +80,9 @@
 
 
 
-from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
 from PyQt5.QtWidgets import QLineEdit
+from Model.client_model import Client
 from Controller import *
 
 class RegisterController(QObject):
@@ -91,6 +92,7 @@ class RegisterController(QObject):
         super().__init__()
         self.register_window = RegisterWindow()
         self.register_window.btn_back.clicked.connect(self.back_button_clicked)
+        self.register_window.btn_send_email.connect(self.send_verification_request)
 
     def show_register(self):
         self.register_window.show()
@@ -100,3 +102,9 @@ class RegisterController(QObject):
         for lineEdit in lineEdits:
             lineEdit.clear()
         self.register_window.close()
+
+    @pyqtSlot()
+    def send_verification_request(self):
+        client = Client('localhost', 8000)
+        client.connect()
+        client.send_verification_code(self.register_window.lineEdit_send_email.text())
