@@ -92,7 +92,8 @@ class RegisterController(QObject):
         super().__init__()
         self.register_window = RegisterWindow()
         self.register_window.btn_back.clicked.connect(self.back_button_clicked)
-        self.register_window.btn_send_email.connect(self.send_verification_request)
+        self.register_window.btn_request_verification_code.connect(self.request_verification_code)
+        self.register_window.btn_verify_verification_code.connect(self.verify_verification_code)
 
     def show_register(self):
         self.register_window.show()
@@ -104,7 +105,12 @@ class RegisterController(QObject):
         self.register_window.close()
 
     @pyqtSlot()
-    def send_verification_request(self):
+    def request_verification_code(self):
         client = Client('localhost', 8000)
-        client.connect()
-        client.send_verification_code(self.register_window.lineEdit_send_email.text())
+        client.request_verification_code(self.register_window.lineEdit_email.text())
+
+    @pyqtSlot()
+    def verify_verification_code(self):
+        client = Client('localhost', 8000)
+        client.verify_verification_code(self.register_window.lineEdit_email.text(),
+                                        self.register_window.lineEdit_verification_code.text())

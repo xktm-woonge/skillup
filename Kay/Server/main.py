@@ -40,10 +40,10 @@ def handle_client_connection(client_socket):
 
         elif message.startswith("VERIFY"):
             # 解析邮箱验证码请求消息
-            _, username = message.split("|")
+            _, email, verification_code = message.split("|")
 
             # 检查验证码是否匹配
-            if username in user_data and user_data[username]['verification_code'] == verification_code:
+            if email in user_data and user_data[email]['verification_code'] == verification_code:
                 # 验证通过，发送验证通过响应
                 response = "Verification successful"
                 client_socket.sendall(response.encode())

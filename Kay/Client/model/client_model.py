@@ -5,6 +5,7 @@ class Client:
         self.host = host
         self.port = port
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket.connect((self.host, self.port))
 
     def connect(self):
         self.socket.connect((self.host, self.port))
@@ -16,7 +17,7 @@ class Client:
         data = self.socket.recv(1024)
         return data.decode()
     
-    def send_verification_code(self, email):
+    def request_verification_code(self, email):
         # 构建验证请求消息
         message = f"VERIFICATIONCODE|{email}"
         # 发送验证请求
@@ -26,8 +27,8 @@ class Client:
         response = self.socket.recv(1024).decode()
         print(f"Server response: {response}")
 
-    def verify_verification_code(self, verification_code):
-        message = f"VERIFY|{verification_code}"
+    def verify_verification_code(self, email, verification_code):
+        message = f"VERIFY|{email}|{verification_code}"
         self.socket.sendall(message.encode())
 
         response = self.socket.recv(1024).decode()
