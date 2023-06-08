@@ -4,13 +4,13 @@ from PyQt5.QtCore import QFile, Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QLabel, QDesktopWidget
 
 try:
-    from Templates import *
+    from templates import *
 except ImportError:
     import sys
     from pathlib import Path
     sys.path.append(str(Path(__file__).parents[1]))
 
-    from Templates import *
+    from templates import *
 
 class RegisterWindow(QWidget):
     _instance = None

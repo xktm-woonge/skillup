@@ -9,7 +9,7 @@ except ImportError:
     from pathlib import Path
     sys.path.append(str(Path(__file__).parents[1]))
 
-    from Templates import *
+    from templates import *
 
 class LoginWindow(QWidget):
     _instance = None

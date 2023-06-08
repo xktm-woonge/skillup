@@ -1,6 +1,6 @@
 from PyQt5.QtCore import QObject, pyqtSlot, pyqtSignal
 from PyQt5.QtWidgets import QMessageBox
-from Controller import *
+from controller import *
 
 class LoginController(QObject):
     def __init__(self):

@@ -25,3 +25,6 @@ class ChatWindow(QWidget):
 
     def clear_message_input(self):
         self.message_input.clear()
+
+if __name__ == '__main__':
+    pass

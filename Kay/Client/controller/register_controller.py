@@ -82,8 +82,8 @@
 
 from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
 from PyQt5.QtWidgets import QLineEdit
-from Model.client_model import Client
-from Controller import *
+from model.client_model import Client
+from controller import *
 
 class RegisterController(QObject):
     back_button_clicked = pyqtSignal()
@@ -92,8 +92,8 @@ class RegisterController(QObject):
         super().__init__()
         self.register_window = RegisterWindow()
         self.register_window.btn_back.clicked.connect(self.back_button_clicked)
-        self.register_window.btn_request_verification_code.connect(self.request_verification_code)
-        self.register_window.btn_verify_verification_code.connect(self.verify_verification_code)
+        self.register_window.btn_request_verification_code.clicked.connect(self.request_verification_code)
+        self.register_window.btn_verify_verification_code.clicked.connect(self.verify_verification_code)
 
     def show_register(self):
         self.register_window.show()
