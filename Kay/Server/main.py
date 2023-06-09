@@ -2,7 +2,7 @@ import socket
 import threading
 import random
 import string
-from Model.email_sender import EmailSender
+from model.email_sender import EmailSender
 
 # 나중에 DB로 추가해야 됨
 user_data = {}
