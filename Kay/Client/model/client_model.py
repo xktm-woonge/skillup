@@ -44,9 +44,9 @@
 
 
 
-
 import socket
 import threading
+import time
 
 class Client:
     def __init__(self, host, port):
@@ -55,15 +55,22 @@ class Client:
         self.socket = None
         self.is_connected = False
         self.lock = threading.Lock()
+        self.reconnect_delay = 5  # 重新连接延迟时间（秒）
 
     def connect(self):
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.connect((self.host, self.port))
-        self.is_connected = True
+        while not self.is_connected:
+            try:
+                self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                self.socket.connect((self.host, self.port))
+                self.is_connected = True
+                print("Connected to the server")
 
-        # 在单独的线程中处理接收消息
-        receive_thread = threading.Thread(target=self.receive_messages)
-        receive_thread.start()
+                # 在单独的线程中处理接收消息
+                receive_thread = threading.Thread(target=self.receive_messages)
+                receive_thread.start()
+            except ConnectionRefusedError:
+                print("Connection refused, retrying...")
+                time.sleep(self.reconnect_delay)
 
     def send_message(self, message):
         with self.lock:
@@ -79,10 +86,15 @@ class Client:
                     # 处理接收到的消息，例如打印或者进行其他操作
                     print(f"Received message: {message}")
             except ConnectionResetError:
-                # 连接被重置，说明客户端与服务端断开了连接
                 print("Connection reset by peer")
                 self.close()
-                break
+                self.reconnect()
+
+    def reconnect(self):
+        self.is_connected = False
+        self.socket.close()
+        print("Reconnecting...")
+        self.connect()
 
     def request_verification_code(self, email):
         # 构建验证请求消息
@@ -104,3 +116,4 @@ class Client:
             if self.is_connected:
                 self.is_connected = False
                 self.socket.close()
+                print("Connection closed")
