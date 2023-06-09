@@ -40,7 +40,7 @@ class RegisterWindow(QWidget):
         layout = QVBoxLayout()
 
         self.btn_back = HoverButton()
-        self.btn_back.setIcon(QIcon("Kay/Client/view/static/back_icon.png"))
+        self.btn_back.setIcon(QIcon("../static/back_icon.png"))
         self.btn_back.setIconSize(QSize(16, 16))
 
         layout.addWidget(self.btn_back)
