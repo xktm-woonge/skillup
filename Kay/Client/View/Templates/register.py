@@ -1,6 +1,7 @@
 import os
 import sys
-from PyQt5.QtCore import QFile, Qt
+from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import QFile, Qt, QSize
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QLabel, QDesktopWidget
 
 try:
@@ -38,7 +39,10 @@ class RegisterWindow(QWidget):
         
         layout = QVBoxLayout()
 
-        self.btn_back = HoverButton("<-")
+        self.btn_back = HoverButton()
+        self.btn_back.setIcon(QIcon("Kay/Client/view/static/back_icon.png"))
+        self.btn_back.setIconSize(QSize(16, 16))
+
         layout.addWidget(self.btn_back)
         layout.setAlignment(self.btn_back, Qt.AlignLeft)
 
