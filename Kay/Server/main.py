@@ -20,6 +20,10 @@ def handle_client_connection(client_socket):
     while True:
         # 接收客户端的消息
         message = client_socket.recv(1024).decode()
+        
+        if not message:
+            print(f"Client {client_socket.getpeername()} disconnected.")
+            break
 
         if message.startswith("VERIFICATIONCODE"):
             # 解析注册请求消息

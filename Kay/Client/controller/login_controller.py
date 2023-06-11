@@ -1,12 +1,14 @@
+# controller/login_controller.py
 from PyQt5.QtCore import QObject, pyqtSlot, pyqtSignal
 from PyQt5.QtWidgets import QMessageBox
 from controller import *
 
 class LoginController(QObject):
-    def __init__(self):
+    def __init__(self, client_thread):
         super().__init__()
+        self.client_thread = client_thread
         self.login_window = LoginWindow()
-        self.register_controller = RegisterController()
+        self.register_controller = RegisterController(self.client_thread)
         self.login_window.btn_register.clicked.connect(self.show_register_window)
         self.register_controller.back_button_clicked.connect(self.show_login_window)
         self.login_window.show()

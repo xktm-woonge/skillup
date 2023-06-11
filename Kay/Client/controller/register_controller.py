@@ -1,14 +1,14 @@
-
+# controller/register_controller.py
 from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
 from PyQt5.QtWidgets import QLineEdit
-from model.client_model import Client
 from controller import *
 
 class RegisterController(QObject):
     back_button_clicked = pyqtSignal()
 
-    def __init__(self):
+    def __init__(self, client_thread):
         super().__init__()
+        self.client_thread = client_thread
         self.register_window = RegisterWindow()
         self.register_window.btn_back.clicked.connect(self.back_button_clicked)
         self.register_window.btn_request_verification_code.clicked.connect(self.request_verification_code)
@@ -25,11 +25,11 @@ class RegisterController(QObject):
 
     @pyqtSlot()
     def request_verification_code(self):
-        client = Client('localhost', 8000)
-        client.request_verification_code(self.register_window.lineEdit_email.text())
+        email = self.register_window.lineEdit_email.text()
+        self.client_thread.request_verification_code(email)
 
     @pyqtSlot()
     def verify_verification_code(self):
-        client = Client('localhost', 8000)
-        client.verify_verification_code(self.register_window.lineEdit_email.text(),
-                                        self.register_window.lineEdit_verification_code.text())
+        email = self.register_window.lineEdit_email.text()
+        verification_code = self.register_window.lineEdit_verification_code.text()
+        self.client_thread.verify_verification_code(email, verification_code)

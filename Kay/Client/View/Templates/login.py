@@ -3,7 +3,7 @@ from PyQt5.QtCore import QFile
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLineEdit, QLabel, QDesktopWidget
 
 try:
-    from Templates import *
+    from templates import *
 except ImportError:
     import sys
     from pathlib import Path
