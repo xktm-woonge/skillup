@@ -80,4 +80,4 @@ if __name__ == "__main__":
     </html>
     """
     emailSender = EmailSender('smtp.naver.com', 587)
-    emailSender.send_email("longguo0318@naver.com", "fydrnrlek318", "sulkyungkim@naver.com", "test메일", message)
+    emailSender.send_email("longguo0318@naver.com", "aaaabbbb", "sulkyungkim@naver.com", "test메일", message)
