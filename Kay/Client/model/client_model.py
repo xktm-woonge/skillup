@@ -55,11 +55,13 @@ class Client:
         # 构建验证请求消息
         message = f"VERIFICATIONCODE|{email}"
         # 发送验证请求
-        self.send_message(message)
+        ret = self.send_message(message)
+        print(ret)
 
     def verify_verification_code(self, email, verification_code):
         message = f"VERIFY|{email}|{verification_code}"
-        self.send_message(message)
+        ret = self.send_message(message)
+        print(ret)
 
     def register_user(self, username, password, email, verification_code):
         # 发送请求给服务器，进行用户注册

@@ -11,7 +11,7 @@ class ClientThread(QThread):
 
     def run(self):
         self.client.connect()
-        self.client.receive_messages()
+        # self.client.receive_messages()
 
     def send_message(self, message):
         self.client.send_message(message)
