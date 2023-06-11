@@ -2,15 +2,17 @@
 import socket
 import threading
 import time
+from PyQt5.QtCore import pyqtSignal
 
 class Client:
-    def __init__(self, host, port):
+    def __init__(self, host, port, message_callback):
         self.host = host
         self.port = port
         self.socket = None
         self.is_connected = False
         self.lock = threading.Lock()
         self.reconnect_delay = 5  # 重新连接
+        self.message_callback = message_callback
         
     def connect(self):
         while not self.is_connected:
@@ -38,8 +40,7 @@ class Client:
                 data = self.socket.recv(1024)
                 if data:
                     message = data.decode()
-                    # 处理接收到的消息，例如打印或者进行其他操作
-                    self.message_received.emit(message)
+                    self.message_callback(message)
             except ConnectionResetError:
                 print("Connection reset by peer")
                 self.close()
