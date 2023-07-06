@@ -2,6 +2,7 @@
 
 QLabel#title {
     color: rgb(141, 83, 255);
+    font-family: Verdana;  /* 폰트 변경 */
     font-size: 18px;  /* 글자 크기 조정 */
     font-weight: bold;  /* 볼드 처리 */
 }
@@ -9,9 +10,6 @@ QLabel#title {
 QLineEdit {
     height: 40px;
     border-radius: 10px;
-    margin-left: 20px; /* 이 줄을 수정하여 좌측 여백을 20px로 설정 */
-    margin-right: 20px; /* 이 줄을 수정하여 우측 여백을 20px로 설정 */
-    margin-bottom: 20px;
     padding-left: 10px;
 }
 
@@ -20,11 +18,6 @@ QPushButton#loginButton, QPushButton#signupButton {
     color: white;
     height: 40px;
     border-radius: 10px;
-    margin-bottom: 20px;
-    margin-left: 20px; /* 이 줄을 추가하여 좌측 여백을 20px로 설정 */
-    margin-right: 20px; /* 이 줄을 추가하여 우측 여백을 20px로 설정 */
-    padding-left: 20px;
-    padding-right: 20px;
 }
 
 QPushButton#signupButton {
@@ -32,13 +25,18 @@ QPushButton#signupButton {
     color: black;
 }
 
-
-QLabel#findIDPW, QLabel#adminContact {
+QPushButton#findIDPW {
+    text-align: left;
+    background: none;
+    border: none;
     color: rgb(100, 100, 100);
+    cursor: pointer;
 }
 
-QPushButton#loginButton, QPushButton#signupButton {
-    padding-left: 20px;
-    padding-right: 20px;
-    /* 기타 스타일 */
+QPushButton#adminContact {
+    text-align: right;
+    background: none;
+    border: none;
+    color: rgb(100, 100, 100);
+    cursor: pointer;
 }
