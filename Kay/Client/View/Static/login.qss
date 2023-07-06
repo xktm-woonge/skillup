@@ -12,6 +12,7 @@ QLineEdit {
     margin-left: 20px; /* 이 줄을 수정하여 좌측 여백을 20px로 설정 */
     margin-right: 20px; /* 이 줄을 수정하여 우측 여백을 20px로 설정 */
     margin-bottom: 20px;
+    padding-left: 10px;
 }
 
 QPushButton#loginButton, QPushButton#signupButton {

@@ -50,13 +50,11 @@ class LoginWindow(QWidget):
         
         # 이메일, 비밀번호 입력 필드
         emailField = QLineEdit()
-        emailField.setStyleSheet("QLineEdit { padding-left: 10px; }")  # 여백 추가
         emailField.setPlaceholderText('Email')
         layout.addWidget(emailField)
 
         passwordField = QLineEdit()
-        passwordField.setStyleSheet("QLineEdit { padding-left: 10px; }")  # 여백 추가
-        passwordField.setPlaceholderText('비밀번호')
+        passwordField.setPlaceholderText('PASSWORD')
         layout.addWidget(passwordField)
         
         # 로그인, 회원가입 버튼
@@ -74,19 +72,21 @@ class LoginWindow(QWidget):
         bottomLayout = QHBoxLayout()  # 새로운 레이아웃 생성
         bottomLayout.setContentsMargins(20, 0, 20, 0)  # 좌, 상, 우, 하 마진 설정
 
-        findIDPWLabel = QLabel('ID/PW 찾기')
-        findIDPWLabel.setObjectName('findIDPW')
-        findIDPWLabel.setCursor(Qt.PointingHandCursor)  # 마우스 오버 시 커서 변경
-        bottomLayout.addWidget(findIDPWLabel, alignment=Qt.AlignLeft)  # 새로운 레이아웃에 추가
+        findIDPWButton = QPushButton('ID/PW 찾기')
+        findIDPWButton.setObjectName('findIDPW')
+        findIDPWButton.setCursor(Qt.PointingHandCursor)  # 마우스 오버 시 커서 변경
+        findIDPWButton.setStyleSheet("text-align: left; background: none; border: none;")  # 레이블처럼 보이게 설정
+        bottomLayout.addWidget(findIDPWButton, alignment=Qt.AlignLeft)  # 새로운 레이아웃에 추가
 
-        adminContactLabel = QLabel('관리자 문의')
-        adminContactLabel.setObjectName('adminContact')
-        adminContactLabel.setCursor(Qt.PointingHandCursor)  # 마우스 오버 시 커서 변경
-        bottomLayout.addWidget(adminContactLabel, alignment=Qt.AlignRight)  # 새로운 레이아웃에 추가
+        adminContactButton = QPushButton('관리자 문의')
+        adminContactButton.setObjectName('adminContact')
+        adminContactButton.setCursor(Qt.PointingHandCursor)  # 마우스 오버 시 커서 변경
+        adminContactButton.setStyleSheet("text-align: right; background: none; border: none;")  # 레이블처럼 보이게 설정
+        bottomLayout.addWidget(adminContactButton, alignment=Qt.AlignRight)  # 새로운 레이아웃에 추가
 
+        layout.setContentsMargins(0, 0, 0, 50)
         layout.addLayout(bottomLayout)  # 메인 레이아웃에 추가
 
-        
     def _moveToCenter(self):
         # 获取屏幕的矩形
         screenRect = QDesktopWidget().screenGeometry()
