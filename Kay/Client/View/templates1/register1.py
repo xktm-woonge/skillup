@@ -136,3 +136,4 @@ if __name__ == '__main__':
     loginWindow = RegisterWindow()
     loginWindow.show()
     app.exec_()
+    print('aa')

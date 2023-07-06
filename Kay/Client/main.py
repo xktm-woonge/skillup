@@ -9,3 +9,4 @@ if __name__ == '__main__':
     login_controller = LoginController(client_thread)
     client_thread.start()
     app.exec_()
+    print('aa')

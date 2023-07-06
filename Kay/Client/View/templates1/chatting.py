@@ -27,4 +27,4 @@ class ChatWindow(QWidget):
         self.message_input.clear()
 
 if __name__ == '__main__':
-    pass
+    print('aa')

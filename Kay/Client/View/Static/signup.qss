@@ -31,3 +31,9 @@ QWidget {
     height: 48px;
     margin-left: 10px;
 }
+
+QLabel#imageLabel {
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+}
