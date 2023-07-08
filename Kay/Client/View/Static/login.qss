@@ -13,16 +13,26 @@ QLineEdit {
     padding-left: 10px;
 }
 
-QPushButton#loginButton, QPushButton#signupButton {
+QPushButton#loginButton {
     background-color: rgb(141, 83, 255);
     color: white;
     height: 40px;
     border-radius: 10px;
 }
 
+QPushButton#loginButton:hover {
+    background-color: rgb(161, 103, 255); /* 마우스오버시 색상 */
+}
+
 QPushButton#signupButton {
     background-color: rgb(200, 200, 200);
     color: black;
+    height: 40px;
+    border-radius: 10px;
+}
+
+QPushButton#signupButton:hover {
+    background-color: rgb(220, 220, 220); /* 마우스오버시 색상 */
 }
 
 QPushButton#findIDPW {
@@ -39,4 +49,10 @@ QPushButton#adminContact {
     border: none;
     color: rgb(100, 100, 100);
     cursor: pointer;
+}
+
+QWidget {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding-left: 10px;
 }

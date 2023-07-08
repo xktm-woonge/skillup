@@ -1,83 +1,75 @@
-import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton
+from PyQt5.QtWidgets import QApplication, QWidget, QLineEdit, QPushButton, QHBoxLayout
+from PyQt5.QtGui import QPainter, QColor, QPalette, QBrush
+from PyQt5.QtCore import Qt
 
-class LoginView(QWidget):
-    def __init__(self):
-        super().__init__()
+class SearchWidget(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.initUI()
 
-        # 设置窗口属性
-        self.setWindowTitle('登录')
-        self.resize(300, 150)
+    def initUI(self):
+        self.lineEdit = CustomLineEdit(self)
+        self.lineEdit.setPlaceholderText("输入搜索内容")
 
-        # 垂直布局
-        layout = QVBoxLayout()
+        layout = QHBoxLayout()
+        layout.addWidget(self.lineEdit)
         self.setLayout(layout)
 
-        # 用户名布局
-        username_layout = QHBoxLayout()
-        layout.addLayout(username_layout)
-        username_label = QLabel('用户名')
-        username_layout.addWidget(username_label)
-        self.username_input = QLineEdit()
-        username_layout.addWidget(self.username_input)
+class CustomLineEdit(QLineEdit):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.buttonVisible = False
 
-        # 密码布局
-        password_layout = QHBoxLayout()
-        layout.addLayout(password_layout)
-        password_label = QLabel('密码')
-        password_layout.addWidget(password_label)
-        self.password_input = QLineEdit()
-        self.password_input.setEchoMode(QLineEdit.Password)
-        password_layout.addWidget(self.password_input)
+        self.searchButton = QPushButton("查找", self)
+        self.searchButton.setFixedSize(50, self.height())
 
-        # 按钮布局
-        button_layout = QHBoxLayout()
-        layout.addLayout(button_layout)
-        login_button = QPushButton('登录')
-        button_layout.addWidget(login_button)
-        register_button = QPushButton('注册')
-        button_layout.addWidget(register_button)
+        self.searchButton.clicked.connect(self.onSearchButtonClicked)
 
-class RegisterView(QWidget):
-    def __init__(self):
-        super().__init__()
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.updateButtonGeometry()
 
-        # 设置窗口属性
-        self.setWindowTitle('注册')
-        self.resize(300, 150)
+    def paintEvent(self, event):
+        super().paintEvent(event)
+        if self.buttonVisible:
+            palette = self.palette()
+            background_color = palette.color(QPalette.Base)
 
-        # 垂直布局
-        layout = QVBoxLayout()
-        self.setLayout(layout)
+            painter = QPainter(self)
+            painter.setRenderHint(QPainter.Antialiasing)
 
-        # 用户名布局
-        username_layout = QHBoxLayout()
-        layout.addLayout(username_layout)
-        username_label = QLabel('用户名')
-        username_layout.addWidget(username_label)
-        self.username_input = QLineEdit()
-        username_layout.addWidget(self.username_input)
+            button_rect = self.searchButton.rect()
+            button_rect.setY(0)
+            button_rect.setHeight(self.height())
 
-        # 密码布局
-        password_layout = QHBoxLayout()
-        layout.addLayout(password_layout)
-        password_label = QLabel('密码')
-        password_layout.addWidget(password_label)
-        self.password_input = QLineEdit()
-        self.password_input.setEchoMode(QLineEdit.Password)
-        password_layout.addWidget(self.password_input)
+            painter.fillRect(button_rect, background_color)
+            self.searchButton.render(painter)
 
-        # 按钮布局
-        button_layout = QHBoxLayout()
-        layout.addLayout(button_layout)
-        register_button = QPushButton('注册')
-        button_layout.addWidget(register_button)
-        back_button = QPushButton('返回登录')
-        button_layout.addWidget(back_button)
+    def updateButtonGeometry(self):
+        button_size = self.searchButton.sizeHint()
+        button_size.setHeight(self.height())
+        self.searchButton.setFixedSize(button_size)
 
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    # login_view = LoginView()
-    register_view = RegisterView()
-    register_view.show()
-    sys.exit(app.exec_())
+        button_rect = self.searchButton.rect()
+        button_rect.moveTopRight(self.rect().topRight())
+        self.searchButton.setGeometry(button_rect)
+
+    def enterEvent(self, event):
+        super().enterEvent(event)
+        self.buttonVisible = True
+        self.update()
+
+    def leaveEvent(self, event):
+        super().leaveEvent(event)
+        self.buttonVisible = False
+        self.update()
+
+    def onSearchButtonClicked(self):
+        text = self.text()
+        # 执行搜索操作
+        print("搜索内容:", text)
+
+app = QApplication([])
+widget = SearchWidget()
+widget.show()
+app.exec_()

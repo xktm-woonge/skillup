@@ -1,0 +1,53 @@
+QPushButton#backButton {
+    background: none;
+    border: none;
+    icon-size: 20px;
+}
+
+QLabel#title {
+    color: rgb(141, 83, 255);
+    font-family: Verdana;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+QLineEdit {
+    height: 40px;
+    border-radius: 10px;
+    padding-left: 10px;
+}
+
+QPushButton#authButton, QPushButton#checkButton {
+    border-radius: 10px;
+}
+
+QCheckBox {
+    color: rgb(100, 100, 100);
+}
+
+QPushButton#signupButton {
+    background-color: rgb(141, 83, 255);
+    color: white;
+    height: 40px;
+    border-radius: 10px;
+}
+
+QPushButton#signupButton:hover {
+    background-color: rgb(161, 103, 255);
+}
+
+QPushButton#findIDPW {
+    text-align: left;
+    background: none;
+    border: none;
+    color: rgb(100, 100, 100);
+    cursor: pointer;
+}
+
+QPushButton#adminContact {
+    text-align: right;
+    background: none;
+    border: none;
+    color: rgb(100, 100, 100);
+    cursor: pointer;
+}
