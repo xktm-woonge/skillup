@@ -1,6 +1,7 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QLineEdit, QLabel, QSpacerItem, QSizePolicy, QHBoxLayout, QVBoxLayout, QCheckBox, QPushButton
-from PyQt5.QtGui import QIcon, QPainter
+import re
+from PyQt5.QtWidgets import QApplication, QWidget, QLineEdit, QLabel, QHBoxLayout, QVBoxLayout, QPushButton, QToolButton
+from PyQt5.QtGui import QIcon, QPainter, QPixmap
 from PyQt5.QtCore import Qt, QFile, QRect, QPoint
 from pathlib import Path
 
@@ -36,40 +37,24 @@ class AuthButton(QPushButton):
 class CustomLineEdit(QLineEdit):
     def __init__(self, buttonName, objectName, parent=None):
         super().__init__(parent)
-        self.buttonRect = QRect()
-        self.buttonVisible = True
+        self.setFixedSize(360, 40)
 
         self.button = AuthButton(buttonName, self)
         self.button.setObjectName(objectName)
+        self.button.setFixedSize(100, self.height() - 4)
+        self.button.move(self.width() - self.button.width() - 2, 2)
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
-        self.updateButtonRect()
+        self.button.setFixedSize(100, self.height() - 4)
+        self.button.move(self.width() - self.button.width() - 2, 2)
 
     def paintEvent(self, event):
         super().paintEvent(event)
-        if self.buttonVisible:
-            painter = QPainter(self)
-            painter.setRenderHint(QPainter.Antialiasing)
-            self.button.setGeometry(self.buttonRect)
-            self.button.render(painter)
-
-    def updateButtonRect(self):
-        buttonWidth = 100
-        buttonHeight = self.height() - 4
-        buttonX = self.width() - buttonWidth - 2
-        buttonY = 2
-        self.buttonRect = QRect(buttonX, buttonY, buttonWidth, buttonHeight)
+        self.button.update()
 
 
 class RegisterWindow(QWidget):
-    _instance = None
-
-    def __new__(cls, *args, **kwargs):
-        if not cls._instance:
-            cls._instance = super().__new__(cls, *args, **kwargs)
-        return cls._instance
-
     def __init__(self):
         super().__init__()
         self.initUI()
@@ -95,14 +80,12 @@ class RegisterWindow(QWidget):
 
         emailField = CustomLineEdit('인증발송', 'verifyButton')
         emailField.setPlaceholderText('Email')
-        emailField.setFixedSize(360, 40)
 
         emailLayout = QHBoxLayout()
         emailLayout.addWidget(emailField, alignment=Qt.AlignCenter)
 
         authField = CustomLineEdit('확인', 'confirmButton')
         authField.setPlaceholderText('인증코드 입력')
-        authField.setFixedSize(360, 40)
 
         authLayout = QHBoxLayout()
         authLayout.addWidget(authField, alignment=Qt.AlignCenter)
@@ -121,12 +104,48 @@ class RegisterWindow(QWidget):
         passwordConfirmLayout = QHBoxLayout()
         passwordConfirmLayout.addWidget(passwordConfirmField, alignment=Qt.AlignCenter)
 
-        checkPasswordLength = QLabel('8~16자 사이의 길이를 가진 비밀번호')
-        checkPasswordContain = QLabel('대문자, 소문자, 숫자, 특수기호를 각 1개 이상 포함')
-        checkPasswordMatch = QLabel('두번 입력한 비밀번호가 다름')
-        checkPasswordLength.setContentsMargins(15, 0, 0, 0)
-        checkPasswordContain.setContentsMargins(15, 0, 0, 0)
-        checkPasswordMatch.setContentsMargins(15, 0, 0, 0)
+        self.checkPasswordLength = QLabel('8~16자 사이의 길이를 가진 비밀번호')
+        self.checkPasswordContain = QLabel('대문자, 소문자, 숫자, 특수기호를 각 1개 이상 포함')
+        self.checkPasswordMatch = QLabel('두번 입력한 비밀번호가 다름')
+        self.checkPasswordLength.setObjectName('checkPasswordLength')
+        self.checkPasswordContain.setObjectName('checkPasswordContain')
+        self.checkPasswordMatch.setObjectName('checkPasswordMatch')
+        self.checkPasswordLength.setContentsMargins(15, 0, 0, 0)
+        self.checkPasswordContain.setContentsMargins(15, 0, 0, 0)
+        self.checkPasswordMatch.setContentsMargins(15, 0, 0, 0)
+
+        falseLabel = QLabel()
+        falsePixmap = QPixmap((f'{Path(__file__).parents[1]}/static/false.jpg'))
+        smallFalsePixmap = falsePixmap.scaled(10, 10)
+        falseLabel.setPixmap(smallFalsePixmap)
+
+        checkPasswordLengthLayout = QHBoxLayout()
+        checkPasswordLengthLayout.addSpacing(15)
+        checkPasswordLengthLayout.addWidget(falseLabel)
+        checkPasswordLengthLayout.addWidget(self.checkPasswordLength)
+        checkPasswordLengthLayout.setAlignment(Qt.AlignLeft)
+
+        falseLabel = QLabel()
+        falsePixmap = QPixmap((f'{Path(__file__).parents[1]}/static/false.jpg'))
+        smallFalsePixmap = falsePixmap.scaled(10, 10)
+        falseLabel.setPixmap(smallFalsePixmap)
+
+        checkPasswordContainLayout = QHBoxLayout()
+        checkPasswordContainLayout.addSpacing(15)
+        checkPasswordContainLayout.addWidget(falseLabel)
+        checkPasswordContainLayout.addWidget(self.checkPasswordContain)
+        checkPasswordContainLayout.setAlignment(Qt.AlignLeft)
+
+        falseLabel = QLabel()
+        falsePixmap = QPixmap((f'{Path(__file__).parents[1]}/static/false.jpg'))
+        smallFalsePixmap = falsePixmap.scaled(10, 10)
+        falseLabel.setPixmap(smallFalsePixmap)
+
+        checkPasswordMatchLayout = QHBoxLayout()
+        checkPasswordMatchLayout.addSpacing(15)
+        checkPasswordMatchLayout.addWidget(falseLabel)
+        checkPasswordMatchLayout.addWidget(self.checkPasswordMatch)
+        checkPasswordMatchLayout.setAlignment(Qt.AlignLeft)
 
         signupButton = QPushButton('회원가입')
         signupButton.setObjectName('signupButton')
@@ -156,9 +175,9 @@ class RegisterWindow(QWidget):
         layout.addSpacing(10)
         layout.addLayout(passwordConfirmLayout)
         layout.addSpacing(10)
-        layout.addWidget(checkPasswordLength)
-        layout.addWidget(checkPasswordContain)
-        layout.addWidget(checkPasswordMatch)
+        layout.addLayout(checkPasswordLengthLayout)
+        layout.addLayout(checkPasswordContainLayout)
+        layout.addLayout(checkPasswordMatchLayout)
         layout.addSpacing(180)
         layout.addLayout(signupButtonLayout)
         layout.addSpacing(20)
@@ -168,11 +187,24 @@ class RegisterWindow(QWidget):
         self.setLayout(layout)
         self._setStyle()
 
+        # Connect the textChanged signal of the passwordField
+        passwordField.textChanged.connect(self.validatePassword)
+
     def _setStyle(self):
         qss_file = QFile(f'{Path(__file__).parents[1]}/static/register.qss')
         qss_file.open(QFile.ReadOnly | QFile.Text)
         style_sheet = qss_file.readAll()
         self.setStyleSheet(str(style_sheet, encoding='utf-8'))
+
+    def validatePassword(self):
+        password = self.sender().text()  # Get the text from the signal sender
+
+        length_valid = bool(re.match(r'^.{8,16}$', password))
+        contain_valid = bool(re.search(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]+$', password))
+
+        self.checkPasswordLength.setStyleSheet("color: red;" if not length_valid else "color: green")
+        self.checkPasswordContain.setStyleSheet("color: red;" if not contain_valid else "color: green")
+        self.checkPasswordMatch.setStyleSheet("color: red;" if not contain_valid else "color: green")
 
 
 if __name__ == '__main__':

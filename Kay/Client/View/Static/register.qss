@@ -48,3 +48,9 @@ QPushButton#adminContact {
     color: rgb(100, 100, 100);
     cursor: pointer;
 }
+
+QLabel#checkPasswordLength,
+QLabel#checkPasswordContain,
+QLabel#checkPasswordMatch {
+    color: red;
+}
