@@ -59,6 +59,7 @@ class RegisterWindow(QWidget):
         super().__init__()
         self.length_valid = False
         self.contain_valid = False
+        self.pwd = ""
         self.initUI()
 
     def initUI(self):
@@ -94,68 +95,26 @@ class RegisterWindow(QWidget):
 
         self.passwordField = QLineEdit()
         self.passwordField.setPlaceholderText('Password')
+        self.passwordField.setEchoMode(QLineEdit.Password)
         self.passwordField.setFixedSize(360, 40)
         
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.hideLastCharacter)
-        self.timer.setInterval(1000)  # 设置定时器间隔为 1000 毫秒
+        # self.timer = QTimer()
+        # self.timer.timeout.connect(self.hideLastCharacter)
+        # self.timer.setInterval(1000)  # 设置定时器间隔为 1000 毫秒
 
-        self.passwordField.textChanged.connect(self.showLastCharacter)
+        # self.passwordField.textChanged.connect(self.showLastCharacter)
         
-
         passwordLayout = QHBoxLayout()
         passwordLayout.addWidget(self.passwordField, alignment=Qt.AlignCenter)
 
         self.passwordConfirmField = QLineEdit()
         self.passwordConfirmField.setPlaceholderText('Password Confirm')
+        self.passwordConfirmField.setEchoMode(QLineEdit.Password)
         self.passwordConfirmField.setFixedSize(360, 40)
-        self.passwordConfirmField.textChanged.connect(self.showLastCharacter)
+        # self.passwordConfirmField.textChanged.connect(self.showLastCharacter)
 
         passwordConfirmLayout = QHBoxLayout()
         passwordConfirmLayout.addWidget(self.passwordConfirmField, alignment=Qt.AlignCenter)
-
-        # self.checkPasswordLength = QLabel('8~16자 사이의 길이를 가진 비밀번호')
-        # self.checkPasswordContain = QLabel('대문자, 소문자, 숫자, 특수기호를 각 1개 이상 포함')
-        # self.checkPasswordMatch = QLabel('두번 입력한 비밀번호가 다름')
-        # self.checkPasswordLength.setObjectName('checkPasswordLength')
-        # self.checkPasswordContain.setObjectName('checkPasswordContain')
-        # self.checkPasswordMatch.setObjectName('checkPasswordMatch')
-        # self.checkPasswordLength.setContentsMargins(15, 0, 0, 0)
-        # self.checkPasswordContain.setContentsMargins(15, 0, 0, 0)
-        # self.checkPasswordMatch.setContentsMargins(15, 0, 0, 0)
-
-        # falseLabel = QLabel()
-        # falsePixmap = QPixmap((f'{Path(__file__).parents[1]}/static/false.jpg'))
-        # smallFalsePixmap = falsePixmap.scaled(10, 10)
-        # falseLabel.setPixmap(smallFalsePixmap)
-
-        # checkPasswordLengthLayout = QHBoxLayout()
-        # checkPasswordLengthLayout.addSpacing(15)
-        # checkPasswordLengthLayout.addWidget(falseLabel)
-        # checkPasswordLengthLayout.addWidget(self.checkPasswordLength)
-        # checkPasswordLengthLayout.setAlignment(Qt.AlignLeft)
-
-        # falseLabel = QLabel()
-        # falsePixmap = QPixmap((f'{Path(__file__).parents[1]}/static/false.jpg'))
-        # smallFalsePixmap = falsePixmap.scaled(10, 10)
-        # falseLabel.setPixmap(smallFalsePixmap)
-
-        # checkPasswordContainLayout = QHBoxLayout()
-        # checkPasswordContainLayout.addSpacing(15)
-        # checkPasswordContainLayout.addWidget(falseLabel)
-        # checkPasswordContainLayout.addWidget(self.checkPasswordContain)
-        # checkPasswordContainLayout.setAlignment(Qt.AlignLeft)
-
-        # falseLabel = QLabel()
-        # falsePixmap = QPixmap((f'{Path(__file__).parents[1]}/static/false.jpg'))
-        # smallFalsePixmap = falsePixmap.scaled(10, 10)
-        # falseLabel.setPixmap(smallFalsePixmap)
-
-        # checkPasswordMatchLayout = QHBoxLayout()
-        # checkPasswordMatchLayout.addSpacing(15)
-        # checkPasswordMatchLayout.addWidget(falseLabel)
-        # checkPasswordMatchLayout.addWidget(self.checkPasswordMatch)
-        # checkPasswordMatchLayout.setAlignment(Qt.AlignLeft)
         
         checkPasswordLengthLayout = QHBoxLayout()
         checkPasswordLengthLayout.addSpacing(15)
