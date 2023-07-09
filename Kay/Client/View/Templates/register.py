@@ -2,7 +2,7 @@ import sys
 import re
 from PyQt5.QtWidgets import QApplication, QWidget, QLineEdit, QLabel, QHBoxLayout, QVBoxLayout, QPushButton, QToolButton
 from PyQt5.QtGui import QIcon, QPainter, QPixmap
-from PyQt5.QtCore import Qt, QFile, QRect, QPoint
+from PyQt5.QtCore import Qt, QFile, QTimer
 from pathlib import Path
 
 
@@ -92,19 +92,27 @@ class RegisterWindow(QWidget):
         authLayout = QHBoxLayout()
         authLayout.addWidget(authField, alignment=Qt.AlignCenter)
 
-        passwordField = QLineEdit()
-        passwordField.setPlaceholderText('Password')
-        passwordField.setFixedSize(360, 40)
+        self.passwordField = QLineEdit()
+        self.passwordField.setPlaceholderText('Password')
+        self.passwordField.setFixedSize(360, 40)
+        
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.hideLastCharacter)
+        self.timer.setInterval(1000)  # 设置定时器间隔为 1000 毫秒
+
+        self.passwordField.textChanged.connect(self.showLastCharacter)
+        
 
         passwordLayout = QHBoxLayout()
-        passwordLayout.addWidget(passwordField, alignment=Qt.AlignCenter)
+        passwordLayout.addWidget(self.passwordField, alignment=Qt.AlignCenter)
 
-        passwordConfirmField = QLineEdit()
-        passwordConfirmField.setPlaceholderText('Password Confirm')
-        passwordConfirmField.setFixedSize(360, 40)
+        self.passwordConfirmField = QLineEdit()
+        self.passwordConfirmField.setPlaceholderText('Password Confirm')
+        self.passwordConfirmField.setFixedSize(360, 40)
+        self.passwordConfirmField.textChanged.connect(self.showLastCharacter)
 
         passwordConfirmLayout = QHBoxLayout()
-        passwordConfirmLayout.addWidget(passwordConfirmField, alignment=Qt.AlignCenter)
+        passwordConfirmLayout.addWidget(self.passwordConfirmField, alignment=Qt.AlignCenter)
 
         # self.checkPasswordLength = QLabel('8~16자 사이의 길이를 가진 비밀번호')
         # self.checkPasswordContain = QLabel('대문자, 소문자, 숫자, 특수기호를 각 1개 이상 포함')
@@ -220,7 +228,36 @@ class RegisterWindow(QWidget):
         self._setStyle()
 
         # Connect the textChanged signal of the passwordField
-        passwordField.textChanged.connect(self.changeStyleSheet)
+        self.passwordField.textChanged.connect(self.changeStyleSheet)
+        
+    def showLastCharacter(self):
+        password = self.sender().text() 
+        if password:
+            last_character = password[-1]
+            encrypted_text = '*' * (len(password) - 1) + last_character
+            self.sender().setText(encrypted_text)  # 设置加密的文本
+
+            self.timer.start(1000)  # 启动定时器，设定为1秒
+
+    def hideLastCharacter(self):
+        password = self.passwordField.text()
+        encrypted_text = '*' * len(password)
+        self.passwordField.setText(encrypted_text)  # 设置所有字符加密
+
+        password1 = self.passwordField.text()
+        password2 = self.passwordConfirmField.text()
+
+        if password1:
+            password = self.passwordField.text()
+            encrypted_text = '*' * len(password)
+            self.passwordField.setText(encrypted_text)  # 设置加密的文本
+
+        if password2:
+            password = self.passwordConfirmField.text()
+            encrypted_text = '*' * len(password)
+            self.passwordConfirmField.setText(encrypted_text)  # 设置加密的文本
+
+        self.timer.stop()  # 停止定时器
 
     def _setStyle(self):
         qss_file = QFile(f'{Path(__file__).parents[1]}/static/register.qss')
