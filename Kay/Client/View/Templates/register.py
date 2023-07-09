@@ -9,26 +9,26 @@ class AuthButton(QPushButton):
     def __init__(self, text, parent=None):
         super().__init__(parent)
         self.setText(text)
-        self.setCursor(Qt.PointingHandCursor)  # 设置鼠标光标形状为手型
+        self.setCursor(Qt.PointingHandCursor)
 
     def enterEvent(self, event):
-        self.setStyleSheet("background-color: rgb(220, 220, 220);")  # 设置鼠标悬停时的背景颜色
+        self.setStyleSheet("background-color: rgb(220, 220, 220);")
         super().enterEvent(event)
 
     def leaveEvent(self, event):
-        self.setStyleSheet("")  # 清除背景颜色样式
+        self.setStyleSheet("")
         super().leaveEvent(event)
 
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
 
-        # 绘制按钮背景
+        # Draw button background
         painter.setPen(Qt.NoPen)
         painter.setBrush(self.palette().button().color())
-        painter.drawEllipse(self.rect())
+        painter.drawRect(self.rect())
 
-        # 绘制按钮文本
+        # Draw button text
         painter.setPen(self.palette().buttonText().color())
         painter.drawText(self.rect(), Qt.AlignCenter, self.text())
 
@@ -39,7 +39,7 @@ class CustomLineEdit(QLineEdit):
         self.buttonRect = QRect()
         self.buttonVisible = True
 
-        self.button = AuthButton(buttonName, self)  # 将按钮的父级小部件设置为CustomLineEdit
+        self.button = AuthButton(buttonName, self)
         self.button.setObjectName(objectName)
 
     def resizeEvent(self, event):
@@ -55,7 +55,7 @@ class CustomLineEdit(QLineEdit):
             self.button.render(painter)
 
     def updateButtonRect(self):
-        buttonWidth = 100  # 设置按钮的宽度
+        buttonWidth = 100
         buttonHeight = self.height() - 4
         buttonX = self.width() - buttonWidth - 2
         buttonY = 2
@@ -76,10 +76,7 @@ class RegisterWindow(QWidget):
 
     def initUI(self):
         self.setWindowTitle('회원가입')
-
-        self.setWindowFlags(self.windowFlags() & ~Qt.WindowMaximizeButtonHint) # 최대화 버튼 제거
-
-        # 메인창 위치
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowMaximizeButtonHint)
         self.setGeometry(0, 0, 400, 650)
         self.setFixedSize(400, 650)
 
@@ -95,47 +92,47 @@ class RegisterWindow(QWidget):
         titleLabel = QLabel('회원가입', self)
         titleLabel.setObjectName('title')
         titleLabel.move(160, 24)
-        
+
         emailField = CustomLineEdit('인증발송', 'verifyButton')
         emailField.setPlaceholderText('Email')
         emailField.setFixedSize(360, 40)
-        
+
         emailLayout = QHBoxLayout()
         emailLayout.addWidget(emailField, alignment=Qt.AlignCenter)
 
         authField = CustomLineEdit('확인', 'confirmButton')
         authField.setPlaceholderText('인증코드 입력')
         authField.setFixedSize(360, 40)
-        
+
         authLayout = QHBoxLayout()
         authLayout.addWidget(authField, alignment=Qt.AlignCenter)
 
         passwordField = QLineEdit()
         passwordField.setPlaceholderText('Password')
         passwordField.setFixedSize(360, 40)
-        
+
         passwordLayout = QHBoxLayout()
         passwordLayout.addWidget(passwordField, alignment=Qt.AlignCenter)
 
         passwordConfirmField = QLineEdit()
         passwordConfirmField.setPlaceholderText('Password Confirm')
         passwordConfirmField.setFixedSize(360, 40)
-        
+
         passwordConfirmLayout = QHBoxLayout()
         passwordConfirmLayout.addWidget(passwordConfirmField, alignment=Qt.AlignCenter)
 
         checkPasswordLength = QLabel('8~16자 사이의 길이를 가진 비밀번호')
         checkPasswordContain = QLabel('대문자, 소문자, 숫자, 특수기호를 각 1개 이상 포함')
         checkPasswordMatch = QLabel('두번 입력한 비밀번호가 다름')
-        checkPasswordLength.setContentsMargins(15, 0, 0, 0)  # 좌측 여백 추가
-        checkPasswordContain.setContentsMargins(15, 0, 0, 0)  # 좌측 여백 추가
-        checkPasswordMatch.setContentsMargins(15, 0, 0, 0)  # 좌측 여백 추가
+        checkPasswordLength.setContentsMargins(15, 0, 0, 0)
+        checkPasswordContain.setContentsMargins(15, 0, 0, 0)
+        checkPasswordMatch.setContentsMargins(15, 0, 0, 0)
 
         signupButton = QPushButton('회원가입')
         signupButton.setObjectName('signupButton')
         signupButton.setCursor(Qt.PointingHandCursor)
         signupButton.setFixedSize(360, 40)
-        
+
         signupButtonLayout = QHBoxLayout()
         signupButtonLayout.addWidget(signupButton, alignment=Qt.AlignCenter)
 
@@ -144,13 +141,13 @@ class RegisterWindow(QWidget):
         adminContactButton = QPushButton('관리자 문의')
         adminContactButton.setObjectName('adminContact')
 
-        bottomLayout = QHBoxLayout()  # 새로운 레이아웃 생성
+        bottomLayout = QHBoxLayout()
         bottomLayout.addSpacing(15)
         bottomLayout.addWidget(findIDPWButton, alignment=Qt.AlignLeft)
         bottomLayout.addWidget(adminContactButton, alignment=Qt.AlignRight)
         bottomLayout.addSpacing(15)
 
-        layout.addSpacing(60)
+        layout.addSpacing(70)
         layout.addLayout(emailLayout)
         layout.addSpacing(10)
         layout.addLayout(authLayout)

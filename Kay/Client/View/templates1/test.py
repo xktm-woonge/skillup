@@ -1,41 +1,37 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QLabel
-from PyQt5.QtCore import Qt, QPoint
+from PyQt5.QtWidgets import QApplication, QWidget, QLineEdit, QVBoxLayout, QGraphicsDropShadowEffect
+from PyQt5.QtCore import Qt
 
 
-class Example(QWidget):
+class CustomLineEdit(QLineEdit):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setFixedSize(200, 30)
+
+        # 创建阴影效果并应用于QLineEdit
+        shadow = QGraphicsDropShadowEffect(self)
+        shadow.setBlurRadius(5)
+        shadow.setColor(Qt.black)
+        shadow.setOffset(0, 0)
+        self.setGraphicsEffect(shadow)
+
+
+class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
-
         self.initUI()
 
     def initUI(self):
-        self.setGeometry(100, 100, 300, 200)
-        self.setWindowTitle('Example')
+        layout = QVBoxLayout()
+        lineEdit = CustomLineEdit()
+        layout.addWidget(lineEdit)
 
-        # QHBoxLayout 생성
-        hbox = QHBoxLayout()
-
-        # QLabel 생성 및 가운데 정렬 설정
-        label = QLabel('Label', self)
-        label.setAlignment(Qt.AlignCenter)
-
-        # QLabel을 QHBoxLayout에 추가
-        hbox.addWidget(label)
-
-        self.setLayout(hbox)
-
-        self.show()
-
-        # QLabel의 x, y 좌표 취득
-        label_pos = label.mapToGlobal(QPoint(0, 0))
-        label_x = label_pos.x()
-        label_y = label_pos.y()
-        print("Label의 x 좌표:", label_x)
-        print("Label의 y 좌표:", label_y)
+        self.setLayout(layout)
+        self.setWindowTitle('QLineEdit 带阴影效果示例')
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ex = Example()
+    mainWindow = MainWindow()
+    mainWindow.show()
     sys.exit(app.exec_())
