@@ -12,17 +12,13 @@ QLabel#title {
 }
 
 QLineEdit {
-    height: 40px;
+    height: 30px;
     border-radius: 10px;
     padding-left: 10px;
 }
 
 QPushButton#authButton, QPushButton#checkButton {
     border-radius: 10px;
-}
-
-QCheckBox {
-    color: rgb(100, 100, 100);
 }
 
 QPushButton#signupButton {

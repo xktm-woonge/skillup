@@ -88,34 +88,43 @@ class RegisterWindow(QWidget):
         layout = QVBoxLayout()
 
         backButton = QPushButton(self)
+        backButton.setFixedSize(17, 17)
         backButton.setIcon(QIcon(f'{Path(__file__).parents[1]}/static/back.png'))
         backButton.setObjectName('backButton')
-        # backButton.move(-10, 44)
         backButton.setCursor(Qt.PointingHandCursor)
+        backButton.move(30, 30)
 
-        titleLabel = QLabel('회원가입')
+        titleLabel = QLabel('회원가입', self)
         titleLabel.setObjectName('title')
-        titleLabel.setAlignment(Qt.AlignCenter)
-
-        # Move backButton and titleLabel to the same layout
-        titleLayout = QHBoxLayout()
-        # titleLayout.addWidget(backButton)
-        # titleLayout.addItem(QSpacerItem(0, 0, QSizePolicy.Expanding))
-        titleLayout.addWidget(titleLabel)
-        # titleLayout.addItem(QSpacerItem(0, 0, QSizePolicy.Expanding))
-
-
-        emailField = CustomLineEdit('인증요청', 'verifyButton')
+        titleLabel.move(160, 24)
+        
+        emailField = CustomLineEdit('인증발송', 'verifyButton')
         emailField.setPlaceholderText('Email')
+        emailField.setFixedSize(360, 40)
+        
+        emailLayout = QHBoxLayout()
+        emailLayout.addWidget(emailField, alignment=Qt.AlignCenter)
 
         authField = CustomLineEdit('확인', 'confirmButton')
         authField.setPlaceholderText('인증코드 입력')
+        authField.setFixedSize(360, 40)
+        
+        authLayout = QHBoxLayout()
+        authLayout.addWidget(authField, alignment=Qt.AlignCenter)
 
         passwordField = QLineEdit()
         passwordField.setPlaceholderText('Password')
+        passwordField.setFixedSize(360, 40)
+        
+        passwordLayout = QHBoxLayout()
+        passwordLayout.addWidget(passwordField, alignment=Qt.AlignCenter)
 
         passwordConfirmField = QLineEdit()
         passwordConfirmField.setPlaceholderText('Password Confirm')
+        passwordConfirmField.setFixedSize(360, 40)
+        
+        passwordConfirmLayout = QHBoxLayout()
+        passwordConfirmLayout.addWidget(passwordConfirmField, alignment=Qt.AlignCenter)
 
         checkPasswordLength = QLabel('8~16자 사이의 길이를 가진 비밀번호')
         checkPasswordContain = QLabel('대문자, 소문자, 숫자, 특수기호를 각 1개 이상 포함')
@@ -134,16 +143,20 @@ class RegisterWindow(QWidget):
         bottomLayout.addWidget(findIDPWButton, alignment=Qt.AlignLeft)
         bottomLayout.addWidget(adminContactButton, alignment=Qt.AlignRight)
 
-        layout.addLayout(titleLayout)
-        layout.addWidget(emailField)
-        layout.addWidget(authField)
-        layout.addWidget(passwordField)
-        layout.addWidget(passwordConfirmField)
+        layout.addSpacing(60)
+        layout.addLayout(emailLayout)
+        layout.addSpacing(5)
+        layout.addLayout(authLayout)
+        layout.addSpacing(15)
+        layout.addLayout(passwordLayout)
+        layout.addSpacing(5)
+        layout.addLayout(passwordConfirmLayout)
         layout.addWidget(checkPasswordLength)
         layout.addWidget(checkPasswordContain)
         layout.addWidget(checkPasswordMatch)
         layout.addWidget(signupButton)
         layout.addLayout(bottomLayout)
+        layout.setAlignment(Qt.AlignTop)
 
         self.setLayout(layout)
         self._setStyle()
