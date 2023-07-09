@@ -1,7 +1,7 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLineEdit, QLabel, QSpacerItem, QSizePolicy, QHBoxLayout, QVBoxLayout, QCheckBox, QPushButton
 from PyQt5.QtGui import QIcon, QPainter
-from PyQt5.QtCore import Qt, QFile, QRect
+from PyQt5.QtCore import Qt, QFile, QRect, QPoint
 from pathlib import Path
 
 
@@ -18,7 +18,6 @@ class AuthButton(QPushButton):
     def leaveEvent(self, event):
         self.setStyleSheet("")  # 清除背景颜色样式
         super().leaveEvent(event)
-
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -88,19 +87,23 @@ class RegisterWindow(QWidget):
 
         layout = QVBoxLayout()
 
-        backButton = QPushButton()
-        backButton.setIcon(QIcon(f'{Path(__file__).parents[1]}/static/back_icon.png'))
+        backButton = QPushButton(self)
+        backButton.setIcon(QIcon(f'{Path(__file__).parents[1]}/static/back.png'))
         backButton.setObjectName('backButton')
+        # backButton.move(-10, 44)
+        backButton.setCursor(Qt.PointingHandCursor)
 
         titleLabel = QLabel('회원가입')
         titleLabel.setObjectName('title')
+        titleLabel.setAlignment(Qt.AlignCenter)
 
         # Move backButton and titleLabel to the same layout
         titleLayout = QHBoxLayout()
-        titleLayout.addWidget(backButton)
-        titleLayout.addItem(QSpacerItem(20, 40, QSizePolicy.Expanding))
+        # titleLayout.addWidget(backButton)
+        # titleLayout.addItem(QSpacerItem(0, 0, QSizePolicy.Expanding))
         titleLayout.addWidget(titleLabel)
-        titleLayout.addItem(QSpacerItem(20, 40, QSizePolicy.Expanding))
+        # titleLayout.addItem(QSpacerItem(0, 0, QSizePolicy.Expanding))
+
 
         emailField = CustomLineEdit('인증요청', 'verifyButton')
         emailField.setPlaceholderText('Email')

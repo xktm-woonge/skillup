@@ -1,75 +1,41 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QLineEdit, QPushButton, QHBoxLayout
-from PyQt5.QtGui import QPainter, QColor, QPalette, QBrush
-from PyQt5.QtCore import Qt
+import sys
+from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QLabel
+from PyQt5.QtCore import Qt, QPoint
 
-class SearchWidget(QWidget):
-    def __init__(self, parent=None):
-        super().__init__(parent)
+
+class Example(QWidget):
+    def __init__(self):
+        super().__init__()
+
         self.initUI()
 
     def initUI(self):
-        self.lineEdit = CustomLineEdit(self)
-        self.lineEdit.setPlaceholderText("输入搜索内容")
+        self.setGeometry(100, 100, 300, 200)
+        self.setWindowTitle('Example')
 
-        layout = QHBoxLayout()
-        layout.addWidget(self.lineEdit)
-        self.setLayout(layout)
+        # QHBoxLayout 생성
+        hbox = QHBoxLayout()
 
-class CustomLineEdit(QLineEdit):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.buttonVisible = False
+        # QLabel 생성 및 가운데 정렬 설정
+        label = QLabel('Label', self)
+        label.setAlignment(Qt.AlignCenter)
 
-        self.searchButton = QPushButton("查找", self)
-        self.searchButton.setFixedSize(50, self.height())
+        # QLabel을 QHBoxLayout에 추가
+        hbox.addWidget(label)
 
-        self.searchButton.clicked.connect(self.onSearchButtonClicked)
+        self.setLayout(hbox)
 
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
-        self.updateButtonGeometry()
+        self.show()
 
-    def paintEvent(self, event):
-        super().paintEvent(event)
-        if self.buttonVisible:
-            palette = self.palette()
-            background_color = palette.color(QPalette.Base)
+        # QLabel의 x, y 좌표 취득
+        label_pos = label.mapToGlobal(QPoint(0, 0))
+        label_x = label_pos.x()
+        label_y = label_pos.y()
+        print("Label의 x 좌표:", label_x)
+        print("Label의 y 좌표:", label_y)
 
-            painter = QPainter(self)
-            painter.setRenderHint(QPainter.Antialiasing)
 
-            button_rect = self.searchButton.rect()
-            button_rect.setY(0)
-            button_rect.setHeight(self.height())
-
-            painter.fillRect(button_rect, background_color)
-            self.searchButton.render(painter)
-
-    def updateButtonGeometry(self):
-        button_size = self.searchButton.sizeHint()
-        button_size.setHeight(self.height())
-        self.searchButton.setFixedSize(button_size)
-
-        button_rect = self.searchButton.rect()
-        button_rect.moveTopRight(self.rect().topRight())
-        self.searchButton.setGeometry(button_rect)
-
-    def enterEvent(self, event):
-        super().enterEvent(event)
-        self.buttonVisible = True
-        self.update()
-
-    def leaveEvent(self, event):
-        super().leaveEvent(event)
-        self.buttonVisible = False
-        self.update()
-
-    def onSearchButtonClicked(self):
-        text = self.text()
-        # 执行搜索操作
-        print("搜索内容:", text)
-
-app = QApplication([])
-widget = SearchWidget()
-widget.show()
-app.exec_()
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    ex = Example()
+    sys.exit(app.exec_())
