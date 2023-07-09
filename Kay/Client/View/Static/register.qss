@@ -13,11 +13,14 @@ QLabel#title {
 
 QLineEdit {
     height: 30px;
-    border-radius: 10px;
-    padding-left: 10px;
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding: 2px;
+    background-color: white;
+    box-shadow: 2px 2px 2px gray;
 }
 
-QPushButton#authButton, QPushButton#checkButton {
+QPushButton#verifyButton, QPushButton#confirmButton {
     border-radius: 10px;
 }
 

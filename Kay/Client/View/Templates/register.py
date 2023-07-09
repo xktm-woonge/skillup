@@ -51,9 +51,7 @@ class CustomLineEdit(QLineEdit):
         if self.buttonVisible:
             painter = QPainter(self)
             painter.setRenderHint(QPainter.Antialiasing)
-
             self.button.setGeometry(self.buttonRect)
-
             self.button.render(painter)
 
     def updateButtonRect(self):
@@ -129,10 +127,17 @@ class RegisterWindow(QWidget):
         checkPasswordLength = QLabel('8~16자 사이의 길이를 가진 비밀번호')
         checkPasswordContain = QLabel('대문자, 소문자, 숫자, 특수기호를 각 1개 이상 포함')
         checkPasswordMatch = QLabel('두번 입력한 비밀번호가 다름')
+        checkPasswordLength.setContentsMargins(15, 0, 0, 0)  # 좌측 여백 추가
+        checkPasswordContain.setContentsMargins(15, 0, 0, 0)  # 좌측 여백 추가
+        checkPasswordMatch.setContentsMargins(15, 0, 0, 0)  # 좌측 여백 추가
 
         signupButton = QPushButton('회원가입')
         signupButton.setObjectName('signupButton')
         signupButton.setCursor(Qt.PointingHandCursor)
+        signupButton.setFixedSize(360, 40)
+        
+        signupButtonLayout = QHBoxLayout()
+        signupButtonLayout.addWidget(signupButton, alignment=Qt.AlignCenter)
 
         findIDPWButton = QPushButton('ID/PW 찾기')
         findIDPWButton.setObjectName('findIDPW')
@@ -140,21 +145,26 @@ class RegisterWindow(QWidget):
         adminContactButton.setObjectName('adminContact')
 
         bottomLayout = QHBoxLayout()  # 새로운 레이아웃 생성
+        bottomLayout.addSpacing(15)
         bottomLayout.addWidget(findIDPWButton, alignment=Qt.AlignLeft)
         bottomLayout.addWidget(adminContactButton, alignment=Qt.AlignRight)
+        bottomLayout.addSpacing(15)
 
         layout.addSpacing(60)
         layout.addLayout(emailLayout)
-        layout.addSpacing(5)
+        layout.addSpacing(10)
         layout.addLayout(authLayout)
-        layout.addSpacing(15)
+        layout.addSpacing(20)
         layout.addLayout(passwordLayout)
-        layout.addSpacing(5)
+        layout.addSpacing(10)
         layout.addLayout(passwordConfirmLayout)
+        layout.addSpacing(10)
         layout.addWidget(checkPasswordLength)
         layout.addWidget(checkPasswordContain)
         layout.addWidget(checkPasswordMatch)
-        layout.addWidget(signupButton)
+        layout.addSpacing(180)
+        layout.addLayout(signupButtonLayout)
+        layout.addSpacing(20)
         layout.addLayout(bottomLayout)
         layout.setAlignment(Qt.AlignTop)
 
