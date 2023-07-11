@@ -1,4 +1,4 @@
-# main.py
+# login.py
 import sys
 from pathlib import Path
 from PyQt5.QtCore import Qt, QFile
@@ -49,43 +49,43 @@ class LoginWindow(QWidget):
         layout.addWidget(titleLabel)
         
         # 이메일, 비밀번호 입력 필드
-        emailField = QLineEdit()
-        emailField.setPlaceholderText('Email')
-        emailField.setFixedSize(350, 50)
+        self.emailField = QLineEdit()
+        self.emailField.setPlaceholderText('Email')
+        self.emailField.setFixedSize(350, 50)
         
         # QHBoxLayout를 생성하고 가운데 정렬을 적용한 후 메인 레이아웃에 추가
         emailLayout = QHBoxLayout()
-        emailLayout.addWidget(emailField, alignment=Qt.AlignCenter)
+        emailLayout.addWidget(self.emailField, alignment=Qt.AlignCenter)
         layout.addLayout(emailLayout)
 
-        passwordField = QLineEdit()
-        passwordField.setPlaceholderText('PASSWORD')
-        passwordField.setFixedSize(350, 50)
+        self.passwordField = QLineEdit()
+        self.passwordField.setPlaceholderText('Password')
+        self.passwordField.setFixedSize(350, 50)
         
         # QHBoxLayout를 생성하고 가운데 정렬을 적용한 후 메인 레이아웃에 추가
         passwordLayout = QHBoxLayout()
-        passwordLayout.addWidget(passwordField, alignment=Qt.AlignCenter)
+        passwordLayout.addWidget(self.passwordField, alignment=Qt.AlignCenter)
         layout.addLayout(passwordLayout)
         
         # 로그인, 회원가입 버튼
-        loginButton = QPushButton('로그인')
-        loginButton.setObjectName('loginButton')
-        loginButton.setCursor(Qt.PointingHandCursor)  # 마우스 오버 시 커서 변경
-        loginButton.setFixedSize(350, 50)
+        self.loginButton = QPushButton('로그인')
+        self.loginButton.setObjectName('loginButton')
+        self.loginButton.setCursor(Qt.PointingHandCursor)  # 마우스 오버 시 커서 변경
+        self.loginButton.setFixedSize(350, 50)
         
         # QHBoxLayout를 생성하고 가운데 정렬을 적용한 후 메인 레이아웃에 추가
         buttonLayout = QHBoxLayout()
-        buttonLayout.addWidget(loginButton, alignment=Qt.AlignCenter)
+        buttonLayout.addWidget(self.loginButton, alignment=Qt.AlignCenter)
         layout.addLayout(buttonLayout)
 
-        signupButton = QPushButton('회원가입')
-        signupButton.setObjectName('signupButton')
-        signupButton.setCursor(Qt.PointingHandCursor)  # 마우스 오버 시 커서 변경
-        signupButton.setFixedSize(350, 50)
+        self.registerButton = QPushButton('회원가입')
+        self.registerButton.setObjectName('registerButton')
+        self.registerButton.setCursor(Qt.PointingHandCursor)  # 마우스 오버 시 커서 변경
+        self.registerButton.setFixedSize(350, 50)
         
         # QHBoxLayout를 생성하고 가운데 정렬을 적용한 후 메인 레이아웃에 추가
         buttonLayout = QHBoxLayout()
-        buttonLayout.addWidget(signupButton, alignment=Qt.AlignCenter)
+        buttonLayout.addWidget(self.registerButton, alignment=Qt.AlignCenter)
         layout.addLayout(buttonLayout)
         
         # ID/PW 찾기, 관리자 문의 레이블

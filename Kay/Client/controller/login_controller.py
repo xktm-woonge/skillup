@@ -9,7 +9,7 @@ class LoginController(QObject):
         self.client_thread = client_thread
         self.login_window = LoginWindow()
         self.register_controller = RegisterController(self.client_thread)
-        self.login_window.btn_register.clicked.connect(self.show_register_window)
+        self.login_window.registerButton.clicked.connect(self.show_register_window)
         self.register_controller.back_button_clicked.connect(self.show_login_window)
         self.login_window.show()
 

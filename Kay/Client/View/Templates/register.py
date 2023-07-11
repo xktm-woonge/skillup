@@ -35,9 +35,10 @@ class AuthButton(QPushButton):
 
 
 class CustomLineEdit(QLineEdit):
-    def __init__(self, buttonName, objectName, parent=None):
+    def __init__(self, lineEditObjectName, buttonName, objectName, parent=None):
         super().__init__(parent)
         self.setFixedSize(360, 40)
+        self.setObjectName(lineEditObjectName)
 
         self.button = AuthButton(buttonName, self)
         self.button.setObjectName(objectName)
@@ -52,6 +53,9 @@ class CustomLineEdit(QLineEdit):
     def paintEvent(self, event):
         super().paintEvent(event)
         self.button.update()
+        
+    def getButton(self):
+        return self.button
 
 
 class RegisterWindow(QWidget):
@@ -70,28 +74,28 @@ class RegisterWindow(QWidget):
 
         layout = QVBoxLayout()
 
-        backButton = QPushButton(self)
-        backButton.setFixedSize(17, 17)
-        backButton.setIcon(QIcon(f'{Path(__file__).parents[1]}/static/back.png'))
-        backButton.setObjectName('backButton')
-        backButton.setCursor(Qt.PointingHandCursor)
-        backButton.move(30, 30)
+        self.backButton = QPushButton(self)
+        self.backButton.setFixedSize(17, 17)
+        self.backButton.setIcon(QIcon(f'{Path(__file__).parents[1]}/static/back.png'))
+        self.backButton.setObjectName('backButton')
+        self.backButton.setCursor(Qt.PointingHandCursor)
+        self.backButton.move(30, 30)
 
         titleLabel = QLabel('회원가입', self)
         titleLabel.setObjectName('title')
         titleLabel.move(160, 24)
 
-        emailField = CustomLineEdit('인증발송', 'verifyButton')
-        emailField.setPlaceholderText('Email')
+        self.emailField = CustomLineEdit('emailLineEdit', '인증발송', 'verifyButton')
+        self.emailField.setPlaceholderText('Email')
 
         emailLayout = QHBoxLayout()
-        emailLayout.addWidget(emailField, alignment=Qt.AlignCenter)
+        emailLayout.addWidget(self.emailField, alignment=Qt.AlignCenter)
 
-        authField = CustomLineEdit('확인', 'confirmButton')
-        authField.setPlaceholderText('인증코드 입력')
+        self.verifyField = CustomLineEdit('verifyField', '확인', 'confirmButton')
+        self.verifyField.setPlaceholderText('인증코드 입력')
 
         authLayout = QHBoxLayout()
-        authLayout.addWidget(authField, alignment=Qt.AlignCenter)
+        authLayout.addWidget(self.verifyField, alignment=Qt.AlignCenter)
 
         self.passwordField = QLineEdit()
         self.passwordField.setPlaceholderText('Password')

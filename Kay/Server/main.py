@@ -73,7 +73,7 @@ def start_server():
     # 创建套接字
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # 绑定IP地址和端口号
-    server_address = ('192.168.35.167', 8000)
+    server_address = ('192.168.35.2', 8000)
     server_socket.bind(server_address)
     # 开始监听连接
     server_socket.listen(5)
