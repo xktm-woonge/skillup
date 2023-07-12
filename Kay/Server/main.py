@@ -32,8 +32,8 @@ def handle_client_connection(client_socket):
                 verification_code = generate_verification_code()
                 print(f"Verification code for {email}: {verification_code}")
 
-                emailSender = EmailSender(*smtp_info['naver'])
-                emailSender.send_email("endteamchat@gmail.com", "fxerdbpuijwurack", email, "인증번호", verification_code)
+                emailSender = EmailSender(*smtp_info['gmail'])
+                emailSender.send_email("endteamchat@gmail.com", "fxerdbpuijwurack", email, "채팅 프로그램 인증번호", verification_code)
 
                 # 将用户名、邮箱和验证码保存到全局变量中
                 user_data[email] = {'verification_code': verification_code}

@@ -12,14 +12,49 @@ class EmailSender:
         self.smtp = smtplib.SMTP(self.smtp_server, self.smtp_port)
         self.smtp.starttls()
 
-    def send_email(self, sender_email, sender_password, receiver_email, subject, message):
-        msg = MIMEMultipart()
+    def send_email(self, sender_email, sender_password, receiver_email, subject, content):
+        msg = MIMEMultipart('alternative')
         msg['From'] = sender_email
         msg['To'] = receiver_email
         msg['Subject'] = subject
+        
+        # HTML content and CSS style
+        html = f"""
+        <html>
+        <head>
+            <style>
+            body {{
+                font-family: Arial, sans-serif;
+                background-color: #f6f6f6;
+            }}
+            
+            h2 {{
+                color: #333333;
+            }}
+            
+            p {{
+                color: #666666;
+            }}
+            
+            .container {{
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 20px;
+                background-color: #ffffff;
+            }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+            <h2>아래 인증번호를 확인하십시오</h2>
+            <p>{content}</p>
+            </div>
+        </body>
+        </html>
+        """
 
-        body = MIMEText(message, 'plain')
-        msg.attach(body)
+        html_part = MIMEText(html, 'html')
+        msg.attach(html_part)
 
         try:
             if not self.smtp:
