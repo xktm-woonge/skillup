@@ -79,5 +79,5 @@ if __name__ == "__main__":
         </body>
     </html>
     """
-    emailSender = EmailSender('smtp.naver.com', 587)
-    emailSender.send_email("longguo0318@naver.com", "aaaabbbb", "sulkyungkim@naver.com", "test메일", message)
+    emailSender = EmailSender('smtp.gmail.com', 587)
+    emailSender.send_email("endteamchat@gmail.com", "fxerdbpuijwurack", "longguo0318@naver.com", "test메일", message)

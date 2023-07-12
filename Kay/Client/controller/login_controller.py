@@ -22,6 +22,7 @@ class LoginController(QObject):
 
         layout = QVBoxLayout(self.main_widget)
         layout.addWidget(self.stacked_widget)
+        layout.setContentsMargins(0, 0, 0, 0)
 
         self.main_widget.setFixedSize(400, 650)  # 창의 크기를 고정
         self.main_widget.setWindowFlags(self.main_widget.windowFlags() & ~Qt.WindowMaximizeButtonHint)  # 최대화 버튼 제거
