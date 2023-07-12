@@ -1,4 +1,4 @@
-# model/client_model.py
+# ./client/model/client_model.py
 import socket
 import threading
 import time
@@ -11,7 +11,7 @@ class Client:
         self.socket = None
         self.is_connected = False
         self.lock = threading.Lock()
-        self.reconnect_delay = 5  # 重新连接
+        self.reconnect_delay = 5
         self.message_callback = message_callback
         
     def connect(self):
@@ -22,7 +22,7 @@ class Client:
                 self.is_connected = True
                 print("Connected to the server")
 
-                # 在单独的线程中处理接收消息
+                # 별도의 스레드에서 메시지 수신 처리
                 receive_thread = threading.Thread(target=self.receive_messages)
                 receive_thread.start()
             except ConnectionRefusedError:
@@ -53,20 +53,18 @@ class Client:
         self.connect()
 
     def request_verification_code(self, email):
-        # 构建验证请求消息
+        # 인증 요청 메시지 작성
         message = f"VERIFICATIONCODE|{email}"
-        # 发送验证请求
-        ret = self.send_message(message)
-        print(ret)
+        # 인증 요청 전송
+        self.send_message(message)
 
     def verify_verification_code(self, email, verification_code):
         message = f"VERIFY|{email}|{verification_code}"
-        ret = self.send_message(message)
-        print(ret)
+        self.send_message(message)
 
     def register_user(self, username, password, email, verification_code):
-        # 发送请求给服务器，进行用户注册
-        # 返回服务器的响应结果
+        # 서버에 등록 요청을 보내고, 서버의 응답 결과를 반환
+        # ...
         pass
 
     def close(self):

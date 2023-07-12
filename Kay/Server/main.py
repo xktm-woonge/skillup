@@ -1,3 +1,4 @@
+# ./server/main.py
 import socket
 import threading
 import random
@@ -19,79 +20,79 @@ smtp_info = {
 def handle_client_connection(client_socket):
     try:
         while True:
-            # 接收客户端的消息
+            # 수신한 클라이언트 메시지 받기
             message = client_socket.recv(1024).decode()
             
             if not message:
                 raise ConnectionError("Client disconnected")
 
             if message.startswith("VERIFICATIONCODE"):
-                # 解析注册请求消息
+                # 등록 요청 메시지 분석
                 _, email = message.split("|")
-                # 处理邮箱验证码功能
+                # 이메일 인증코드 생성
                 verification_code = generate_verification_code()
                 print(f"Verification code for {email}: {verification_code}")
 
-                emailSender = EmailSender(*smtp_info['gmail'])
-                emailSender.send_email("endteamchat@gmail.com", "fxerdbpuijwurack", email, "채팅 프로그램 인증번호", verification_code)
+                email_sender = EmailSender(*smtp_info['gmail'])
+                email_sender.send_email("endteamchat@gmail.com", "fxerdbpuijwurack", email, "채팅 프로그램 인증번호", verification_code)
 
-                # 将用户名、邮箱和验证码保存到全局变量中
+                # 사용자 데이터에 이메일과 인증코드 저장
                 user_data[email] = {'verification_code': verification_code}
 
-                # 假设验证通过，发送注册成功响应
+                # 가정: 인증 성공 및 등록 성공 응답 보내기
                 response = "Registration successful"
                 client_socket.sendall(response.encode())
 
             elif message.startswith("VERIFY"):
-                # 解析邮箱验证码请求消息
+                # 이메일 인증코드 확인 요청 메시지 분석
                 _, email, verification_code = message.split("|")
 
-                # 检查验证码是否匹配
+                # 인증코드 일치 여부 확인
                 if email in user_data and user_data[email]['verification_code'] == verification_code:
-                    # 验证通过，发送验证通过响应
+                    # 인증 성공 응답 보내기
                     response = "Verification successful"
                     client_socket.sendall(response.encode())
                 else:
-                    # 验证不通过，发送验证失败响应
+                    # 인증 실패 응답 보내기
                     response = "Verification failed"
                     client_socket.sendall(response.encode())
 
             else:
-                # 处理其他聊天功能
+                # 다른 채팅 기능 처리
                 # ...
-                pass
+                print('test')
 
     except ConnectionError:
         print(f"Client {client_socket.getpeername()} disconnected.")
 
     finally:
-        # 关闭客户端连接
+        # 클라이언트 연결 종료
         client_socket.close()
 
-# 示例用法（续）
+# 예시 사용 (계속)
 def start_server():
-    # 创建套接字
+    # 소켓 생성
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    # 绑定IP地址和端口号
+    # IP 주소와 포트 번호 바인딩
     server_address = ('192.168.35.2', 8000)
     server_socket.bind(server_address)
-    # 开始监听连接
+    # 연결 수신 대기 시작
     server_socket.listen(5)
 
     print("Server started. Listening for connections...")
 
     while True:
-        # 接受客户端连接
+        # 클라이언트 연결 수락
         client_socket, client_address = server_socket.accept()
         print(f"New connection from {client_address}")
 
-        # 创建新线程处理客户端连接
+        # 클라이언트 연결을 처리하는 새로운 스레드 생성
         client_thread = threading.Thread(target=handle_client_connection, args=(client_socket,))
         client_thread.start()
 
-# 生成验证码的示例函数
+# 인증 코드 생성 예시 함수
 def generate_verification_code():
-    # 生成6位随机验证码
+    # 6자리 임의의 인증 코드 생성
     return ''.join(random.choices(string.digits, k=6))
 
 start_server()
