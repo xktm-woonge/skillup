@@ -41,6 +41,7 @@ class RegisterController(QObject):
         self.register_window.emailField.getButton().setEnabled(False)  # 버튼 비활성화
         self.register_window.emailField.getButton().setProperty("remaining_time", 180)  # 버튼에 남은 시간 속성 설정 (초 단위)
         self.timer.start(1000)  # 타이머 시작, 1초마다 타임아웃 이벤트 발생
+        self.register_window.emailField.getButton().setText("03:00")
 
     def update_button(self):
         remaining_time = self.register_window.emailField.getButton().property("remaining_time")
