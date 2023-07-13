@@ -1,5 +1,5 @@
-from PyQt5.QtCore import QThread, QTimer, QObject, pyqtSignal, pyqtSlot
-from PyQt5.QtWidgets import QLineEdit
+from PyQt5.QtCore import QTimer, QObject, pyqtSignal, pyqtSlot
+from PyQt5.QtWidgets import QLineEdit, QMessageBox
 from controller import *
 
 class RegisterController(QObject):
@@ -55,3 +55,10 @@ class RegisterController(QObject):
             minutes = remaining_time // 60
             seconds = remaining_time % 60
             self.register_window.emailField.getButton().setText(f"{minutes:02d}:{seconds:02d}")
+
+    def handle_email_sent_failure(self):
+        QMessageBox.critical(
+            self.register_window,
+            "이메일 전송 실패",
+            "이메일 전송에 실패했습니다."
+        )
