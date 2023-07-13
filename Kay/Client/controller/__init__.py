@@ -12,5 +12,5 @@ __all__ = [
     "LoginWindow",
     "RegisterWindow",
     "LoginController",
-    "RegisterController"
+    "RegisterController",
 ]

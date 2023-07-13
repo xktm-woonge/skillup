@@ -4,6 +4,7 @@ from controller import *
 
 class RegisterController(QObject):
     back_button_clicked = pyqtSignal()
+    send_email_fail = pyqtSignal()
 
     def __init__(self, client_thread):
         super().__init__()
@@ -12,6 +13,7 @@ class RegisterController(QObject):
         self.register_window.backButton.clicked.connect(self.back_button_clicked)
         self.register_window.emailField.getButton().clicked.connect(self.request_verification_code)
         self.register_window.verifyField.getButton().clicked.connect(self.verify_verification_code)
+        self.client_thread.send_email_fail.connect(self.handle_email_sent_failure)
 
         self.timer = QTimer()  # 타이머 객체 생성
         self.timer.timeout.connect(self.update_button)  # 타이머 타임아웃 시그널에 슬롯 연결
