@@ -1,4 +1,5 @@
-# ./client/model/client_model.py
+# model/client_model.py
+
 import socket
 import threading
 import time

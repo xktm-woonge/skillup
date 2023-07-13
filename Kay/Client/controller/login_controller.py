@@ -1,4 +1,5 @@
 # controller/login_controller.py
+
 from PyQt5.QtCore import QObject, pyqtSlot, pyqtSignal, Qt
 from PyQt5.QtWidgets import QWidget, QStackedWidget, QVBoxLayout
 from controller import *

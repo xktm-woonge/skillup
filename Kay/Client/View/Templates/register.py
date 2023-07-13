@@ -1,3 +1,4 @@
+# view/templates/register.py
 import sys
 import re
 from PyQt5.QtWidgets import QApplication, QWidget, QLineEdit, QLabel, QHBoxLayout, QVBoxLayout, QPushButton, QToolButton
@@ -85,7 +86,7 @@ class RegisterWindow(QWidget):
         titleLabel.setObjectName('title')
         titleLabel.move(160, 24)
 
-        self.emailField = CustomLineEdit('emailLineEdit', '인증발송', 'verifyButton')
+        self.emailField = CustomLineEdit('emailLineEdit', '인증요청', 'verifyButton')
         self.emailField.setPlaceholderText('Email')
 
         emailLayout = QHBoxLayout()

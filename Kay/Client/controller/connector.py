@@ -1,4 +1,5 @@
 # controller/connector.py
+
 from PyQt5.QtCore import QThread, pyqtSignal
 from model.client_model import Client
 
