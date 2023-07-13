@@ -26,8 +26,13 @@ class Client:
                 # 별도의 스레드에서 메시지 수신 처리
                 receive_thread = threading.Thread(target=self.receive_messages)
                 receive_thread.start()
+
             except ConnectionRefusedError:
                 print("Connection refused, retrying...")
+                time.sleep(self.reconnect_delay)
+
+            except TimeoutError as e:
+                print("Connection timed out:", str(e))
                 time.sleep(self.reconnect_delay)
 
     def send_message(self, message):
