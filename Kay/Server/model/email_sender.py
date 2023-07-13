@@ -63,10 +63,12 @@ class EmailSender:
             self.smtp.login(sender_email, sender_password)
             self.smtp.sendmail(sender_email, receiver_email, msg.as_string())
             print("Email sent successfully!")
+            return True
 
         except Exception as e:
             print("Error sending email:", str(e))
-
+            return False
+            
         finally:
             if self.smtp:
                 self.smtp.quit()

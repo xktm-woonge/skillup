@@ -34,13 +34,20 @@ def handle_client_connection(client_socket):
                 print(f"Verification code for {email}: {verification_code}")
 
                 email_sender = EmailSender(*smtp_info['gmail'])
-                email_sender.send_email("endteamchat@gmail.com", "fxerdbpuijwurack", email, "채팅 프로그램 인증번호", verification_code)
+                email_sent = email_sender.send_email("endteamchat@gmail.com", 
+                                        "fxerdbpuijwurack", 
+                                        email, 
+                                        "채팅 프로그램 인증번호", 
+                                        verification_code)
 
-                # 사용자 데이터에 이메일과 인증코드 저장
-                user_data[email] = {'verification_code': verification_code}
+                # 이메일 전송에 성공한 경우
+                if email_sent:
+                    # 사용자 데이터에 이메일과 인증코드 저장
+                    user_data[email] = {'verification_code': verification_code}
+                    response = "Send email success"
+                else:
+                    response = "Send email fail"
 
-                # 가정: 인증 성공 및 등록 성공 응답 보내기
-                response = "Registration successful"
                 client_socket.sendall(response.encode())
 
             elif message.startswith("VERIFY"):
@@ -74,7 +81,7 @@ def start_server():
     # 소켓 생성
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # IP 주소와 포트 번호 바인딩
-    server_address = ('192.168.35.2', 8000)
+    server_address = ('192.168.35.167', 8000)
     server_socket.bind(server_address)
     # 연결 수신 대기 시작
     server_socket.listen(5)
@@ -95,4 +102,6 @@ def generate_verification_code():
     # 6자리 임의의 인증 코드 생성
     return ''.join(random.choices(string.digits, k=6))
 
-start_server()
+
+if __name__ == "__main__":
+    start_server()
