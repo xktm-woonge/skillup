@@ -2,8 +2,8 @@
 import sys
 import re
 from PyQt5.QtWidgets import QApplication, QWidget, QLineEdit, QLabel, QHBoxLayout, QVBoxLayout, QPushButton, QToolButton
-from PyQt5.QtGui import QIcon, QPainter, QPixmap
-from PyQt5.QtCore import Qt, QFile, QTimer
+from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import Qt, QFile, pyqtSlot
 from pathlib import Path
 
 
@@ -11,6 +11,7 @@ class AuthButton(QPushButton):
     def __init__(self, text, parent=None):
         super().__init__(parent)
         self.setText(text)
+        self.setStyleSheet("background-color: rgb(215, 215, 215);")
         self.setCursor(Qt.PointingHandCursor)
 
     def enterEvent(self, event):
@@ -18,21 +19,8 @@ class AuthButton(QPushButton):
         super().enterEvent(event)
 
     def leaveEvent(self, event):
-        self.setStyleSheet("")
+        self.setStyleSheet("background-color: rgb(215, 215, 215);")
         super().leaveEvent(event)
-
-    def paintEvent(self, event):
-        painter = QPainter(self)
-        painter.setRenderHint(QPainter.Antialiasing)
-
-        # Draw button background
-        painter.setPen(Qt.NoPen)
-        painter.setBrush(self.palette().button().color())
-        painter.drawRect(self.rect())
-
-        # Draw button text
-        painter.setPen(self.palette().buttonText().color())
-        painter.drawText(self.rect(), Qt.AlignCenter, self.text())
 
 
 class CustomLineEdit(QLineEdit):
@@ -193,6 +181,7 @@ class RegisterWindow(QWidget):
 
         # Connect the textChanged signal of the passwordField
         self.passwordField.textChanged.connect(self.changeStyleSheet)
+        self.passwordConfirmField.textChanged.connect(self.checkpasswordConfirmField)
         
     def showLastCharacter(self):
         password = self.sender().text() 
@@ -233,6 +222,7 @@ class RegisterWindow(QWidget):
         self.length_valid = bool(re.match(r'^.{8,16}$', password))
         self.contain_valid = bool(re.search(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]+$', password))
 
+    @pyqtSlot()
     def changeStyleSheet(self):
         password = self.sender().text()  # Get the text from the signal sender
         self.validatePassword(password)
@@ -250,6 +240,25 @@ class RegisterWindow(QWidget):
         else:
             self.tb_checkPasswordContain.setIcon(QIcon(f'{Path(__file__).parents[1]}/static/false.png'))
             self.tb_checkPasswordContain.setStyleSheet("border: none; color:red")
+            
+        if self.length_valid and self.contain_valid:
+            self.passwordField.setStyleSheet("border: 1px solid green;")
+        else:
+            self.passwordField.setStyleSheet("border: 1px solid red;")
+            
+        if self.passwordConfirmField.text() == password:
+            self.passwordConfirmField.setStyleSheet("border: 1px solid green;")
+        else:
+            self.passwordConfirmField.setStyleSheet("border: 1px solid red;")
+            
+    @pyqtSlot()
+    def checkpasswordConfirmField(self):
+        confirmedPassword = self.sender().text()
+        
+        if confirmedPassword == self.passwordField.text():
+            self.passwordConfirmField.setStyleSheet("border: 1px solid green;")
+        else:
+            self.passwordConfirmField.setStyleSheet("border: 1px solid red;")
 
 
 if __name__ == '__main__':
