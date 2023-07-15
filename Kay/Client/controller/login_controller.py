@@ -1,7 +1,7 @@
 # controller/login_controller.py
 
-from PyQt5.QtCore import QObject, pyqtSlot, pyqtSignal, Qt
-from PyQt5.QtWidgets import QWidget, QStackedWidget, QVBoxLayout
+from PyQt5.QtCore import QObject, pyqtSlot, Qt
+from PyQt5.QtWidgets import QWidget, QStackedWidget, QVBoxLayout, QLineEdit
 from controller import *
 
 
@@ -31,8 +31,14 @@ class LoginController(QObject):
 
     @pyqtSlot()
     def show_register_window(self):
+        self.register_controller.back_button_was_clicked = False
         self.stacked_widget.setCurrentIndex(1)  # 회원가입 창 페이지로 전환
 
     @pyqtSlot()
     def show_login_window(self):
+        lineEdits = self.register_controller.register_window.findChildren(QLineEdit)
+        for lineEdit in lineEdits:
+            lineEdit.clear()
+        self.register_controller.reset_verifyButton()
+        # self.show_register_window()
         self.stacked_widget.setCurrentIndex(0)  # 로그인 창 페이지로 전환

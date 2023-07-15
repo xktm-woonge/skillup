@@ -72,6 +72,9 @@ class Client:
         # 서버에 등록 요청을 보내고, 서버의 응답 결과를 반환
         # ...
         pass
+    
+    def is_connected(self):
+        return self.is_connected
 
     def close(self):
         with self.lock:

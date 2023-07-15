@@ -14,24 +14,26 @@ class RegisterController(QObject):
         self.register_window.emailField.getButton().clicked.connect(self.request_verification_code)
         self.register_window.verifyField.getButton().clicked.connect(self.verify_verification_code)
         self.client_thread.send_email_fail.connect(self.handle_email_sent_failure)
+        
+        self.back_button_clicked.connect(self.handle_back_button_clicked)
+        self.back_button_was_clicked = False  # 새로운 멤버 추가
 
         self.timer = QTimer()  # 타이머 객체 생성
         self.timer.timeout.connect(self.update_button)  # 타이머 타임아웃 시그널에 슬롯 연결
 
-    def show_register(self):
-        self.register_window.show()
-
-    def close(self):
-        lineEdits = self.register_window.findChildren(QLineEdit, "lineEdit")
-        for lineEdit in lineEdits:
-            lineEdit.clear()
-        self.register_window.close()
-
     @pyqtSlot()
     def request_verification_code(self):
         email = self.register_window.emailField.text()
-        self.client_thread.request_verification_code(email)
-        self.start_countdown()  # 인증요청 버튼 클릭 시 카운트다운 시작
+        # 서버와 연결 확인 후 연결 상태에 따라 다른 동작 실행
+        if self.client_thread.client.is_connected:
+            self.client_thread.request_verification_code(email)
+            self.start_countdown()  # 인증요청 버튼 클릭 시 카운트다운 시작
+        else:
+            QMessageBox.critical(
+                self.register_window,
+                "서버 연결 실패",
+                "서버에 연결할 수 없습니다. 네트워크 상태를 확인해주세요."
+            )
 
     @pyqtSlot()
     def verify_verification_code(self):
@@ -57,10 +59,21 @@ class RegisterController(QObject):
             minutes = remaining_time // 60
             seconds = remaining_time % 60
             self.register_window.emailField.getButton().setText(f"{minutes:02d}:{seconds:02d}")
-
+            
+    @pyqtSlot()
+    def handle_back_button_clicked(self):
+        self.back_button_was_clicked = True
+    
+    @pyqtSlot()
     def handle_email_sent_failure(self):
-        QMessageBox.critical(
-            self.register_window,
-            "이메일 전송 실패",
-            "이메일 전송에 실패했습니다."
-        )
+        if not self.back_button_was_clicked:
+            QMessageBox.critical(
+                self.register_window,
+                "이메일 전송 실패",
+                "이메일 전송에 실패했습니다."
+            )
+
+    def reset_verifyButton(self):
+        self.timer.stop()  # 타이머 정지
+        self.register_window.emailField.getButton().setText("인증요청")
+        self.register_window.emailField.getButton().setEnabled(True)  # 버튼 활성화
