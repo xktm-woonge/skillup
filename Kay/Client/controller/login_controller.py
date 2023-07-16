@@ -70,6 +70,7 @@ class LoginController(QObject):
                 "비밀번호를 입력해 주세요."
             )
             self.login_window.passwordField.setFocus()
+            return
             
         self.client_thread.login(self.login_window.emailField.text(),
                                  self.login_window.passwordField.text())

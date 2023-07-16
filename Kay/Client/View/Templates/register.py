@@ -126,7 +126,7 @@ class RegisterWindow(QWidget):
         checkPasswordContainLayout.setAlignment(Qt.AlignLeft)
         self.tb_checkPasswordContain = QToolButton()
         self.tb_checkPasswordContain.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.tb_checkPasswordContain.setText('대문자, 소문자, 숫자, 특수기호를 각 1개 이상 포함')
+        self.tb_checkPasswordContain.setText('대소문자, 숫자, 특수기호 1개 이상')
         self.tb_checkPasswordContain.setStyleSheet("border: none; color:gray")
         checkPasswordContainLayout.addWidget(self.tb_checkPasswordContain)
 
