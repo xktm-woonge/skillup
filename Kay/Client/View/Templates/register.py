@@ -1,10 +1,28 @@
 # view/templates/register.py
 import sys
 import re
-from PyQt5.QtWidgets import QApplication, QWidget, QLineEdit, QLabel, QHBoxLayout, QVBoxLayout, QPushButton, QToolButton
-from PyQt5.QtGui import QIcon, QIntValidator
+from PyQt5.QtWidgets import QApplication, QWidget, QLineEdit, QLabel, \
+                            QHBoxLayout, QVBoxLayout, QPushButton, QToolButton, \
+                            QStyle, QStyleOptionToolButton
+from PyQt5.QtGui import QIcon, QIntValidator, QPainter
 from PyQt5.QtCore import Qt, QFile, pyqtSlot
 from pathlib import Path
+
+
+class CustomToolButton(QToolButton):
+    def __init__(self, text, parent=None):
+        super().__init__(parent)
+        self.setText(text)
+        self.setAutoRaise(True)
+        self.setToolTip(text)
+
+    def paintEvent(self, event):
+        opt = QStyleOptionToolButton()
+        self.initStyleOption(opt)
+        opt.text = self.toolTip()  # 툴팁에 텍스트 표시
+
+        painter = QPainter(self)
+        self.style().drawControl(QStyle.CE_ToolButtonLabel, opt, painter, self)
 
 
 class AuthButton(QPushButton):
@@ -115,19 +133,25 @@ class RegisterWindow(QWidget):
         checkPasswordLengthLayout = QHBoxLayout()
         checkPasswordLengthLayout.addSpacing(15)
         checkPasswordLengthLayout.setAlignment(Qt.AlignLeft)
+        
         self.tb_checkPasswordLength = QToolButton()
         self.tb_checkPasswordLength.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.tb_checkPasswordLength.setText('8~16자 사이의 길이를 가진 비밀번호')
+        self.tb_checkPasswordLength = CustomToolButton('8~16자 사이의 길이를 가진 비밀번호')
+        self.tb_checkPasswordLength.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.tb_checkPasswordLength.setStyleSheet("border: none; color:gray")
+
+        checkPasswordLengthLayout = QHBoxLayout()
+        checkPasswordLengthLayout.addSpacing(15)
+        checkPasswordLengthLayout.setAlignment(Qt.AlignLeft)
         checkPasswordLengthLayout.addWidget(self.tb_checkPasswordLength)
-        
+
+        self.tb_checkPasswordContain = CustomToolButton('대문자, 소문자, 숫자, 특수기호를 각 1개 이상 포함')
+        self.tb_checkPasswordContain.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.tb_checkPasswordContain.setStyleSheet("border: none; color:gray")
+
         checkPasswordContainLayout = QHBoxLayout()
         checkPasswordContainLayout.addSpacing(15)
         checkPasswordContainLayout.setAlignment(Qt.AlignLeft)
-        self.tb_checkPasswordContain = QToolButton()
-        self.tb_checkPasswordContain.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.tb_checkPasswordContain.setText('대문자, 소문자, 숫자, 특수기호를 각 1개 이상 포함')
-        self.tb_checkPasswordContain.setStyleSheet("border: none; color:gray")
         checkPasswordContainLayout.addWidget(self.tb_checkPasswordContain)
 
         self.registerButton = QPushButton('회원가입')
