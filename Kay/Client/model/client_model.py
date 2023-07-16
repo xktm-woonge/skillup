@@ -4,6 +4,14 @@ import socket
 import threading
 import time
 
+try:
+    from utils import client_logManager as clmn
+except ImportError:
+    import sys
+    from pathlib import Path
+    sys.path.append(str(Path(__file__).parents[1]))
+    from utils import client_logManager as clmn
+
 class Client:
     def __init__(self, host, port, message_callback):
         self.host = host
@@ -20,24 +28,25 @@ class Client:
                 self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 self.socket.connect((self.host, self.port))
                 self.is_connected = True
-                print("Connected to the server")
+                clmn.HLOG.info("Connected to the server")
 
                 # 별도의 스레드에서 메시지 수신 처리
                 receive_thread = threading.Thread(target=self.receive_messages)
                 receive_thread.start()
 
             except ConnectionRefusedError:
-                print("Connection refused, retrying...")
+                clmn.HLOG.info("Connection refused, retrying...")
                 time.sleep(self.reconnect_delay)
 
             except TimeoutError as e:
-                print("Connection timed out:", str(e))
+                clmn.HLOG.info("Connection timed out:", str(e))
                 time.sleep(self.reconnect_delay)
 
     def send_message(self, message):
         with self.lock:
             if self.is_connected:
                 self.socket.sendall(message.encode())
+                clmn.HLOG.info(f'{message} 전송')
 
     def receive_messages(self):
         while self.is_connected:
@@ -45,16 +54,17 @@ class Client:
                 data = self.socket.recv(1024)
                 if data:
                     message = data.decode()
+                    clmn.HLOG.info(f'{message} 수신')
                     self.message_callback(message)
             except ConnectionResetError:
-                print("Connection reset by peer")
+                clmn.HLOG.info("Connection reset by peer")
                 self.close()
                 self.reconnect()
 
     def reconnect(self):
         self.is_connected = False
         self.socket.close()
-        print("Reconnecting...")
+        clmn.HLOG.info("Reconnecting...")
         self.connect()
 
     def request_verification_code(self, email):
@@ -85,4 +95,4 @@ class Client:
             if self.is_connected:
                 self.is_connected = False
                 self.socket.close()
-                print("Connection closed")
+                clmn.HLOG.info("Connection closed")

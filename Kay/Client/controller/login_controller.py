@@ -2,7 +2,14 @@
 
 from PyQt5.QtCore import QObject, pyqtSlot, Qt
 from PyQt5.QtWidgets import QWidget, QStackedWidget, QVBoxLayout, QMessageBox
-from controller import *
+
+try:
+    from controller import *
+except ImportError:
+    import sys
+    from pathlib import Path
+    sys.path.append(str(Path(__file__).parents[1]))
+    from controller import *
 
 
 class LoginController(QObject):

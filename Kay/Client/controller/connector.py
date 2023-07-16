@@ -1,7 +1,17 @@
 # controller/connector.py
 
 from PyQt5.QtCore import QThread, pyqtSignal
-from model.client_model import Client
+
+try:
+    from model.client_model import Client
+    from utils import client_logManager as clmn
+except ImportError:
+    import sys
+    from pathlib import Path
+    sys.path.append(str(Path(__file__).parents[1]))
+    from model.client_model import Client
+    from utils import client_logManager as clmn
+    
 
 class ClientThread(QThread):
     message_received = pyqtSignal(str)
@@ -14,14 +24,12 @@ class ClientThread(QThread):
     login_success = pyqtSignal()
     login_fail = pyqtSignal()
     
-
     def __init__(self):
         super().__init__()
         self.client = Client('192.168.35.2', 8000, self.handle_message_received)
 
     def run(self):
         self.client.connect()
-        # self.client.receive_messages()
 
     def send_message(self, message):
         self.client.send_message(message)
