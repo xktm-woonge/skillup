@@ -9,20 +9,21 @@ from PyQt5.QtCore import Qt, QFile, pyqtSlot
 from pathlib import Path
 
 
-class CustomToolButton(QToolButton):
-    def __init__(self, text, parent=None):
-        super().__init__(parent)
-        self.setText(text)
-        self.setAutoRaise(True)
-        self.setToolTip(text)
+# ...
 
-    def paintEvent(self, event):
-        opt = QStyleOptionToolButton()
-        self.initStyleOption(opt)
-        opt.text = self.toolTip()  # 툴팁에 텍스트 표시
+class EllipsisLabel(QLabel):
+    def __init__(self, text='', parent=None):
+        super().__init__(text, parent)
+        self.setWordWrap(True)
+        self.setStyleSheet('QLabel { qproperty-alignment: \'AlignTop | AlignLeft\'; }')
 
-        painter = QPainter(self)
-        self.style().drawControl(QStyle.CE_ToolButtonLabel, opt, painter, self)
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.updateText()
+
+    def updateText(self):
+        elided_text = self.fontMetrics().elidedText(self.text(), Qt.ElideRight, self.width())
+        self.setText(elided_text)
 
 
 class AuthButton(QPushButton):
@@ -134,24 +135,20 @@ class RegisterWindow(QWidget):
         checkPasswordLengthLayout.addSpacing(15)
         checkPasswordLengthLayout.setAlignment(Qt.AlignLeft)
         
-        self.tb_checkPasswordLength = QToolButton()
-        self.tb_checkPasswordLength.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.tb_checkPasswordLength = CustomToolButton('8~16자 사이의 길이를 가진 비밀번호')
-        self.tb_checkPasswordLength.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.tb_checkPasswordLength.setStyleSheet("border: none; color:gray")
+        self.tb_checkPasswordLength = QLabel('8~16자 사이의 길이를 가진 비밀번호')
+        self.tb_checkPasswordLength.setObjectName('checkLabel')
+        self.tb_checkPasswordLength.setMinimumHeight(20)
+        self.tb_checkPasswordLength.setStyleSheet('QLabel::icon { padding-right: 10px; }')
 
         checkPasswordLengthLayout = QHBoxLayout()
-        checkPasswordLengthLayout.addSpacing(15)
-        checkPasswordLengthLayout.setAlignment(Qt.AlignLeft)
         checkPasswordLengthLayout.addWidget(self.tb_checkPasswordLength)
 
-        self.tb_checkPasswordContain = CustomToolButton('대문자, 소문자, 숫자, 특수기호를 각 1개 이상 포함')
-        self.tb_checkPasswordContain.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.tb_checkPasswordContain.setStyleSheet("border: none; color:gray")
+        self.tb_checkPasswordContain = QLabel('대문자, 소문자, 숫자, 특수기호를 각 1개 이상 포함')
+        self.tb_checkPasswordContain.setObjectName('checkLabel')
+        self.tb_checkPasswordContain.setMinimumHeight(20)
+        self.tb_checkPasswordContain.setStyleSheet('QLabel::icon { padding-right: 10px; }')
 
         checkPasswordContainLayout = QHBoxLayout()
-        checkPasswordContainLayout.addSpacing(15)
-        checkPasswordContainLayout.setAlignment(Qt.AlignLeft)
         checkPasswordContainLayout.addWidget(self.tb_checkPasswordContain)
 
         self.registerButton = QPushButton('회원가입')
@@ -203,22 +200,8 @@ class RegisterWindow(QWidget):
         # password = self.sender().text()  # Get the text from the signal sender
         self.validatePassword()
         
-        self.tb_checkPasswordLength.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.tb_checkPasswordContain.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        
-        if self.length_valid:
-            self.tb_checkPasswordLength.setIcon(QIcon(f'{Path(__file__).parents[1]}/static/true.png'))
-            self.tb_checkPasswordLength.setStyleSheet("border: none; color:green")
-        else:
-            self.tb_checkPasswordLength.setIcon(QIcon(f'{Path(__file__).parents[1]}/static/false.png'))
-            self.tb_checkPasswordLength.setStyleSheet("border: none; color:red")
-            
-        if self.contain_valid:
-            self.tb_checkPasswordContain.setIcon(QIcon(f'{Path(__file__).parents[1]}/static/true.png'))
-            self.tb_checkPasswordContain.setStyleSheet("border: none; color:green")
-        else:
-            self.tb_checkPasswordContain.setIcon(QIcon(f'{Path(__file__).parents[1]}/static/false.png'))
-            self.tb_checkPasswordContain.setStyleSheet("border: none; color:red")
+        self.tb_checkPasswordLength.setStyleSheet("border: none; color:green" if self.length_valid else "border: none; color:red")
+        self.tb_checkPasswordContain.setStyleSheet("border: none; color:green" if self.contain_valid else "border: none; color:red")
             
         if self.length_valid and self.contain_valid:
             self.passwordField.setStyleSheet("border: 1px solid green;")
