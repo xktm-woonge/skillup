@@ -61,6 +61,7 @@ class LoginWindow(QWidget):
 
         self.passwordField = QLineEdit()
         self.passwordField.setPlaceholderText('Password')
+        self.passwordField.setEchoMode(QLineEdit.Password)
         self.passwordField.setFixedSize(350, 50)
         
         # QHBoxLayout를 생성하고 가운데 정렬을 적용한 후 메인 레이아웃에 추가

@@ -2,7 +2,7 @@
 import sys
 import re
 from PyQt5.QtWidgets import QApplication, QWidget, QLineEdit, QLabel, QHBoxLayout, QVBoxLayout, QPushButton, QToolButton
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QIntValidator
 from PyQt5.QtCore import Qt, QFile, pyqtSlot
 from pathlib import Path
 
@@ -81,7 +81,10 @@ class RegisterWindow(QWidget):
         emailLayout.addWidget(self.emailField, alignment=Qt.AlignCenter)
 
         self.verifyField = CustomLineEdit('verifyField', '확인', 'confirmButton')
+        int_validator = QIntValidator()
+        self.verifyField.setValidator(int_validator)
         self.verifyField.setPlaceholderText('인증코드 입력')
+        self.verifyField.setEnabled(False)
 
         authLayout = QHBoxLayout()
         authLayout.addWidget(self.verifyField, alignment=Qt.AlignCenter)
@@ -113,7 +116,7 @@ class RegisterWindow(QWidget):
         checkPasswordLengthLayout.addSpacing(15)
         checkPasswordLengthLayout.setAlignment(Qt.AlignLeft)
         self.tb_checkPasswordLength = QToolButton()
-        self.tb_checkPasswordLength.setToolButtonStyle(Qt.ToolButtonTextOnly)
+        self.tb_checkPasswordLength.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.tb_checkPasswordLength.setText('8~16자 사이의 길이를 가진 비밀번호')
         self.tb_checkPasswordLength.setStyleSheet("border: none; color:gray")
         checkPasswordLengthLayout.addWidget(self.tb_checkPasswordLength)
@@ -122,7 +125,7 @@ class RegisterWindow(QWidget):
         checkPasswordContainLayout.addSpacing(15)
         checkPasswordContainLayout.setAlignment(Qt.AlignLeft)
         self.tb_checkPasswordContain = QToolButton()
-        self.tb_checkPasswordContain.setToolButtonStyle(Qt.ToolButtonTextOnly)
+        self.tb_checkPasswordContain.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.tb_checkPasswordContain.setText('대문자, 소문자, 숫자, 특수기호를 각 1개 이상 포함')
         self.tb_checkPasswordContain.setStyleSheet("border: none; color:gray")
         checkPasswordContainLayout.addWidget(self.tb_checkPasswordContain)
@@ -176,6 +179,9 @@ class RegisterWindow(QWidget):
         # password = self.sender().text()  # Get the text from the signal sender
         self.validatePassword()
         
+        self.tb_checkPasswordLength.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.tb_checkPasswordContain.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        
         if self.length_valid:
             self.tb_checkPasswordLength.setIcon(QIcon(f'{Path(__file__).parents[1]}/static/true.png'))
             self.tb_checkPasswordLength.setStyleSheet("border: none; color:green")
@@ -227,6 +233,11 @@ class RegisterWindow(QWidget):
     def validatePassword(self):
         self.length_valid = bool(re.match(r'^.{8,16}$', self.passwordField.text()))
         self.contain_valid = bool(re.search(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]+$', self.passwordField.text()))
+        
+        if self.length_valid and self.contain_valid:
+            return True
+        else:
+            return False
 
     # def hideLastCharacter(self):
     #     password = self.passwordField.text()

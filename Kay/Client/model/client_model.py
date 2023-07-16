@@ -3,7 +3,6 @@
 import socket
 import threading
 import time
-from PyQt5.QtCore import pyqtSignal
 
 class Client:
     def __init__(self, host, port, message_callback):
@@ -68,10 +67,15 @@ class Client:
         message = f"VERIFY|{email}|{verification_code}"
         self.send_message(message)
 
-    def register_user(self, username, password, email, verification_code):
+    def register_user(self, email, password, salt):
         # 서버에 등록 요청을 보내고, 서버의 응답 결과를 반환
         # ...
-        pass
+        message = f"REGISTER|{email}|{password}|{salt}"
+        self.send_message(message)
+        
+    def login(self, email, password):
+        message = f"LOGIN|{email}|{password}"
+        self.send_message(message)
     
     def is_connected(self):
         return self.is_connected

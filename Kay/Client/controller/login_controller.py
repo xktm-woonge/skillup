@@ -1,7 +1,7 @@
 # controller/login_controller.py
 
 from PyQt5.QtCore import QObject, pyqtSlot, Qt
-from PyQt5.QtWidgets import QWidget, QStackedWidget, QVBoxLayout, QLineEdit
+from PyQt5.QtWidgets import QWidget, QStackedWidget, QVBoxLayout, QMessageBox
 from controller import *
 
 
@@ -15,9 +15,7 @@ class LoginController(QObject):
 
         self.login_window = LoginWindow()
         self.register_controller = RegisterController(self.client_thread)
-        self.login_window.registerButton.clicked.connect(self.show_register_window)
-        self.register_controller.back_button_clicked.connect(self.show_login_window)
-
+        
         self.stacked_widget.addWidget(self.login_window)  # 로그인 창 페이지 추가
         self.stacked_widget.addWidget(self.register_controller.register_window)  # 회원가입 창 페이지 추가
 
@@ -28,6 +26,15 @@ class LoginController(QObject):
         self.main_widget.setFixedSize(400, 650)  # 창의 크기를 고정
         self.main_widget.setWindowFlags(self.main_widget.windowFlags() & ~Qt.WindowMaximizeButtonHint)  # 최대화 버튼 제거
         self.main_widget.show()
+        
+        self.connect_slot()
+        
+    def connect_slot(self):
+        self.login_window.registerButton.clicked.connect(self.show_register_window)
+        self.login_window.loginButton.clicked.connect(self.handle_login)
+        self.register_controller.back_button_clicked.connect(self.show_login_window)
+        self.client_thread.login_success.connect(self.handle_login_success)
+        self.client_thread.login_fail.connect(self.handle_login_fail)
 
     @pyqtSlot()
     def show_register_window(self):
@@ -36,9 +43,42 @@ class LoginController(QObject):
 
     @pyqtSlot()
     def show_login_window(self):
-        lineEdits = self.register_controller.register_window.findChildren(QLineEdit)
-        for lineEdit in lineEdits:
-            lineEdit.clear()
-        self.register_controller.reset_verifyButton()
-        # self.show_register_window()
         self.stacked_widget.setCurrentIndex(0)  # 로그인 창 페이지로 전환
+
+    @pyqtSlot()
+    def handle_login(self):
+        if not self.login_window.emailField.text():
+            QMessageBox.warning(
+                self.login_window,
+                "이메일 체크",
+                "이메일을 입력해 주세요."
+            )
+            self.login_window.emailField.setFocus()
+            return
+            
+        if not self.login_window.passwordField.text():
+            QMessageBox.warning(
+                self.login_window,
+                "비밀번호 체크",
+                "비밀번호를 입력해 주세요."
+            )
+            self.login_window.passwordField.setFocus()
+            
+        self.client_thread.login(self.login_window.emailField.text(),
+                                 self.login_window.passwordField.text())
+        
+    @pyqtSlot()
+    def handle_login_success(self):
+        QMessageBox.information(
+                self.login_window,
+                "로그인",
+                "로그인에 성공했습니다."
+            )
+        
+    @pyqtSlot()
+    def handle_login_fail(self):
+        QMessageBox.warning(
+                self.login_window,
+                "로그인",
+                "아이디와 비밀번호가 일치하지 않습니다."
+            )
