@@ -1,0 +1,58 @@
+/* view/static/register.qss */
+
+QPushButton#backButton {
+    background: none;
+    border: none;
+    icon-size: 20px;
+}
+
+QLabel#title {
+    color: rgb(141, 83, 255);
+    font-family: Verdana;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+QLineEdit {
+    height: 30px;
+    border-radius: 10px;
+    padding: 2px;
+    background-color: white;
+}
+
+QPushButton#verifyButton, QPushButton#confirmButton {
+    border-radius: 10px;
+}
+
+QPushButton#registerButton {
+    background-color: rgb(141, 83, 255);
+    color: white;
+    height: 40px;
+    border-radius: 10px;
+}
+
+QPushButton#registerButton:hover {
+    background-color: rgb(161, 103, 255);
+}
+
+QPushButton#findIDPW {
+    text-align: left;
+    background: none;
+    border: none;
+    color: rgb(100, 100, 100);
+    cursor: pointer;
+}
+
+QPushButton#adminContact {
+    text-align: right;
+    background: none;
+    border: none;
+    color: rgb(100, 100, 100);
+    cursor: pointer;
+}
+
+QLabel#checkPasswordLength,
+QLabel#checkPasswordContain,
+QLabel#checkPasswordMatch {
+    color: red;
+}

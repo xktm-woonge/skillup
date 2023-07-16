@@ -1,0 +1,52 @@
+/* view/static/login.qss */
+
+QLabel#title {
+    color: rgb(141, 83, 255);
+    font-family: Verdana;  /* 폰트 변경 */
+    font-size: 18px;  /* 글자 크기 조정 */
+    font-weight: bold;  /* 볼드 처리 */
+}
+
+QLineEdit {
+    height: 40px;
+    border-radius: 10px;
+    padding-left: 10px;
+}
+
+QPushButton#loginButton {
+    background-color: rgb(141, 83, 255);
+    color: white;
+    height: 40px;
+    border-radius: 10px;
+}
+
+QPushButton#loginButton:hover {
+    background-color: rgb(161, 103, 255); /* 마우스오버시 색상 */
+}
+
+QPushButton#registerButton {
+    background-color: rgb(200, 200, 200);
+    color: black;
+    height: 40px;
+    border-radius: 10px;
+}
+
+QPushButton#registerButton:hover {
+    background-color: rgb(220, 220, 220); /* 마우스오버시 색상 */
+}
+
+QPushButton#findIDPW {
+    text-align: left;
+    background: none;
+    border: none;
+    color: rgb(100, 100, 100);
+    cursor: pointer;
+}
+
+QPushButton#adminContact {
+    text-align: right;
+    background: none;
+    border: none;
+    color: rgb(100, 100, 100);
+    cursor: pointer;
+}
