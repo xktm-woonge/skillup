@@ -84,7 +84,7 @@ def start_server():
     server_address = ('192.168.35.167', 8000)
     server_socket.bind(server_address)
     # 연결 수신 대기 시작
-    server_socket.listen(5)
+    server_socket.listen(20)
 
     print("Server started. Listening for connections...")
 

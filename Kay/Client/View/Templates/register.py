@@ -113,39 +113,27 @@ class RegisterWindow(QWidget):
         checkPasswordLengthLayout.addSpacing(15)
         checkPasswordLengthLayout.setAlignment(Qt.AlignLeft)
         self.tb_checkPasswordLength = QToolButton()
-        self.tb_checkPasswordLength.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.tb_checkPasswordLength.setText(' 8~16자 사이의 길이를 가진 비밀번호')
-        self.tb_checkPasswordLength.setIcon(QIcon(f'{Path(__file__).parents[1]}/static/false.png'))
-        self.tb_checkPasswordLength.setStyleSheet("border: none; color:red")
+        self.tb_checkPasswordLength.setToolButtonStyle(Qt.ToolButtonTextOnly)
+        self.tb_checkPasswordLength.setText('8~16자 사이의 길이를 가진 비밀번호')
+        self.tb_checkPasswordLength.setStyleSheet("border: none; color:gray")
         checkPasswordLengthLayout.addWidget(self.tb_checkPasswordLength)
         
         checkPasswordContainLayout = QHBoxLayout()
         checkPasswordContainLayout.addSpacing(15)
         checkPasswordContainLayout.setAlignment(Qt.AlignLeft)
         self.tb_checkPasswordContain = QToolButton()
-        self.tb_checkPasswordContain.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.tb_checkPasswordContain.setText(' 대문자, 소문자, 숫자, 특수기호를 각 1개 이상 포함')
-        self.tb_checkPasswordContain.setIcon(QIcon(f'{Path(__file__).parents[1]}/static/false.png'))
-        self.tb_checkPasswordContain.setStyleSheet("border: none; color:red")
+        self.tb_checkPasswordContain.setToolButtonStyle(Qt.ToolButtonTextOnly)
+        self.tb_checkPasswordContain.setText('대문자, 소문자, 숫자, 특수기호를 각 1개 이상 포함')
+        self.tb_checkPasswordContain.setStyleSheet("border: none; color:gray")
         checkPasswordContainLayout.addWidget(self.tb_checkPasswordContain)
-        
-        # checkPasswordMatchLayout = QHBoxLayout()
-        # checkPasswordMatchLayout.addSpacing(15)
-        # checkPasswordMatchLayout.setAlignment(Qt.AlignLeft)
-        # self.tb_checkPasswordMatch = QToolButton()
-        # self.tb_checkPasswordMatch.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        # self.tb_checkPasswordMatch.setText(' 두번 입력한 비밀번호가 다름')
-        # self.tb_checkPasswordMatch.setIcon(QIcon(f'{Path(__file__).parents[1]}/static/false.png'))
-        # self.tb_checkPasswordMatch.setStyleSheet("border: none; color:gray")
-        # checkPasswordMatchLayout.addWidget(self.tb_checkPasswordMatch)
 
-        signupButton = QPushButton('회원가입')
-        signupButton.setObjectName('signupButton')
-        signupButton.setCursor(Qt.PointingHandCursor)
-        signupButton.setFixedSize(360, 40)
+        self.registerButton = QPushButton('회원가입')
+        self.registerButton.setObjectName('registerButton')
+        self.registerButton.setCursor(Qt.PointingHandCursor)
+        self.registerButton.setFixedSize(360, 40)
 
-        signupButtonLayout = QHBoxLayout()
-        signupButtonLayout.addWidget(signupButton, alignment=Qt.AlignCenter)
+        self.registerButtonLayout = QHBoxLayout()
+        self.registerButtonLayout.addWidget(self.registerButton, alignment=Qt.AlignCenter)
 
         findIDPWButton = QPushButton('ID/PW 찾기')
         findIDPWButton.setObjectName('findIDPW')
@@ -171,7 +159,7 @@ class RegisterWindow(QWidget):
         layout.addLayout(checkPasswordContainLayout)
         # layout.addLayout(checkPasswordMatchLayout)
         layout.addSpacing(180)
-        layout.addLayout(signupButtonLayout)
+        layout.addLayout(self.registerButtonLayout)
         layout.addSpacing(20)
         layout.addLayout(bottomLayout)
         layout.setAlignment(Qt.AlignTop)
@@ -180,52 +168,13 @@ class RegisterWindow(QWidget):
         self._setStyle()
 
         # Connect the textChanged signal of the passwordField
-        self.passwordField.textChanged.connect(self.changeStyleSheet)
+        self.passwordField.textChanged.connect(self.checkPasswordField)
         self.passwordConfirmField.textChanged.connect(self.checkpasswordConfirmField)
         
-    def showLastCharacter(self):
-        password = self.sender().text() 
-        if password:
-            last_character = password[-1]
-            encrypted_text = '●' * (len(password) - 1) + last_character
-            self.sender().setText(encrypted_text)  # 设置加密的文本
-
-            self.timer.start(1000)  # 启动定时器，设定为1秒
-
-    def hideLastCharacter(self):
-        password = self.passwordField.text()
-        encrypted_text = '●' * len(password)
-        self.passwordField.setText(encrypted_text)  # 设置所有字符加密
-
-        password1 = self.passwordField.text()
-        password2 = self.passwordConfirmField.text()
-
-        if password1:
-            password = self.passwordField.text()
-            encrypted_text = '●' * len(password)
-            self.passwordField.setText(encrypted_text)  # 设置加密的文本
-
-        if password2:
-            password = self.passwordConfirmField.text()
-            encrypted_text = '●' * len(password)
-            self.passwordConfirmField.setText(encrypted_text)  # 设置加密的文本
-
-        self.timer.stop()  # 停止定时器
-
-    def _setStyle(self):
-        qss_file = QFile(f'{Path(__file__).parents[1]}/static/register.qss')
-        qss_file.open(QFile.ReadOnly | QFile.Text)
-        style_sheet = qss_file.readAll()
-        self.setStyleSheet(str(style_sheet, encoding='utf-8'))
-        
-    def validatePassword(self, password):
-        self.length_valid = bool(re.match(r'^.{8,16}$', password))
-        self.contain_valid = bool(re.search(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]+$', password))
-
     @pyqtSlot()
-    def changeStyleSheet(self):
-        password = self.sender().text()  # Get the text from the signal sender
-        self.validatePassword(password)
+    def checkPasswordField(self):
+        # password = self.sender().text()  # Get the text from the signal sender
+        self.validatePassword()
         
         if self.length_valid:
             self.tb_checkPasswordLength.setIcon(QIcon(f'{Path(__file__).parents[1]}/static/true.png'))
@@ -246,19 +195,58 @@ class RegisterWindow(QWidget):
         else:
             self.passwordField.setStyleSheet("border: 1px solid red;")
             
-        if self.passwordConfirmField.text() == password:
+        if self.passwordConfirmField.text() == self.passwordField.text():
             self.passwordConfirmField.setStyleSheet("border: 1px solid green;")
         else:
             self.passwordConfirmField.setStyleSheet("border: 1px solid red;")
             
     @pyqtSlot()
     def checkpasswordConfirmField(self):
-        confirmedPassword = self.sender().text()
-        
-        if confirmedPassword == self.passwordField.text():
+        if self.passwordConfirmField.text() == self.passwordField.text():
             self.passwordConfirmField.setStyleSheet("border: 1px solid green;")
+            return True
         else:
             self.passwordConfirmField.setStyleSheet("border: 1px solid red;")
+            return False
+        
+    def showLastCharacter(self):
+        password = self.sender().text() 
+        if password:
+            last_character = password[-1]
+            encrypted_text = '●' * (len(password) - 1) + last_character
+            self.sender().setText(encrypted_text)  # 设置加密的文本
+
+            self.timer.start(1000)  # 启动定时器，设定为1秒
+
+    def _setStyle(self):
+        qss_file = QFile(f'{Path(__file__).parents[1]}/static/register.qss')
+        qss_file.open(QFile.ReadOnly | QFile.Text)
+        style_sheet = qss_file.readAll()
+        self.setStyleSheet(str(style_sheet, encoding='utf-8'))
+        
+    def validatePassword(self):
+        self.length_valid = bool(re.match(r'^.{8,16}$', self.passwordField.text()))
+        self.contain_valid = bool(re.search(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]+$', self.passwordField.text()))
+
+    # def hideLastCharacter(self):
+    #     password = self.passwordField.text()
+    #     encrypted_text = '●' * len(password)
+    #     self.passwordField.setText(encrypted_text)  # 设置所有字符加密
+
+    #     password1 = self.passwordField.text()
+    #     password2 = self.passwordConfirmField.text()
+
+    #     if password1:
+    #         password = self.passwordField.text()
+    #         encrypted_text = '●' * len(password)
+    #         self.passwordField.setText(encrypted_text)  # 设置加密的文本
+
+    #     if password2:
+    #         password = self.passwordConfirmField.text()
+    #         encrypted_text = '●' * len(password)
+    #         self.passwordConfirmField.setText(encrypted_text)  # 设置加密的文本
+
+    #     self.timer.stop()  # 停止定时器
 
 
 if __name__ == '__main__':

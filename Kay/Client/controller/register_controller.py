@@ -1,10 +1,11 @@
 from PyQt5.QtCore import QTimer, QObject, pyqtSignal, pyqtSlot
-from PyQt5.QtWidgets import QLineEdit, QMessageBox
+from PyQt5.QtWidgets import QMessageBox
+import re
 from controller import *
 
 class RegisterController(QObject):
     back_button_clicked = pyqtSignal()
-    send_email_fail = pyqtSignal()
+    # send_email_fail = pyqtSignal()
 
     def __init__(self, client_thread):
         super().__init__()
@@ -13,6 +14,7 @@ class RegisterController(QObject):
         self.register_window.backButton.clicked.connect(self.back_button_clicked)
         self.register_window.emailField.getButton().clicked.connect(self.request_verification_code)
         self.register_window.verifyField.getButton().clicked.connect(self.verify_verification_code)
+        self.register_window.registerButton.clicked.connect(self.send_register)
         self.client_thread.send_email_fail.connect(self.handle_email_sent_failure)
         
         self.back_button_clicked.connect(self.handle_back_button_clicked)
@@ -20,6 +22,37 @@ class RegisterController(QObject):
 
         self.timer = QTimer()  # 타이머 객체 생성
         self.timer.timeout.connect(self.update_button)  # 타이머 타임아웃 시그널에 슬롯 연결
+        
+    def start_countdown(self):
+        self.register_window.emailField.getButton().setEnabled(False)  # 버튼 비활성화
+        self.register_window.emailField.getButton().setProperty("remaining_time", 180)  # 버튼에 남은 시간 속성 설정 (초 단위)
+        self.timer.start(1000)  # 타이머 시작, 1초마다 타임아웃 이벤트 발생
+        self.register_window.emailField.getButton().setText("03:00")
+
+    def update_button(self):
+        remaining_time = self.register_window.emailField.getButton().property("remaining_time")
+        if remaining_time <= 0:
+            self.register_window.emailField.getButton().setText("인증요청")
+            self.register_window.emailField.getButton().setEnabled(True)
+            self.timer.stop()  # 타이머 정지
+        else:
+            remaining_time -= 1
+            self.register_window.emailField.getButton().setProperty("remaining_time", remaining_time)
+            minutes = remaining_time // 60
+            seconds = remaining_time % 60
+            self.register_window.emailField.getButton().setText(f"{minutes:02d}:{seconds:02d}")
+            
+    def reset_verifyButton(self):
+        self.timer.stop()  # 타이머 정지
+        self.register_window.emailField.getButton().setText("인증요청")
+        self.register_window.emailField.getButton().setEnabled(True)  # 버튼 활성화
+    
+    def validate_email(self):
+        pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
+        if re.match(pattern, self.register_window.emailField.text()):
+            return True
+        else:
+            return False
 
     @pyqtSlot()
     def request_verification_code(self):
@@ -40,25 +73,6 @@ class RegisterController(QObject):
         email = self.register_window.emailField.text()
         verification_code = self.register_window.verifyField.text()
         self.client_thread.verify_verification_code(email, verification_code)
-
-    def start_countdown(self):
-        self.register_window.emailField.getButton().setEnabled(False)  # 버튼 비활성화
-        self.register_window.emailField.getButton().setProperty("remaining_time", 180)  # 버튼에 남은 시간 속성 설정 (초 단위)
-        self.timer.start(1000)  # 타이머 시작, 1초마다 타임아웃 이벤트 발생
-        self.register_window.emailField.getButton().setText("03:00")
-
-    def update_button(self):
-        remaining_time = self.register_window.emailField.getButton().property("remaining_time")
-        if remaining_time <= 0:
-            self.register_window.emailField.getButton().setText("인증요청")
-            self.register_window.emailField.getButton().setEnabled(True)
-            self.timer.stop()  # 타이머 정지
-        else:
-            remaining_time -= 1
-            self.register_window.emailField.getButton().setProperty("remaining_time", remaining_time)
-            minutes = remaining_time // 60
-            seconds = remaining_time % 60
-            self.register_window.emailField.getButton().setText(f"{minutes:02d}:{seconds:02d}")
             
     @pyqtSlot()
     def handle_back_button_clicked(self):
@@ -72,8 +86,32 @@ class RegisterController(QObject):
                 "이메일 전송 실패",
                 "이메일 전송에 실패했습니다."
             )
-
-    def reset_verifyButton(self):
-        self.timer.stop()  # 타이머 정지
-        self.register_window.emailField.getButton().setText("인증요청")
-        self.register_window.emailField.getButton().setEnabled(True)  # 버튼 활성화
+            
+    @pyqtSlot()
+    def send_register(self):
+        if not self.validate_email():
+            QMessageBox.critical(
+                self.register_window,
+                "이메일 양식 체크",
+                "이메일 양식이 틀렸습니다."
+            )
+            self.register_window.emailField.setFocus()
+            return
+        
+        if not self.register_window.validatePassword():
+            QMessageBox.critical(
+                self.register_window,
+                "password 양식 체크",
+                "password 양식이 틀렸습니다."
+            )
+            self.register_window.passwordField.setFocus()
+            return
+            
+        if not self.register_window.checkpasswordConfirmField():
+            QMessageBox.critical(
+                self.register_window,
+                "password 확인 양식 체크",
+                "두번 입력한 password가 상이합니다."
+            )
+            self.register_window.passwordConfirmField.setFocus()
+            return

@@ -24,14 +24,14 @@ QPushButton#verifyButton, QPushButton#confirmButton {
     border-radius: 10px;
 }
 
-QPushButton#signupButton {
+QPushButton#registerButton {
     background-color: rgb(141, 83, 255);
     color: white;
     height: 40px;
     border-radius: 10px;
 }
 
-QPushButton#signupButton:hover {
+QPushButton#registerButton:hover {
     background-color: rgb(161, 103, 255);
 }
 
