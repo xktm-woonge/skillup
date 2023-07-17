@@ -7,6 +7,15 @@ from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, \
                             QLabel, QLineEdit, QPushButton, QDesktopWidget, QHBoxLayout
 from PyQt5.QtGui import QPixmap
 
+try:
+    from utils import *
+except ImportError:
+    import sys
+    from pathlib import Path
+    sys.path.append(str(Path(__file__).parents[2]))
+    from utils import *
+
+
 class LoginWindow(QWidget):
     _instance = None
 
@@ -46,6 +55,7 @@ class LoginWindow(QWidget):
         # 제목 레이블
         titleLabel = QLabel('로그인')
         titleLabel.setObjectName('title')
+        titleLabel.setFont(get_NotoSan_font())
         titleLabel.setAlignment(Qt.AlignCenter)  # 가운데 정렬
         layout.addWidget(titleLabel)
         

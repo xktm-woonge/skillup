@@ -6,6 +6,14 @@ from PyQt5.QtGui import QIcon, QIntValidator
 from PyQt5.QtCore import Qt, QFile, pyqtSlot
 from pathlib import Path
 
+try:
+    from utils import *
+except ImportError:
+    import sys
+    from pathlib import Path
+    sys.path.append(str(Path(__file__).parents[2]))
+    from utils import *
+
 
 class AuthButton(QPushButton):
     def __init__(self, text, parent=None):
@@ -71,6 +79,7 @@ class RegisterWindow(QWidget):
         self.backButton.move(30, 30)
 
         titleLabel = QLabel('회원가입', self)
+        titleLabel.setFont(get_NotoSan_font())
         titleLabel.setObjectName('title')
         titleLabel.move(160, 24)
 

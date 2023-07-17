@@ -2,7 +2,7 @@
 from PyQt5.QtWidgets import QApplication
 from controller.connector import ClientThread
 from controller.login_controller import LoginController
-from utils import client_logManager as clmn
+from utils import *
 
 if __name__ == '__main__':
     app = QApplication([])

@@ -8,8 +8,7 @@ QPushButton#backButton {
 
 QLabel#title {
     color: rgb(141, 83, 255);
-    font-family: Verdana;
-    font-size: 18px;
+    font-size: 20px;
     font-weight: bold;
 }
 

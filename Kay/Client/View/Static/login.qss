@@ -2,8 +2,7 @@
 
 QLabel#title {
     color: rgb(141, 83, 255);
-    font-family: Verdana;  /* 폰트 변경 */
-    font-size: 18px;  /* 글자 크기 조정 */
+    font-size: 20px;  /* 글자 크기 조정 */
     font-weight: bold;  /* 볼드 처리 */
 }
 

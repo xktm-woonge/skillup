@@ -5,12 +5,12 @@ import threading
 import time
 
 try:
-    from utils import client_logManager as clmn
+    from utils import *
 except ImportError:
     import sys
     from pathlib import Path
     sys.path.append(str(Path(__file__).parents[1]))
-    from utils import client_logManager as clmn
+    from utils import *
 
 class Client:
     def __init__(self, host, port, message_callback):
