@@ -5,11 +5,13 @@ from PyQt5.QtWidgets import QWidget, QStackedWidget, QVBoxLayout, QMessageBox
 
 try:
     from controller import *
+    from model.check_re import validate_email
 except ImportError:
     import sys
     from pathlib import Path
     sys.path.append(str(Path(__file__).parents[1]))
     from controller import *
+    from model.check_re import validate_email
 
 
 class LoginController(QObject):
@@ -59,6 +61,15 @@ class LoginController(QObject):
                 self.login_window,
                 "이메일 체크",
                 "이메일을 입력해 주세요."
+            )
+            self.login_window.emailField.setFocus()
+            return
+        
+        if not validate_email(self.login_window.emailField.text()):
+            QMessageBox.warning(
+                self.login_window,
+                "이메일 양식 체크",
+                "이메일 양식이 틀렸습니다."
             )
             self.login_window.emailField.setFocus()
             return

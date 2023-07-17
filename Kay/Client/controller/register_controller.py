@@ -6,11 +6,13 @@ import hashlib
 
 try:
     from controller import *
+    from model.check_re import validate_email
 except ImportError:
     import sys
     from pathlib import Path
     sys.path.append(str(Path(__file__).parents[1]))
     from controller import *
+    from model.check_re import validate_email
     
 
 class RegisterController(QObject):
@@ -42,7 +44,7 @@ class RegisterController(QObject):
     def request_verification_code(self):
         email = self.register_window.emailField.text()
         
-        if not self.validate_email():
+        if not validate_email(self.register_window.emailField.text()):
             QMessageBox.warning(
                 self.register_window,
                 "이메일 양식 체크",
@@ -228,10 +230,3 @@ class RegisterController(QObject):
         self.register_window.verifyField.setEnabled(False)
         self.register_window.passwordField.setStyleSheet("")
         self.register_window.passwordConfirmField.setStyleSheet("")
-    
-    def validate_email(self):
-        pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
-        if re.match(pattern, self.register_window.emailField.text()):
-            return True
-        else:
-            return False

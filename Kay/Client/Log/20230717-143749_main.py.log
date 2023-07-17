@@ -1,0 +1,2 @@
+[2023-07-17 14:37:49.820][D][client_logManager.py(Init):12] LogManager Init function called !!!
+[2023-07-17 14:37:50.358][I][client_model.py(connect):31] Connected to the server
