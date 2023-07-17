@@ -1,0 +1,8 @@
+[2023-07-17 14:52:03.679][D][client_logManager.py(Init):12] LogManager Init function called !!!
+[2023-07-17 14:52:04.201][I][client_model.py(connect):31] Connected to the server
+[2023-07-17 14:52:11.856][I][client_model.py(send_message):49] LOGIN|adsf@dfj.com|asdf 전송
+[2023-07-17 14:52:11.858][I][client_model.py(receive_messages):57] non-existent email 수신
+[2023-07-17 14:52:16.366][I][client_model.py(send_message):49] LOGIN|adsf@dfj.com|asdf 전송
+[2023-07-17 14:52:16.367][I][client_model.py(receive_messages):57] non-existent email 수신
+[2023-07-17 14:52:20.351][I][client_model.py(send_message):49] LOGIN|adsf@dfj.com|asdf 전송
+[2023-07-17 14:52:20.352][I][client_model.py(receive_messages):57] non-existent email 수신

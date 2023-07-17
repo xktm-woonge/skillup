@@ -23,6 +23,7 @@ class ClientThread(QThread):
     duplicate_registration = pyqtSignal()
     login_success = pyqtSignal()
     login_fail = pyqtSignal()
+    non_existent_email = pyqtSignal()
     
     def __init__(self):
         super().__init__()
@@ -64,3 +65,5 @@ class ClientThread(QThread):
             self.login_success.emit()
         elif message == 'Login fail':
             self.login_fail.emit()
+        elif message == 'non-existent email':
+            self.non_existent_email.emit()

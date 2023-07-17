@@ -101,7 +101,7 @@ def handle_client_connection(client_socket):
                     else:
                         response = "Login fail"
                 else:
-                    response = "Login fail"
+                    response = "non-existent email"
                     
                 client_socket.sendall(response.encode())
                 

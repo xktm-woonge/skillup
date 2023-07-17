@@ -44,6 +44,7 @@ class LoginController(QObject):
         self.register_controller.back_button_clicked.connect(self.show_login_window)
         self.client_thread.login_success.connect(self.handle_login_success)
         self.client_thread.login_fail.connect(self.handle_login_fail)
+        self.client_thread.non_existent_email.connect(self.handle_non_existent_email)
 
     @pyqtSlot()
     def show_register_window(self):
@@ -100,4 +101,12 @@ class LoginController(QObject):
                 self.login_window,
                 "로그인",
                 "아이디와 비밀번호가 일치하지 않습니다."
+            )
+        
+    @pyqtSlot()
+    def handle_non_existent_email(self):
+        QMessageBox.warning(
+                self.login_window,
+                "로그인",
+                "존재하지 않는 계정입니다."
             )
