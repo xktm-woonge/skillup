@@ -7,6 +7,7 @@ class EmailSender:
         self.smtp_server = smtp_server
         self.smtp_port = smtp_port
         self.smtp = None
+        self.smtp_connection = False
 
     def connect(self):
         self.smtp = smtplib.SMTP(self.smtp_server, self.smtp_port)
@@ -59,6 +60,7 @@ class EmailSender:
         try:
             if not self.smtp:
                 self.connect()
+                self.smtp_connection = True
 
             self.smtp.login(sender_email, sender_password)
             self.smtp.sendmail(sender_email, receiver_email, msg.as_string())
@@ -70,7 +72,8 @@ class EmailSender:
             return False
             
         finally:
-            if self.smtp:
+
+            if self.smtp and self.smtp_connection:
                 self.smtp.quit()
 
 

@@ -26,7 +26,7 @@ class ClientThread(QThread):
     
     def __init__(self):
         super().__init__()
-        self.client = Client('192.168.35.2', 8000, self.handle_message_received)
+        self.client = Client('localhost', 8000, self.handle_message_received)
 
     def run(self):
         self.client.connect()

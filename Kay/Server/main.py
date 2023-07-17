@@ -6,6 +6,8 @@ import string
 import hashlib
 import os
 import sqlite3
+import sys
+from pathlib import Path
 from model.email_sender import EmailSender
 
 # 나중에 DB로 추가해야 됨
@@ -120,7 +122,7 @@ def start_server():
     # 소켓 생성
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # IP 주소와 포트 번호 바인딩
-    server_address = ('192.168.35.2', 8000)
+    server_address = ('localhost', 8000)
     server_socket.bind(server_address)
     # 연결 수신 대기 시작
     server_socket.listen(20)
@@ -145,7 +147,7 @@ def generate_verification_code():
 def store_in_database(email, hashed_password, salt):
     # Connect to the SQLite database
     # If the database does not exist, it will be created
-    conn = sqlite3.connect('./database/user_database.db')
+    conn = sqlite3.connect(f'{str(Path(__file__).parent)}/database/user_database.db')
 
     # Create a cursor object
     c = conn.cursor()
@@ -173,7 +175,7 @@ def store_in_database(email, hashed_password, salt):
 
 def check_user(email):
     # Connect to the SQLite database
-    conn = sqlite3.connect('./database/user_database.db')
+    conn = sqlite3.connect(f'{str(Path(__file__).parent)}/database/user_database.db')
 
     # Create a cursor object
     c = conn.cursor()
@@ -194,7 +196,7 @@ def check_user(email):
 
 def get_userInfo(email):
     # Connect to the SQLite database
-    conn = sqlite3.connect('./database/user_database.db')
+    conn = sqlite3.connect(f'{str(Path(__file__).parent)}/database/user_database.db')
 
     # Create a cursor object
     c = conn.cursor()

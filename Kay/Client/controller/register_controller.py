@@ -131,6 +131,9 @@ class RegisterController(QObject):
     
     @pyqtSlot()
     def handle_email_sent_failure(self):
+        self.verify_email_success = False
+        self.reset_verifyButton()
+        self.register_window.verifyField.setEnabled(False)
         if not self.back_button_was_clicked:
             QMessageBox.warning(
                 self.register_window,
