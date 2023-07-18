@@ -1,4 +1,4 @@
-# controller/connector.py
+# ./controller/connector.py
 
 from PyQt5.QtCore import QThread, pyqtSignal
 

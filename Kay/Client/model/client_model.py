@@ -25,14 +25,15 @@ class Client:
     def connect(self):
         while not self.is_connected:
             try:
-                self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                self.socket.connect((self.host, self.port))
-                self.is_connected = True
-                clmn.HLOG.info("Connected to the server")
+                if self.socket is None or self.socket.fileno() == -1:
+                    self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    self.socket.connect((self.host, self.port))
+                    self.is_connected = True
+                    clmn.HLOG.info("Connected to the server")
 
-                # 별도의 스레드에서 메시지 수신 처리
-                receive_thread = threading.Thread(target=self.receive_messages)
-                receive_thread.start()
+                    # 별도의 스레드에서 메시지 수신 처리
+                    receive_thread = threading.Thread(target=self.receive_messages)
+                    receive_thread.start()
 
             except ConnectionRefusedError:
                 clmn.HLOG.info("Connection refused, retrying...")
@@ -56,14 +57,25 @@ class Client:
                     message = data.decode()
                     clmn.HLOG.info(f'{message} 수신')
                     self.message_callback(message)
-            except ConnectionResetError:
+                else:  # 소켓이 정상적으로 닫힌 경우
+                    self.is_connected = False
+                    self.socket.close()
+                    self.socket = None
+                    self.reconnect()
+            except (ConnectionResetError, ConnectionAbortedError):
                 clmn.HLOG.info("Connection reset by peer")
-                self.close()
+                self.is_connected = False
+                self.socket = None
                 self.reconnect()
 
     def reconnect(self):
+        if self.socket is not None:
+            try:
+                self.socket.close()
+            except Exception as e:
+                clmn.HLOG.error(f"Error closing socket: {str(e)}")
+            self.socket = None
         self.is_connected = False
-        self.socket.close()
         clmn.HLOG.info("Reconnecting...")
         self.connect()
 

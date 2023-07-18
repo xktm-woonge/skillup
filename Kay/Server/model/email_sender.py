@@ -1,11 +1,26 @@
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+import random
+import string
+
+"""
+{      
+'gmail': ('smtp.gmail.com', 587),
+'naver': ('smtp.naver.com', 587),
+'daum': ('smtp.daum.net', 465),
+'hanmail': ('smtp.daum.net', 465),
+'nate': ('smtp.mail.nate.com', 465),
+'outlook': ('smtp.outlook.com', 587),
+}
+"""
 
 class EmailSender:
-    def __init__(self, smtp_server, smtp_port):
-        self.smtp_server = smtp_server
-        self.smtp_port = smtp_port
+    def __init__(self):
+        self.smtp_server = 'smtp.gmail.com'
+        self.smtp_port = 587
+        self.sender_email = "endteamchat@gmail.com"
+        self.sender_password = "fxerdbpuijwurack"
         self.smtp = None
         self.smtp_connection = False
 
@@ -13,9 +28,9 @@ class EmailSender:
         self.smtp = smtplib.SMTP(self.smtp_server, self.smtp_port)
         self.smtp.starttls()
 
-    def send_email(self, sender_email, sender_password, receiver_email, subject, content):
+    def send_email(self, receiver_email, subject, content):
         msg = MIMEMultipart('alternative')
-        msg['From'] = sender_email
+        msg['From'] = self.sender_email
         msg['To'] = receiver_email
         msg['Subject'] = subject
         
@@ -62,8 +77,8 @@ class EmailSender:
                 self.connect()
                 self.smtp_connection = True
 
-            self.smtp.login(sender_email, sender_password)
-            self.smtp.sendmail(sender_email, receiver_email, msg.as_string())
+            self.smtp.login(self.sender_email, self.sender_password)
+            self.smtp.sendmail(self.sender_email, receiver_email, msg.as_string())
             print("Email sent successfully!")
             return True
 
@@ -75,6 +90,12 @@ class EmailSender:
 
             if self.smtp and self.smtp_connection:
                 self.smtp.quit()
+                
+    # 인증 코드 생성 예시 함수
+    @staticmethod
+    def generate_verification_code():
+        # 6자리 임의의 인증 코드 생성
+        return ''.join(random.choices(string.digits, k=6))
 
 
 if __name__ == "__main__":

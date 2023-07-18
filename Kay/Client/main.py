@@ -1,4 +1,4 @@
-# main.py
+# ./main.py
 from PyQt5.QtWidgets import QApplication
 from controller.connector import ClientThread
 from controller.login_controller import LoginController
