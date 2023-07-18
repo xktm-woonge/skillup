@@ -33,9 +33,9 @@ class AuthController:
                 if email_sent:
                     # 사용자 데이터에 이메일과 인증코드 저장
                     self.user_data[email] = {'verification_code': verification_code}
-                    response = "Send email success"
+                    response = "VERIFICATIONCODE SUCCESS"
                 else:
-                    response = "Send email fail"
+                    response = "VERIFICATIONCODE FAIL"
 
             client_socket.sendall(response.encode())
 
@@ -46,10 +46,10 @@ class AuthController:
         # 인증코드 일치 여부 확인
         if email in self.user_data and self.user_data[email]['verification_code'] == verification_code:
             # 인증 성공 응답 보내기
-            response = "Verification successful"
+            response = "VERIFY SUCCESS"
         else:
             # 인증 실패 응답 보내기
-            response = "Verification failed"
+            response = "VERIFY FAIL"
             
         client_socket.sendall(response.encode())
 
@@ -59,7 +59,7 @@ class AuthController:
         
         # Store the hashed password and salt in the database
         store_in_database(email, hashed_password, salt)
-        response = "Register successful"
+        response = "REGISTER SUCCESS"
         
         client_socket.sendall(response.encode())
 
@@ -71,9 +71,9 @@ class AuthController:
             hashedPassword = hash_password(userPassword, salt)
             
             if dbPassword == hashedPassword:
-                response = "Login successful"
+                response = "LOGIN SUCCESS"
             else:
-                response = "Login fail"
+                response = "LOGIN FAIL"
         else:
             response = "non-existent email"
             

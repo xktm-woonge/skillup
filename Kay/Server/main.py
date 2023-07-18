@@ -3,6 +3,7 @@ import socket
 import threading
 from model import *
 from controller import *
+from utils import *
 
 
 auth_controller = AuthController()
@@ -31,10 +32,10 @@ def handle_client_connection(client_socket):
             else:
                 # 다른 채팅 기능 처리
                 # ...
-                print('test')
+                slmn.HLOG.info('test')
 
     except ConnectionError:
-        print(f"Client {client_socket.getpeername()} disconnected.")
+        slmn.HLOG.info(f"Client {client_socket.getpeername()} disconnected.")
 
     finally:
         # 클라이언트 연결 종료
@@ -50,12 +51,12 @@ def start_server():
     # 연결 수신 대기 시작
     server_socket.listen(20)
 
-    print("Server started. Listening for connections...")
+    slmn.HLOG.info("Server started. Listening for connections...")
 
     while True:
         # 클라이언트 연결 수락
         client_socket, client_address = server_socket.accept()
-        print(f"New connection from {client_address}")
+        slmn.HLOG.info(f"New connection from {client_address}")
 
         # 클라이언트 연결을 처리하는 새로운 스레드 생성
         client_thread = threading.Thread(target=handle_client_connection, args=(client_socket,))
@@ -63,4 +64,5 @@ def start_server():
 
 
 if __name__ == "__main__":
+    slmn.Init()
     start_server()

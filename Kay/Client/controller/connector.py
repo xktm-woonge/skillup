@@ -51,19 +51,19 @@ class ClientThread(QThread):
         self.client.close()
 
     def handle_message_received(self, message):
-        if message == 'Send email fail':
+        if message == 'VERIFICATIONCODE FAIL':
             self.send_email_fail.emit()
-        elif message == 'Verification successful':
+        elif message == 'VERIFY SUCCESS':
             self.verify_success.emit()
-        elif message == 'Verification failed':
+        elif message == 'VERIFY FAIL':
             self.verify_fail.emit()
-        elif message == 'Register successful':
+        elif message == 'REGISTER SUCCESS':
             self.register_success.emit()
         elif message == 'The account has already been registered':
             self.duplicate_registration.emit()
-        elif message == 'Login successful':
+        elif message == 'LOGIN SUCCESS':
             self.login_success.emit()
-        elif message == 'Login fail':
+        elif message == 'LOGIN FAIL':
             self.login_fail.emit()
         elif message == 'non-existent email':
             self.non_existent_email.emit()
