@@ -3,6 +3,7 @@
 import socket
 import threading
 import time
+import json
 
 try:
     from utils import *
@@ -78,6 +79,41 @@ class Client:
         self.is_connected = False
         clmn.HLOG.info("Reconnecting...")
         self.connect()
+        
+    def request_verification_code(self, email):
+        # 인증 요청 메시지 작성
+    message = json.dumps({
+        "command": "VERIFICATIONCODE",
+        "email": email
+    })
+    # 인증 요청 전송
+    self.send_message(message)
+
+# def verify_verification_code(self, email, verification_code):
+#     message = json.dumps({
+#         "command": "VERIFY",
+#         "email": email,
+#         "verification_code": verification_code
+#     })
+#     self.send_message(message)
+
+# def register_user(self, email, password, salt):
+#     # 서버에 등록 요청을 보내고, 서버의 응답 결과를 반환
+#     message = json.dumps({
+#         "command": "REGISTER",
+#         "email": email,
+#         "password": password,
+#         "salt": salt
+#     })
+#     self.send_message(message)
+
+# def login(self, email, password):
+#     message = json.dumps({
+#         "command": "LOGIN",
+#         "email": email,
+#         "password": password
+#     })
+#     self.send_message(message)
 
     def request_verification_code(self, email):
         # 인증 요청 메시지 작성
