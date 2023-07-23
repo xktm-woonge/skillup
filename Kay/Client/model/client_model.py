@@ -80,14 +80,14 @@ class Client:
         clmn.HLOG.info("Reconnecting...")
         self.connect()
         
-    def request_verification_code(self, email):
-        # 인증 요청 메시지 작성
-    message = json.dumps({
-        "command": "VERIFICATIONCODE",
-        "email": email
-    })
-    # 인증 요청 전송
-    self.send_message(message)
+    # def request_verification_code(self, email):
+    #     # 인증 요청 메시지 작성
+    # message = json.dumps({
+    #     "command": "VERIFICATIONCODE",
+    #     "email": email
+    # })
+    # # 인증 요청 전송
+    # self.send_message(message)
 
 # def verify_verification_code(self, email, verification_code):
 #     message = json.dumps({
