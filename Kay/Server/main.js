@@ -1,63 +1,91 @@
-// server.js
 const net = require('net');
-const port = 3000;
+const express = require('express');
+const http = require('http');
+const socketIo = require('socket.io');
+const authController = require('./controller');
 
-const server = net.createServer();
+const tcpPort = 8000;
+const httpPort = 3000;
 
-server.on('connection', (socket) => {
-    console.log('New client connected');
-    
+const tcpServer = net.createServer();
+const app = express();
+const httpServer = http.createServer(app);
+const io = socketIo(httpServer);
+
+let userSessions = {}; // 사용자 세션 정보를 저장하는 객체
+
+tcpServer.on('connection', (socket) => {
+    let userId = ...;  // 클라이언트를 식별하기 위한 고유한 값
+    userSessions[userId] = { socket: socket, environment: 'PC' };
+
     socket.on('data', (data) => {
         let message = data.toString();
-        console.log('Received:', message);
-        
-        // Parse and handle message here
-        let [command, ...args] = message.split('|');
 
+        let command = message.split(' ')[0];
         switch (command) {
             case 'VERIFICATIONCODE':
-                handleVerificationRequest(args[0]); // e.g., send email verification code
+                authController.handleVerificationCodeRequest(message, userSessions[userId]);
                 break;
             case 'VERIFY':
-                verifyVerificationCode(args[0], args[1]); // verify the code
+                authController.handleVerify(message, userSessions[userId]);
                 break;
             case 'REGISTER':
-                registerUser(args[0], args[1], args[2]); // register user
+                authController.handleRegister(message, userSessions[userId]);
                 break;
             case 'LOGIN':
-                loginUser(args[0], args[1]); // login user
+                authController.handleLogin(message, userSessions[userId]);
                 break;
             default:
                 console.log('Unknown command:', command);
                 break;
         }
     });
-    
+
     socket.on('end', () => {
         console.log('Client disconnected');
+        delete userSessions[userId];
     });
-    
+
     socket.on('error', (err) => {
         console.log('Socket error:', err);
     });
 });
 
-server.listen(port, () => {
-    console.log(`Server listening on port ${port}`);
+io.on('connection', (socket) => {
+    let userId = ...;
+    userSessions[userId] = { socket: socket, environment: 'Web' };
+    
+    socket.on('message', (message) => {
+        let command = message.split(' ')[0];
+        switch (command) {
+            case 'VERIFICATIONCODE':
+                authController.handleVerificationCodeRequest(message, userSessions[userId]);
+                break;
+            case 'VERIFY':
+                authController.handleVerify(message, userSessions[userId]);
+                break;
+            case 'REGISTER':
+                authController.handleRegister(message, userSessions[userId]);
+                break;
+            case 'LOGIN':
+                authController.handleLogin(message, userSessions[userId]);
+                break;
+            default:
+                console.log('Unknown command:', command);
+                break;
+        }
+    });
+
+    socket.on('disconnect', () => {
+        console.log('User disconnected');
+        delete userSessions[userId];
+    });
 });
 
-function handleVerificationRequest(email) {
-    // TODO: Implement function to handle verification code request
-}
+tcpServer.listen(tcpPort, () => {
+    console.log(`TCP Server listening on port ${tcpPort}`);
+});
 
-function verifyVerificationCode(email, code) {
-    // TODO: Implement function to verify verification code
-}
-
-function registerUser(email, password, salt) {
-    // TODO: Implement function to register user
-}
-
-function loginUser(email, password) {
-    // TODO: Implement function to login user
-}
+httpServer.listen(httpPort, () => {
+    console.log(`HTTP Server listening on port ${httpPort}`);
+});
