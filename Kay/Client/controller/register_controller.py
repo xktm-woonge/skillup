@@ -133,7 +133,7 @@ class RegisterController(QObject):
         self.back_button_clicked.emit()
     
     @pyqtSlot()
-    def handle_email_sent_failure(self):
+    def handle_email_sent_failure(self, msg):
         self.verify_email_success = False
         self.reset_verifyButton()
         self.register_window.verifyField.setEnabled(False)

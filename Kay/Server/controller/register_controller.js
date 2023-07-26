@@ -13,13 +13,13 @@ exports.handleVerificationCodeRequest = function (message, session) {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: 'your-email@example.com',
-            pass: 'your-password'
+            user: 'endteamchat@gmail.com',
+            pass: 'fxerdbpuijwurack'
         }
     });
 
     const mailOptions = {
-        from: 'your-email@example.com',
+        from: 'endteamchat@gmail.com',
         to: email,
         subject: '채팅 프로그램 인증번호',
         text: `Your verification code is ${verificationCode}`
@@ -28,12 +28,11 @@ exports.handleVerificationCodeRequest = function (message, session) {
     transporter.sendMail(mailOptions, (error, info) => {
         let response;
         if (error) {
-            response = 'VERIFICATIONCODE FAIL';
+            response = {command: 'VERIFICATIONCODE' , status: 'FAIL',  message: '메세지 문구'};
         } else {
-            // If the email was sent successfully, store the verification code in the user's session
             session.verificationCode = verificationCode;
-            response = 'VERIFICATIONCODE SUCCESS';
+            response = {command: 'VERIFICATIONCODE' , status: 'SUCCESS',  message: '메세지 문구'};
         }
-        session.socket.write(response);
-    });
+        session.socket.write(JSON.stringify(response));
+    });    
 }

@@ -14,16 +14,15 @@ except ImportError:
     
 
 class ClientThread(QThread):
-    message_received = pyqtSignal(str)
-    send_email_success = pyqtSignal()
-    send_email_fail = pyqtSignal()
-    verify_success = pyqtSignal()
-    verify_fail = pyqtSignal()
-    register_success = pyqtSignal()
-    duplicate_registration = pyqtSignal()
-    login_success = pyqtSignal()
-    login_fail = pyqtSignal()
-    non_existent_email = pyqtSignal()
+    send_email_success = pyqtSignal(str)
+    send_email_fail = pyqtSignal(str)
+    verify_success = pyqtSignal(str)
+    verify_fail = pyqtSignal(str)
+    register_success = pyqtSignal(str)
+    duplicate_registration = pyqtSignal(str)
+    login_success = pyqtSignal(str)
+    login_fail = pyqtSignal(str)
+    non_existent_email = pyqtSignal(str)
     
     def __init__(self):
         super().__init__()
@@ -50,20 +49,29 @@ class ClientThread(QThread):
     def close(self):
         self.client.close()
 
-    def handle_message_received(self, message):
-        if message == 'VERIFICATIONCODE FAIL':
-            self.send_email_fail.emit()
-        elif message == 'VERIFY SUCCESS':
-            self.verify_success.emit()
-        elif message == 'VERIFY FAIL':
-            self.verify_fail.emit()
-        elif message == 'REGISTER SUCCESS':
-            self.register_success.emit()
-        elif message == 'The account has already been registered':
-            self.duplicate_registration.emit()
-        elif message == 'LOGIN SUCCESS':
-            self.login_success.emit()
-        elif message == 'LOGIN FAIL':
-            self.login_fail.emit()
-        elif message == 'non-existent email':
-            self.non_existent_email.emit()
+    def handle_message_received(self, received_message):
+        command = received_message['command']
+        status = received_message['status']
+        message = received_message['message']
+
+        if command == 'VERIFICATIONCODE':
+            if status == 'FAIL':
+                self.send_email_fail.emit(message)
+            elif status == 'DUPLICATE':
+                self.duplicate_registration.emit(message)
+        # elif message == 'The account has already been registered':
+        #     self.duplicate_registration.emit()
+        elif command == 'VERIFY':
+            if status == 'SUCCESS':
+                self.verify_success.emit(message)
+            elif status == 'FAIL':
+                self.verify_fail.emit(message)
+        elif command == 'LOGIN':
+            if status == 'SUCCESS':
+                self.login_success.emit(message)
+            elif status == 'FAIL':
+                self.login_fail.emit()
+            elif status == 'UNREGISTERED':
+                self.non_existent_email.emit(message)
+        elif command == 'REGISTER' and status == 'SUCCESS':
+            self.register_success.emit(message)
