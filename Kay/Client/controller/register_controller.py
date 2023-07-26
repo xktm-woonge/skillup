@@ -6,13 +6,13 @@ import os
 import hashlib
 
 try:
-    from controller import *
+    from view.templates import *
     from model.check_re import validate_email
 except ImportError:
     import sys
     from pathlib import Path
     sys.path.append(str(Path(__file__).parents[1]))
-    from controller import *
+    from view.templates import *
     from model.check_re import validate_email
     
 
@@ -46,11 +46,8 @@ class RegisterController(QObject):
         email = self.register_window.emailField.text()
         
         if not validate_email(self.register_window.emailField.text()):
-            QMessageBox.warning(
-                self.register_window,
-                "이메일 양식 체크",
-                "이메일 양식이 틀렸습니다."
-            )
+            msg = "이메일 양식이 틀렸습니다."
+            warningBox(self.register_window, msg)
             self.register_window.emailField.setFocus()
             return
         
@@ -61,67 +58,65 @@ class RegisterController(QObject):
             self.register_window.verifyField.setEnabled(True)
             self.register_window.verifyField.setFocus()
         else:
-            QMessageBox.warning(
-                self.register_window,
-                "서버 연결 실패",
-                "서버에 연결할 수 없습니다. 네트워크 상태를 확인해주세요."
-            )
+            msg = "서버에 연결할 수 없습니다. 네트워크 상태를 확인해주세요."
+            warningBox(self.register_window, msg)
 
     @pyqtSlot()
     def verify_verification_code(self):
         email = self.register_window.emailField.text()
         verification_code = self.register_window.verifyField.text()
         if not verification_code:
-            QMessageBox.warning(
-                self.register_window,
-                "인증 번호 체크",
-                "인증 번호를 입력해 주세요."
-            )
+            msg = "인증 번호를 입력해 주세요."
+            warningBox(self.register_window, msg)
             return
         
         self.register_window.verifyField.setEnabled(True)        
         self.client_thread.verify_verification_code(email, verification_code)
         
     @pyqtSlot()
-    def handle_verify_success(self):
+    def handle_verify_success(self, msg):
         self.timer.stop()
         self.register_window.emailField.getButton().setText("인증요청")
         self.register_window.emailField.setEnabled(False)
         self.register_window.verifyField.setEnabled(False)
-        QMessageBox.information(
-                self.register_window,
-                "인증 결과",
-                "인증에 성공했습니다."
-            )
+        informationBox(self.register_window, msg)
+        # QMessageBox.information(
+        #         self.register_window,
+        #         "인증 결과",
+        #         "인증에 성공했습니다."
+        #     )
         self.verify_email_success = True
         
     @pyqtSlot()
-    def handle_register_success(self):
-        QMessageBox.information(
-                self.register_window,
-                "회원가입 결과",
-                "축하합니다.\n회원가입에 성공했습니다."
-            )
+    def handle_register_success(self, msg):
+        informationBox(self.register_window, msg)
+        # QMessageBox.information(
+        #         self.register_window,
+        #         "회원가입 결과",
+        #         "축하합니다.\n회원가입에 성공했습니다."
+        #     )
         self.handle_back_button_clicked()
         
     @pyqtSlot()
-    def handle_duplicate_registration(self):
+    def handle_duplicate_registration(self, msg):
         self.reset_verifyButton()
-        QMessageBox.warning(
-                self.register_window,
-                "회원가입 결과",
-                "이미 가입된 계정입니다."
-            )
+        warningBox(self.register_window, msg)
+        # QMessageBox.warning(
+        #         self.register_window,
+        #         "회원가입 결과",
+        #         "이미 가입된 계정입니다."
+        #     )
         self.register_window.verifyField.setEnabled(False)
         self.register_window.emailField.setFocus()
         
     @pyqtSlot()
-    def handle_verify_fail(self):
-        QMessageBox.warning(
-                self.register_window,
-                "인증 결과",
-                "인증에 실패했습니다. 다시 확인해 주세요."
-            )
+    def handle_verify_fail(self, msg):
+        warningBox(self.register_window, msg)
+        # QMessageBox.warning(
+        #         self.register_window,
+        #         "인증 결과",
+        #         "인증에 실패했습니다. 다시 확인해 주세요."
+        #     )
             
     @pyqtSlot()
     def handle_back_button_clicked(self):
@@ -138,39 +133,46 @@ class RegisterController(QObject):
         self.reset_verifyButton()
         self.register_window.verifyField.setEnabled(False)
         if not self.back_button_was_clicked:
-            QMessageBox.warning(
-                self.register_window,
-                "이메일 전송 실패",
-                "이메일 전송에 실패했습니다."
-            )
+            warningBox(self.register_window, msg)
+            # QMessageBox.warning(
+            #     self.register_window,
+            #     "이메일 전송 실패",
+            #     "이메일 전송에 실패했습니다."
+            # )
             
     @pyqtSlot()
-    def send_register(self):        
+    def send_register(self, msg):        
         if not self.verify_email_success:
             self.register_window.emailField.setFocus()
-            QMessageBox.warning(
-                self.register_window,
-                "이메일 인증 체크",
-                "이메일 인증부터 진행해 주세요."
-            )
+            msg = "이메일 인증부터 진행해 주세요."
+            warningBox(self.register_window, msg)
+            # QMessageBox.warning(
+            #     self.register_window,
+            #     "이메일 인증 체크",
+            #     "이메일 인증부터 진행해 주세요."
+            # )
             self.register_window.passwordField.setFocus()
             return
         
         if not self.register_window.validatePassword():
-            QMessageBox.warning(
-                self.register_window,
-                "password 양식 체크",
-                "password 양식이 틀렸습니다."
-            )
+            msg = "password 양식이 틀렸습니다."
+            warningBox(self.register_window, msg)
+            # QMessageBox.warning(
+            #     self.register_window,
+            #     "password 양식 체크",
+            #     "password 양식이 틀렸습니다."
+            # )
             self.register_window.passwordField.setFocus()
             return
             
         if not self.register_window.checkpasswordConfirmField():
-            QMessageBox.warning(
-                self.register_window,
-                "password 확인 양식 체크",
-                "두번 입력한 password가 상이합니다."
-            )
+            msg = "두번 입력한 password가 상이합니다."
+            warningBox(self.register_window, msg)
+            # QMessageBox.warning(
+            #     self.register_window,
+            #     "password 확인 양식 체크",
+            #     "두번 입력한 password가 상이합니다."
+            # )
             self.register_window.passwordConfirmField.setFocus()
             return
         

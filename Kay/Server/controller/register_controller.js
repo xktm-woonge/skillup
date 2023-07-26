@@ -28,10 +28,10 @@ exports.handleVerificationCodeRequest = function (message, session) {
     transporter.sendMail(mailOptions, (error, info) => {
         let response;
         if (error) {
-            response = {command: 'VERIFICATIONCODE' , status: 'FAIL',  message: '메세지 문구'};
+            response = {command: 'VERIFICATIONCODE' , status: 'FAIL',  message: '이메일 전송에 실패했습니다.'};
         } else {
             session.verificationCode = verificationCode;
-            response = {command: 'VERIFICATIONCODE' , status: 'SUCCESS',  message: '메세지 문구'};
+            response = {command: 'VERIFICATIONCODE' , status: 'SUCCESS',  message: '이메일 전송에 성공했습니다.'};
         }
         session.socket.write(JSON.stringify(response));
     });    

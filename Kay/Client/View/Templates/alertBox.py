@@ -1,29 +1,34 @@
 from PyQt5.QtWidgets import QMessageBox
 
-class AlertBox:
 
-    @staticmethod
-    def show(response):
-        msg = QMessageBox()
+def warningBox(screen, msg):
+    alert_box = QMessageBox(screen)
+    alert_box.setIcon(QMessageBox.Warning)
+    alert_box.setWindowTitle("Warning")
+    alert_box.setText(msg)
+    alert_box.exec_()
 
-        # Check command and set alert title accordingly
-        if response['command'] == 'VERIFICATIONCODE':
-            if response['status'] == 'FAIL':
-                msg.setWindowTitle('Verification Error')
-            elif response['status'] == 'SUCCESS':
-                msg.setWindowTitle('Verification Success')
-        else:
-            msg.setWindowTitle('Info')
+def informationBox(screen, msg):
+    alert_box = QMessageBox(screen)
+    alert_box.setIcon(QMessageBox.Information)
+    alert_box.setWindowTitle("Information")
+    alert_box.setText(msg)
+    alert_box.exec_()
 
-        # Set the alert text to the received message
-        msg.setText(response['message'])
 
-        # Set the alert icon according to the status
-        if response['status'] == 'FAIL':
-            msg.setIcon(QMessageBox.Warning)
-        elif response['status'] == 'SUCCESS':
-            msg.setIcon(QMessageBox.Information)
-        else:
-            msg.setIcon(QMessageBox.NoIcon)
+# class AlertBox:
+#     def __init__(self, screen):
+#         self.screen = screen
 
-        retval = msg.exec_()
+#     def show(self, type, msg):
+#         alert_box = QMessageBox(self.screen)
+#         if type.lower() == 'warning':
+#             alert_box.setIcon(QMessageBox.Warning)
+#             alert_box.setWindowTitle("Warning")
+#         elif type.lower() == 'information':
+#             alert_box.setIcon(QMessageBox.Information)
+#             alert_box.setWindowTitle("Information")
+#         else:
+#             raise ValueError(f"Unknown type: {type}")
+#         alert_box.setText(msg)
+#         alert_box.exec_()
