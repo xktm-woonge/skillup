@@ -3,6 +3,7 @@ const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 const registerController = require('./controller/register_controller');
+const logger = require('./utils/logger');
 
 const tcpPort = 8000;
 const httpPort = 3000;
@@ -16,7 +17,9 @@ let userSessions = {}; // 사용자 세션 정보를 저장하는 객체
 
 tcpServer.on('connection', (socket) => {
     let userId = socket.id;  // Set the userId as the socket's ID
+    logger.info(`userId: ${userId}`)
     userSessions[userId] = { socket: socket, environment: 'PC' };
+    logger.info(`userSessions: ${userSessions}`)
 
     socket.on('data', (data) => {
         let message = JSON.parse(data);  // Parse the JSON string

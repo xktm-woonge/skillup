@@ -1,10 +1,12 @@
 const nodemailer = require('nodemailer');
+const logger = require('../utils/logger');
 
 function generateVerificationCode() {
     return Math.floor(100000 + Math.random() * 900000).toString();  // 6자리 랜덤 숫자 생성
 }
 
 exports.handleVerificationCodeRequest = function (message, session) {
+    logger.info(`message: ${message}, session: ${session}`)
     const email = message['info']['email'];
 
     const verificationCode = generateVerificationCode();
@@ -33,6 +35,7 @@ exports.handleVerificationCodeRequest = function (message, session) {
             session.verificationCode = verificationCode;
             response = {command: 'VERIFICATIONCODE' , status: 'SUCCESS',  message: '이메일 전송에 성공했습니다.'};
         }
+        logger.info(response);
         session.socket.write(JSON.stringify(response));
     });    
 }

@@ -1,6 +1,7 @@
 # ./controller/connector.py
 
 from PyQt5.QtCore import QThread, pyqtSignal
+import json
 
 try:
     from model.client_model import Client
@@ -50,9 +51,10 @@ class ClientThread(QThread):
         self.client.close()
 
     def handle_message_received(self, received_message):
-        command = received_message['command']
-        status = received_message['status']
-        message = received_message['message']
+        str_received_message = json.loads(received_message)
+        command = str_received_message['command']
+        status = str_received_message['status']
+        message = str_received_message['message']
 
         if command == 'VERIFICATIONCODE':
             if status == 'FAIL':

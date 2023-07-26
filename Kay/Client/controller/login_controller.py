@@ -4,7 +4,7 @@ from PyQt5.QtCore import QObject, pyqtSlot, Qt
 from PyQt5.QtWidgets import QWidget, QStackedWidget, QVBoxLayout, QMessageBox
 
 try:
-    from controller import *
+    from controller.register_controller import RegisterController
     from view.templates import *
     from model.check_re import validate_email
 except ImportError:
