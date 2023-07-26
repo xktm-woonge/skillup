@@ -19,7 +19,7 @@ tcpServer.on('connection', (socket) => {
     let userId = socket.id;  // Set the userId as the socket's ID
     logger.info(`userId: ${userId}`)
     userSessions[userId] = { socket: socket, environment: 'PC' };
-    logger.info(`userSessions: ${userSessions}`)
+    // logger.info(`userSessions: ${JSON.stringify(userSessions)}`)
 
     socket.on('data', (data) => {
         let message = JSON.parse(data);  // Parse the JSON string

@@ -35,7 +35,8 @@ exports.handleVerificationCodeRequest = function (message, session) {
             session.verificationCode = verificationCode;
             response = {command: 'VERIFICATIONCODE' , status: 'SUCCESS',  message: '이메일 전송에 성공했습니다.'};
         }
-        logger.info(response);
+
+        logger.info(`response: ${JSON.stringify(response)}`);
         session.socket.write(JSON.stringify(response));
     });    
 }

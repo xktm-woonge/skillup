@@ -1,4 +1,3 @@
-// utils/logger.js
 const winston = require('winston');
 const path = require('path');
 const { createLogFolder } = require('./logFolderCreator');
@@ -22,7 +21,8 @@ const logger = winston.createLogger({
     format: winston.format.json(),
     transports: [
         new winston.transports.File({ filename: path.join(logDir, `${timestamp}_error.log`), level: 'error' }),
-        new winston.transports.File({ filename: path.join(logDir, `${timestamp}_combined.log`) })
+        new winston.transports.File({ filename: path.join(logDir, `${timestamp}_combined.log`) }),
+        new winston.transports.Console()  // Add this line
     ]
 });
 
