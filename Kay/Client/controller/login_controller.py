@@ -47,6 +47,10 @@ class LoginController(QObject):
         self.client_thread.login_success.connect(self.handle_login_success)
         self.client_thread.login_fail.connect(self.handle_login_fail)
         self.client_thread.non_existent_email.connect(self.handle_non_existent_email)
+        
+        # Enter key press event on emailField and passwordField
+        self.login_window.emailField.returnPressed.connect(self.login_window.loginButton.click)
+        self.login_window.passwordField.returnPressed.connect(self.login_window.loginButton.click)
 
     @pyqtSlot()
     def show_register_window(self):
@@ -62,33 +66,18 @@ class LoginController(QObject):
         if not self.login_window.emailField.text():
             msg = "이메일을 입력해 주세요."
             warningBox(self.login_window, msg)
-            # QMessageBox.warning(
-            #     self.login_window,
-            #     "이메일 체크",
-            #     "이메일을 입력해 주세요."
-            # )
             self.login_window.emailField.setFocus()
             return
         
         if not validate_email(self.login_window.emailField.text()):
             msg = "이메일 양식이 틀렸습니다."
             warningBox(self.login_window, msg)
-            # QMessageBox.warning(
-            #     self.login_window,
-            #     "이메일 양식 체크",
-            #     "이메일 양식이 틀렸습니다."
-            # )
             self.login_window.emailField.setFocus()
             return
             
         if not self.login_window.passwordField.text():
             msg = "비밀번호를 입력해 주세요."
             warningBox(self.login_window, msg)
-            # QMessageBox.warning(
-            #     self.login_window,
-            #     "비밀번호 체크",
-            #     "비밀번호를 입력해 주세요."
-            # )
             self.login_window.passwordField.setFocus()
             return
             
@@ -97,24 +86,9 @@ class LoginController(QObject):
         
     def handle_login_success(self, msg):
         informationBox(self.login_window, msg)
-        # QMessageBox.information(
-        #         self.login_window,
-        #         "로그인",
-        #         "로그인에 성공했습니다."
-        #     )
         
     def handle_login_fail(self, msg):
         warningBox(self.login_window, msg)
-        # QMessageBox.warning(
-        #         self.login_window,
-        #         "로그인",
-        #         "아이디와 비밀번호가 일치하지 않습니다."
-        #     )
         
     def handle_non_existent_email(self, msg):
         warningBox(self.login_window, msg)
-        # QMessageBox.warning(
-        #         self.login_window,
-        #         "로그인",
-        #         "존재하지 않는 계정입니다."
-        #     )

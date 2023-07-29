@@ -25,9 +25,9 @@ class Client:
         
     def connect(self):
         while not self.is_connected:
+            self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             try:
-                if self.socket is None or self.socket.fileno() == -1:
-                    self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                # if self.socket is None or self.socket.fileno() == -1:
                     self.socket.connect((self.host, self.port))
                     self.is_connected = True
                     clmn.HLOG.info("Connected to the server")
@@ -42,6 +42,13 @@ class Client:
 
             except TimeoutError as e:
                 clmn.HLOG.info("Connection timed out:", str(e))
+                time.sleep(self.reconnect_delay)
+
+            except OSError:
+                clmn.HLOG.info("OSError, retrying...")
+                time.sleep(self.reconnect_delay)
+            except Exception as e:
+                clmn.HLOG.error(f"Unexpected error occurred: {str(e)}")
                 time.sleep(self.reconnect_delay)
 
     def send_message(self, message):
@@ -73,13 +80,15 @@ class Client:
         if self.socket is not None:
             try:
                 self.socket.close()
+                time.sleep(1)  # Wait for the socket to fully close
             except Exception as e:
                 clmn.HLOG.error(f"Error closing socket: {str(e)}")
-            self.socket = None
+        self.socket = None
         self.is_connected = False
         clmn.HLOG.info("Reconnecting...")
         self.connect()
-        
+
+
     def request_verification_code(self, email):
         # 인증 요청 메시지 작성
         message = json.dumps({
@@ -114,26 +123,6 @@ class Client:
                     "password": password}
         })
         self.send_message(message)
-
-    # def request_verification_code(self, email):
-    #     # 인증 요청 메시지 작성
-    #     message = f"VERIFICATIONCODE|{email}"
-    #     # 인증 요청 전송
-    #     self.send_message(message)
-
-    # def verify_verification_code(self, email, verification_code):
-    #     message = f"VERIFY|{email}|{verification_code}"
-    #     self.send_message(message)
-
-    # def register_user(self, email, password, salt):
-    #     # 서버에 등록 요청을 보내고, 서버의 응답 결과를 반환
-    #     # ...
-    #     message = f"REGISTER|{email}|{password}|{salt}"
-    #     self.send_message(message)
-        
-    # def login(self, email, password):
-    #     message = f"LOGIN|{email}|{password}"
-    #     self.send_message(message)
     
     def is_connected(self):
         return self.is_connected
