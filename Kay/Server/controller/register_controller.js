@@ -1,33 +1,16 @@
-const nodemailer = require('nodemailer');
 const logger = require('../utils/logger');
+const { generateVerificationCode } = require('../utils/generateVerificationCode');
+const dbManager = require('../model/dbManager');
+const { sendEmail } = require('../model/emailService');
 
-function generateVerificationCode() {
-    return Math.floor(100000 + Math.random() * 900000).toString();  // 6자리 랜덤 숫자 생성
-}
 
 exports.handleVerificationCodeRequest = function (message, session) {
-    logger.info(`message: ${message}, session: ${session}`)
+    logger.info(`message: ${JSON.stringify(message)}, session: ${JSON.stringify(session)}`)
     const email = message['info']['email'];
 
     const verificationCode = generateVerificationCode();
 
-    // Configure your email transport options here
-    const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: 'endteamchat@gmail.com',
-            pass: 'fxerdbpuijwurack'
-        }
-    });
-
-    const mailOptions = {
-        from: 'endteamchat@gmail.com',
-        to: email,
-        subject: '채팅 프로그램 인증번호',
-        text: `Your verification code is ${verificationCode}`
-    };
-
-    transporter.sendMail(mailOptions, (error, info) => {
+    sendEmail(email, verificationCode, (error, info) => {
         let response;
         if (error) {
             response = {command: 'VERIFICATIONCODE' , status: 'FAIL',  message: '이메일 전송에 실패했습니다.'};
@@ -40,3 +23,37 @@ exports.handleVerificationCodeRequest = function (message, session) {
         session.socket.write(JSON.stringify(response));
     });    
 }
+
+
+exports.handleVerify = function (message, session) {
+    logger.info(`message: ${JSON.stringify(message)}, session: ${JSON.stringify(session)}`)
+    const received_code = message['info']['verification_code'];
+
+    if (received_code === session.verificationCode) {
+        response = {command: 'VERIFY' , status: 'SUCCESS',  message: '인증에 성공했습니다.'};
+    } else {
+        response = {command: 'VERIFY' , status: 'FAIL',  message: '인증에 실패했습니다. 다시 확인해 주세요.'};
+    };
+
+    logger.info(`response: ${JSON.stringify(response)}`);
+    session.socket.write(JSON.stringify(response));
+
+}
+
+
+exports.handleRegister = function (message, session) {
+    logger.info(`message: ${JSON.stringify(message)}, session: ${JSON.stringify(session)}`);
+    const email = message['info']['email'];
+    const password = message['info']['password'];
+    const salt = message['info']['salt'];
+  
+    dbManager.createUser(email, password, salt, (error, results, fields) => {
+      let response;
+      if (error) {
+        response = {command: 'REGISTER', status: 'FAIL', message: '회원가입에 실패했습니다.'};
+      } else {
+        response = {command: 'REGISTER', status: 'SUCCESS', message: '축하합니다.\n회원가입에 성공했습니다.'};
+      }
+      session.socket.write(JSON.stringify(response));
+    });
+  }

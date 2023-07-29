@@ -73,7 +73,6 @@ class RegisterController(QObject):
         self.register_window.verifyField.setEnabled(True)        
         self.client_thread.verify_verification_code(email, verification_code)
         
-    @pyqtSlot()
     def handle_verify_success(self, msg):
         self.timer.stop()
         self.register_window.emailField.getButton().setText("인증요청")
@@ -87,7 +86,6 @@ class RegisterController(QObject):
         #     )
         self.verify_email_success = True
         
-    @pyqtSlot()
     def handle_register_success(self, msg):
         informationBox(self.register_window, msg)
         # QMessageBox.information(
@@ -97,7 +95,6 @@ class RegisterController(QObject):
         #     )
         self.handle_back_button_clicked()
         
-    @pyqtSlot()
     def handle_duplicate_registration(self, msg):
         self.reset_verifyButton()
         warningBox(self.register_window, msg)
@@ -109,7 +106,6 @@ class RegisterController(QObject):
         self.register_window.verifyField.setEnabled(False)
         self.register_window.emailField.setFocus()
         
-    @pyqtSlot()
     def handle_verify_fail(self, msg):
         warningBox(self.register_window, msg)
         # QMessageBox.warning(
@@ -127,7 +123,6 @@ class RegisterController(QObject):
         self.reset_toolButton()
         self.back_button_clicked.emit()
     
-    @pyqtSlot()
     def handle_email_sent_failure(self, msg):
         self.verify_email_success = False
         self.reset_verifyButton()
@@ -141,7 +136,7 @@ class RegisterController(QObject):
             # )
             
     @pyqtSlot()
-    def send_register(self, msg):        
+    def send_register(self):        
         if not self.verify_email_success:
             self.register_window.emailField.setFocus()
             msg = "이메일 인증부터 진행해 주세요."

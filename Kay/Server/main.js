@@ -16,7 +16,7 @@ const io = socketIo(httpServer);
 let userSessions = {}; // 사용자 세션 정보를 저장하는 객체
 
 tcpServer.on('connection', (socket) => {
-    let userId = socket.id;  // Set the userId as the socket's ID
+    let userId = socket.remoteAddress;
     logger.info(`userId: ${userId}`)
     userSessions[userId] = { socket: socket, environment: 'PC' };
     // logger.info(`userSessions: ${JSON.stringify(userSessions)}`)
@@ -30,10 +30,10 @@ tcpServer.on('connection', (socket) => {
                 registerController.handleVerificationCodeRequest(message, userSessions[userId]);
                 break;
             case 'VERIFY':
-                authController.handleVerify(message, userSessions[userId]);
+                registerController.handleVerify(message, userSessions[userId]);
                 break;
             case 'REGISTER':
-                authController.handleRegister(message, userSessions[userId]);
+                registerController.handleRegister(message, userSessions[userId]);
                 break;
             case 'LOGIN':
                 authController.handleLogin(message, userSessions[userId]);
