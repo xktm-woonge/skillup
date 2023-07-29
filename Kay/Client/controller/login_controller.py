@@ -95,7 +95,6 @@ class LoginController(QObject):
         self.client_thread.login(self.login_window.emailField.text(),
                                  self.login_window.passwordField.text())
         
-    @pyqtSlot()
     def handle_login_success(self, msg):
         informationBox(self.login_window, msg)
         # QMessageBox.information(
@@ -104,7 +103,6 @@ class LoginController(QObject):
         #         "로그인에 성공했습니다."
         #     )
         
-    @pyqtSlot()
     def handle_login_fail(self, msg):
         warningBox(self.login_window, msg)
         # QMessageBox.warning(
@@ -113,7 +111,6 @@ class LoginController(QObject):
         #         "아이디와 비밀번호가 일치하지 않습니다."
         #     )
         
-    @pyqtSlot()
     def handle_non_existent_email(self, msg):
         warningBox(self.login_window, msg)
         # QMessageBox.warning(

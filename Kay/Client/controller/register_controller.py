@@ -179,8 +179,8 @@ class RegisterController(QObject):
     def hash_password(self, salt: str) -> str:
         password_bytes = self.register_window.passwordField.text().encode('utf-8')
         salt_bytes = salt.encode('utf-8')
-        return hashlib.pbkdf2_hmac('sha256', password_bytes, salt_bytes, 100000).hex()
-        
+        return hashlib.pbkdf2_hmac('sha256', password_bytes, salt_bytes, 100000, dklen=64).hex()
+
     def encrypt_password(self):
         # Generate a salt
         salt = os.urandom(16).hex()

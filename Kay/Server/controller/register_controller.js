@@ -8,20 +8,32 @@ exports.handleVerificationCodeRequest = function (message, session) {
     logger.info(`message: ${JSON.stringify(message)}, session: ${JSON.stringify(session)}`)
     const email = message['info']['email'];
 
-    const verificationCode = generateVerificationCode();
-
-    sendEmail(email, verificationCode, (error, info) => {
-        let response;
+    dbManager.getUserByEmail(email, (error, results, fields) => {
         if (error) {
-            response = {command: 'VERIFICATIONCODE' , status: 'FAIL',  message: '이메일 전송에 실패했습니다.'};
+            let response = {command: 'VERIFICATIONCODE', status: 'FAIL', message: '이메일 조회 중 에러가 발생했습니다.'};
+            logger.info(`response: ${JSON.stringify(response)}`);
+            session.socket.write(JSON.stringify(response));
+        } else if (results.length > 0) {
+            let response = {command: 'VERIFICATIONCODE', status: 'DUPLICATE', message: '이미 가입된 계정입니다.'};
+            logger.info(`response: ${JSON.stringify(response)}`);
+            session.socket.write(JSON.stringify(response));
         } else {
-            session.verificationCode = verificationCode;
-            response = {command: 'VERIFICATIONCODE' , status: 'SUCCESS',  message: '이메일 전송에 성공했습니다.'};
-        }
+            const verificationCode = generateVerificationCode();
 
-        logger.info(`response: ${JSON.stringify(response)}`);
-        session.socket.write(JSON.stringify(response));
-    });    
+            sendEmail(email, verificationCode, (error, info) => {
+                let response;
+                if (error) {
+                    response = {command: 'VERIFICATIONCODE', status: 'FAIL', message: '이메일 전송에 실패했습니다.'};
+                } else {
+                    session.verificationCode = verificationCode;
+                    response = {command: 'VERIFICATIONCODE', status: 'SUCCESS', message: '이메일 전송에 성공했습니다.'};
+                }
+
+                logger.info(`response: ${JSON.stringify(response)}`);
+                session.socket.write(JSON.stringify(response));
+            });    
+        }
+    });
 }
 
 
@@ -37,7 +49,6 @@ exports.handleVerify = function (message, session) {
 
     logger.info(`response: ${JSON.stringify(response)}`);
     session.socket.write(JSON.stringify(response));
-
 }
 
 

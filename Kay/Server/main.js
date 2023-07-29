@@ -3,6 +3,7 @@ const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 const registerController = require('./controller/register_controller');
+const loginController = require('./controller/login_controller');
 const logger = require('./utils/logger');
 
 const tcpPort = 8000;
@@ -36,7 +37,7 @@ tcpServer.on('connection', (socket) => {
                 registerController.handleRegister(message, userSessions[userId]);
                 break;
             case 'LOGIN':
-                authController.handleLogin(message, userSessions[userId]);
+                loginController.handleLogin(message, userSessions[userId]);
                 break;
             default:
                 console.log('Unknown command:', command);

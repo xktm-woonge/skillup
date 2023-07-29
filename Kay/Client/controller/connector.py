@@ -72,7 +72,7 @@ class ClientThread(QThread):
             if status == 'SUCCESS':
                 self.login_success.emit(message)
             elif status == 'FAIL':
-                self.login_fail.emit()
+                self.login_fail.emit(message)
             elif status == 'UNREGISTERED':
                 self.non_existent_email.emit(message)
         elif command == 'REGISTER' and status == 'SUCCESS':
