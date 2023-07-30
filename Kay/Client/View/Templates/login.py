@@ -46,7 +46,7 @@ class LoginWindow(QWidget):
         self.setLayout(layout)
 
         # 이미지 레이블
-        pixmap = QPixmap(f'{Path(__file__).parents[1]}/static/background.png')
+        pixmap = QPixmap(f'{Path(__file__).parents[1]}/static/img/background.png')
         imageLabel = QLabel()
         imageLabel.setPixmap(pixmap)
         imageLabel.setScaledContents(True)  # 추가된 줄

@@ -73,7 +73,7 @@ class RegisterWindow(QWidget):
 
         self.backButton = QPushButton(self)
         self.backButton.setFixedSize(17, 17)
-        self.backButton.setIcon(QIcon(f'{Path(__file__).parents[1]}/static/back.png'))
+        self.backButton.setIcon(QIcon(f'{Path(__file__).parents[1]}/static/img/back.png'))
         self.backButton.setObjectName('backButton')
         self.backButton.setCursor(Qt.PointingHandCursor)
         self.backButton.move(30, 30)
@@ -126,7 +126,7 @@ class RegisterWindow(QWidget):
         checkPasswordLengthLayout.setAlignment(Qt.AlignLeft)
         self.tb_checkPasswordLength = QToolButton()
         self.tb_checkPasswordLength.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.tb_checkPasswordLength.setIcon(QIcon(f'{Path(__file__).parents[1]}/static/null.png'))
+        self.tb_checkPasswordLength.setIcon(QIcon(f'{Path(__file__).parents[1]}/static/img/null.png'))
         self.tb_checkPasswordLength.setText('8~16자 사이의 길이를 가진 비밀번호')
         self.tb_checkPasswordLength.setStyleSheet("border: none; color:gray")
         checkPasswordLengthLayout.addWidget(self.tb_checkPasswordLength)
@@ -136,7 +136,7 @@ class RegisterWindow(QWidget):
         checkPasswordContainLayout.setAlignment(Qt.AlignLeft)
         self.tb_checkPasswordContain = QToolButton()
         self.tb_checkPasswordContain.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.tb_checkPasswordContain.setIcon(QIcon(f'{Path(__file__).parents[1]}/static/null.png'))
+        self.tb_checkPasswordContain.setIcon(QIcon(f'{Path(__file__).parents[1]}/static/img/null.png'))
         self.tb_checkPasswordContain.setText('대소문자, 숫자, 특수기호 1개 이상')
         self.tb_checkPasswordContain.setStyleSheet("border: none; color:gray")
         checkPasswordContainLayout.addWidget(self.tb_checkPasswordContain)
@@ -194,17 +194,17 @@ class RegisterWindow(QWidget):
         self.tb_checkPasswordContain.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         
         if self.length_valid:
-            self.tb_checkPasswordLength.setIcon(QIcon(f'{Path(__file__).parents[1]}/static/true.png'))
+            self.tb_checkPasswordLength.setIcon(QIcon(f'{Path(__file__).parents[1]}/static/img/true.png'))
             self.tb_checkPasswordLength.setStyleSheet("border: none; color:green")
         else:
-            self.tb_checkPasswordLength.setIcon(QIcon(f'{Path(__file__).parents[1]}/static/false.png'))
+            self.tb_checkPasswordLength.setIcon(QIcon(f'{Path(__file__).parents[1]}/static/img/false.png'))
             self.tb_checkPasswordLength.setStyleSheet("border: none; color:red")
             
         if self.contain_valid:
-            self.tb_checkPasswordContain.setIcon(QIcon(f'{Path(__file__).parents[1]}/static/true.png'))
+            self.tb_checkPasswordContain.setIcon(QIcon(f'{Path(__file__).parents[1]}/static/img/true.png'))
             self.tb_checkPasswordContain.setStyleSheet("border: none; color:green")
         else:
-            self.tb_checkPasswordContain.setIcon(QIcon(f'{Path(__file__).parents[1]}/static/false.png'))
+            self.tb_checkPasswordContain.setIcon(QIcon(f'{Path(__file__).parents[1]}/static/img/false.png'))
             self.tb_checkPasswordContain.setStyleSheet("border: none; color:red")
             
         if self.length_valid and self.contain_valid:

@@ -37,7 +37,7 @@ def __init_logger():
 
     # 创建控制台处理器并设置级别为 WARNING
     console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.WARNING)
+    console_handler.setLevel(logging.DEBUG)
     console_handler.setFormatter(logging.Formatter('[%(asctime)s.%(msecs)03d][%(levelname).1s][%(filename)s(%(funcName)s):%(lineno)d] %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S'))
 

@@ -1,0 +1,9 @@
+/* style.qss */
+
+QPushButton {
+    border: none;
+}
+
+#sidebar {
+    background-color: white;
+}
