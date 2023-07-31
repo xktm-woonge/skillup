@@ -1,9 +1,6 @@
-/* style.qss */
-
-QPushButton {
-    border: none;
+#notification_button, #friend_list_button, #chat_window_button, #profile_setting_button { 
+    border: none 
 }
-
-#sidebar {
-    background-color: white;
+#sidebar { 
+    background-color: white 
 }
