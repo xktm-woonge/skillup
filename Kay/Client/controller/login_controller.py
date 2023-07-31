@@ -5,13 +5,15 @@ from PyQt5.QtWidgets import QWidget, QStackedWidget, QVBoxLayout, QMessageBox
 
 try:
     from controller.register_controller import RegisterController
+    from controller.chatting_controller import ChattingController
     from view.templates import *
     from model.check_re import validate_email
 except ImportError:
     import sys
     from pathlib import Path
     sys.path.append(str(Path(__file__).parents[1]))
-    from controller import *
+    from controller.register_controller import RegisterController
+    from controller.chatting_controller import ChattingController
     from view.templates import *
     from model.check_re import validate_email
 
@@ -85,7 +87,9 @@ class LoginController(QObject):
                                  self.login_window.passwordField.text())
         
     def handle_login_success(self, msg):
-        informationBox(self.login_window, msg)
+        # Create an instance of the chatting window and display it
+        self.main_widget.close()
+        self.chatting_controller = ChattingController()
         
     def handle_login_fail(self, msg):
         warningBox(self.login_window, msg)

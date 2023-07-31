@@ -1,6 +1,7 @@
 # try:
 from controller.login_controller import LoginController
 from controller.register_controller import RegisterController
+from controller.chatting_controller import ChattingController
 # except ImportError:
 #     import sys
 #     from pathlib import Path
@@ -11,4 +12,5 @@ from controller.register_controller import RegisterController
 __all__ = [
     "LoginController",
     "RegisterController",
+    "ChattingController"
 ]

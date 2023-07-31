@@ -1,3 +1,5 @@
+# ./view/templates/chatting.py
+
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, \
                             QTextEdit, QHBoxLayout, QApplication, QDesktopWidget
 from PyQt5.QtCore import Qt, QFile
@@ -6,7 +8,7 @@ from PyQt5.Qt import QSize
 from pathlib import Path
 import sys
 
-class MyApp(QWidget):
+class ChattingWindow(QWidget):
     def __init__(self):
         super().__init__()
 
