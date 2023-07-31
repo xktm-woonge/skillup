@@ -1,8 +1,8 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QListWidget, \
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, \
                             QTextEdit, QHBoxLayout, QApplication, QDesktopWidget
 from PyQt5.QtCore import Qt, QFile
 from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.Qt import QSize, QSizePolicy
+from PyQt5.Qt import QSize
 from pathlib import Path
 import sys
 
@@ -15,7 +15,11 @@ class MyApp(QWidget):
         self.right_width = 900
         self.height = 600
 
+        # Keep track of the current selected button
+        self.currentButton = None
+
         self.initUI()
+        self.connect_slot()
 
     def initUI(self):
         hbox = QHBoxLayout()
@@ -60,28 +64,52 @@ class MyApp(QWidget):
         side_layout.addWidget(self.profile_setting_button, 0, Qt.AlignTop)
         side_layout.addStretch(1)
 
-        middle_area = QVBoxLayout()
+        # Middle Area
+        middle_area_widget = QWidget()
+        middle_area_widget.setFixedSize(self.middle_width, self.height)
+        middle_area = QVBoxLayout(middle_area_widget)
         middle_area.setContentsMargins(0, 0, 0, 0)  # Middle layout border gap removal
         middle_area.setSpacing(0)  # Gap removal between widgets inside middle layout
-        middle_btn = QPushButton('Middle Area', self)
-        middle_area.addWidget(middle_btn)
+        middle_label = QLabel('Middle Area', self)
+        middle_area.addWidget(middle_label)
 
-        chat_screen = QVBoxLayout()
-        chat_screen.setContentsMargins(0, 0, 0, 0)  # Chat screen layout border gap removal
-        chat_screen.setSpacing(0)  # Gap removal between widgets inside chat screen layout
-        chat_btn = QPushButton('Chat Screen', self)
-        chat_screen.addWidget(chat_btn)
+        # Chat Screen
+        right_area_widget = QWidget()
+        right_area = QVBoxLayout(right_area_widget)
+        right_area.setContentsMargins(0, 0, 0, 0)  # Chat screen layout border gap removal
+        right_area.setSpacing(0)  # Gap removal between widgets inside chat screen layout
+        chat_label = QLabel('Chat Screen', self)
+        right_area.addWidget(chat_label)
 
         hbox.addWidget(side_bar)
-        hbox.addLayout(middle_area)
-        hbox.addLayout(chat_screen)
+        hbox.addWidget(middle_area_widget)
+        hbox.addWidget(right_area_widget)
 
         self.setLayout(hbox)
         self._setStyle()
 
         self.setWindowTitle('WeChat Style')
         self.setGeometry(300, 300, 1250, 600)  # Adjusted as per your requirement
+        self.setMinimumSize(QSize(1250, 600))
         self.show()
+
+    def connect_slot(self):
+        self.notification_button.clicked.connect(self.handleButtonClicked)
+        self.friend_list_button.clicked.connect(self.handleButtonClicked)
+        self.chat_window_button.clicked.connect(self.handleButtonClicked)
+        self.profile_setting_button.clicked.connect(self.handleButtonClicked)
+
+    def handleButtonClicked(self):
+        # Get the button that sent the signal
+        button = self.sender()
+
+        # Change the style of the previous button back to normal
+        if self.currentButton is not None:
+            self.currentButton.setStyleSheet("")
+
+        # Change the style of the current button and keep track of it
+        button.setStyleSheet("background-color: rgb(79, 42, 184);")
+        self.currentButton = button
 
     def set_sidebar_icon(self, image_path):
         pixmap = QPixmap(image_path)
