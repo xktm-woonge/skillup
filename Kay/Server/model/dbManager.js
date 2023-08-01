@@ -1,7 +1,7 @@
 const mysql = require('mysql');
 
 const pool = mysql.createPool({
-  connectionLimit: 10, // 연결 풀에 생성될 수 있는 최대 연결 수. 기본값은 10입니다.
+  connectionLimit: 10,
   host: 'localhost',
   user: 'root',
   password: '0000',
@@ -9,13 +9,17 @@ const pool = mysql.createPool({
 });
 
 exports.createUser = function(email, password, salt, callback) {
-  pool.query('INSERT INTO accounts SET ?', {
+  const profilePicture = 'images/base_profile.png';
+  pool.query('INSERT INTO users SET ?', {
+    name: "Hi",
     email: email,
+    profile_picture: profilePicture,
+    status: "offline",
     password: password,
     salt: salt
   }, callback);
 }
 
 exports.getUserByEmail = function(email, callback) {
-  pool.query('SELECT * FROM accounts WHERE email = ?', [email], callback);
+  pool.query('SELECT * FROM users WHERE email = ?', [email], callback);
 }
