@@ -1,6 +1,8 @@
 # ./controller/chatting_controller.py
 
 from PyQt5.QtCore import QObject, pyqtSlot
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon, QPixmap
 from view.templates import ChattingWindow
 from view.templates import NotificationsListWidget, FriendListWidget, ChatListWidget, ProfileSettingWidget
 
@@ -44,6 +46,18 @@ class ChattingController(QObject):
         profile_setting_widget = ProfileSettingWidget()
         self.chatting_window.middle_area.addWidget(profile_setting_widget)
         # Similarly, add a widget to the right area if needed
+        
+    def set_user_info(self, profile_img_path, online):
+        # 프로필 사진 설정
+        profile_pic = QPixmap(profile_img_path)
+        profile_pic_resized = profile_pic.scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.chatting_window.profile_setting_button.setIcon(QIcon(profile_pic_resized))
+
+        # 온라인 상태 설정
+        if online:
+            self.chatting_window.status_label.setStyleSheet("QLabel { background-color: green; border-radius: 5px; }")
+        else:
+            self.chatting_window.status_label.setStyleSheet("QLabel { background-color: gray; border-radius: 5px; }")
 
     def _clear_middle_right_areas(self):
         # Clear widgets in middle_area and right_area

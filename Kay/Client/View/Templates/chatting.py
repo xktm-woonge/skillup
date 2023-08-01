@@ -1,7 +1,7 @@
 # ./view/templates/chatting.py
 
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, \
-                            QTextEdit, QHBoxLayout, QApplication, QDesktopWidget
+                            QHBoxLayout, QApplication, QDesktopWidget
 from PyQt5.QtCore import Qt, QFile
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.Qt import QSize
@@ -49,10 +49,17 @@ class ChattingWindow(QWidget):
             f'{Path(__file__).parents[1]}/static/img/sidebar_chatting_icon.png')
         self.chat_window_button = QPushButton(chat_window_icon, "")
         self.chat_window_button.setFixedSize(50, 50)
-        profile_setting_icon = self.set_sidebar_icon(
-            f'{Path(__file__).parents[1]}/static/img/sidebar_chatting_icon.png')
-        self.profile_setting_button = QPushButton(profile_setting_icon, "")
+        # profile_setting_icon = self.set_sidebar_icon(
+        #     f'{Path(__file__).parents[1]}/static/img/sidebar_chatting_icon.png')
+        self.profile_setting_button = QPushButton()
         self.profile_setting_button.setFixedSize(50, 50)
+        
+        # 온라인 상태를 표시하기 위한 QLabel 추가
+        self.status_label = QLabel()
+        self.status_label.setFixedSize(10, 10)
+        self.status_label.move(5, 5)  # 상태 원의 위치를 조정합니다
+        self.status_label.setStyleSheet("QLabel { background-color: green; border-radius: 5px; }")
+        self.status_label.setParent(self.profile_setting_button)
 
         self.notification_button.setObjectName('notification_button')
         self.friend_list_button.setObjectName('friend_list_button')
@@ -141,5 +148,5 @@ class ChattingWindow(QWidget):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ex = MyApp()
+    ex = ChattingWindow()
     sys.exit(app.exec_())
