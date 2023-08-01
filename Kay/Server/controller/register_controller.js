@@ -5,23 +5,22 @@ const { sendEmail } = require('../model/emailService');
 
 
 exports.handleVerificationCodeRequest = function (message, session) {
-    logger.info(`message: ${JSON.stringify(message)}, session: ${JSON.stringify(session)}`)
     const email = message['info']['email'];
 
-    dbManager.getUserByEmail(email, (error, results, fields) => {
+    dbManager.getUserByEmail(email, (error, user, fields) => {
+        let response;
         if (error) {
-            let response = {command: 'VERIFICATIONCODE', status: 'FAIL', message: '이메일 조회 중 에러가 발생했습니다.'};
+            response = {command: 'VERIFICATIONCODE', status: 'FAIL', message: '이메일 조회 중 에러가 발생했습니다.'};
             logger.info(`response: ${JSON.stringify(response)}`);
             session.socket.write(JSON.stringify(response));
-        } else if (results.length > 0) {
-            let response = {command: 'VERIFICATIONCODE', status: 'DUPLICATE', message: '이미 가입된 계정입니다.'};
+        } else if (user) {
+            response = {command: 'VERIFICATIONCODE', status: 'DUPLICATE', message: '이미 가입된 계정입니다.'};
             logger.info(`response: ${JSON.stringify(response)}`);
             session.socket.write(JSON.stringify(response));
         } else {
             const verificationCode = generateVerificationCode();
 
             sendEmail(email, verificationCode, (error, info) => {
-                let response;
                 if (error) {
                     response = {command: 'VERIFICATIONCODE', status: 'FAIL', message: '이메일 전송에 실패했습니다.'};
                 } else {

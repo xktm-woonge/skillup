@@ -21,5 +21,16 @@ exports.createUser = function(email, password, salt, callback) {
 }
 
 exports.getUserByEmail = function(email, callback) {
-  pool.query('SELECT * FROM users WHERE email = ?', [email], callback);
-}
+  const sql = `SELECT * FROM users WHERE email = ?`;
+  pool.query(sql, [email], (error, results, fields) => {
+      if (error) {
+          return callback(error, null, null);
+      }
+
+      let user = results[0];
+      // assuming 'profile_picture' is the correct column name in your table
+      user.profile_picture = path.join("/uploads", user.profile_picture);
+
+      return callback(null, user, fields);
+  });
+};
