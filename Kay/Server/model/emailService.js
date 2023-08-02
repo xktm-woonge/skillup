@@ -1,4 +1,5 @@
-// models/emailService.js
+// ./model/emailService.js
+
 const nodemailer = require('nodemailer');
 
 exports.sendEmail = function(email, verificationCode, callback) {

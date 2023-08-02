@@ -1,3 +1,5 @@
+// ./controller/register_controller.js
+
 const logger = require('../utils/logger');
 const { generateVerificationCode } = require('../utils/generateVerificationCode');
 const dbManager = require('../model/dbManager');

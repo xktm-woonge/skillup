@@ -1,16 +1,23 @@
+// ./main.js
+
 const net = require('net');
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
+const app = express(); 
+
 const registerController = require('./controller/register_controller');
 const loginController = require('./controller/login_controller');
 const logger = require('./utils/logger');
+const config = require('./config/config.js');
 
-const tcpPort = 8000;
-const httpPort = 3000;
+const tcpPort = config.tcpPort;
+const httpPort = config.httpPort;
+
+// 정적 파일을 제공하는 미들웨어 설정
+app.use('/profile_picture', express.static('images'));
 
 const tcpServer = net.createServer();
-const app = express();
 const httpServer = http.createServer(app);
 const io = socketIo(httpServer);
 
@@ -90,6 +97,6 @@ tcpServer.listen(tcpPort, () => {
     console.log(`TCP Server listening on port ${tcpPort}`);
 });
 
-// httpServer.listen(httpPort, () => {
-//     console.log(`HTTP Server listening on port ${httpPort}`);
-// });
+httpServer.listen(httpPort, () => {
+    console.log(`HTTP Server listening on port ${httpPort}`);
+});
