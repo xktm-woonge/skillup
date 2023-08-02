@@ -15,7 +15,7 @@ const tcpPort = config.tcpPort;
 const httpPort = config.httpPort;
 
 // 정적 파일을 제공하는 미들웨어 설정
-app.use('/profile_picture', express.static('images'));
+app.use('/profile_picture', express.static(__dirname + '/images'));
 
 const tcpServer = net.createServer();
 const httpServer = http.createServer(app);

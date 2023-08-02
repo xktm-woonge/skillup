@@ -4,7 +4,9 @@ const dbManager = require('../model/dbManager');
 const config = require('../config/config.js');
 const logger = require('../utils/logger');
 const { hashPassword } = require('../utils/security');
+const serverAddr = config.serverAddr;
 const httpPort = config.httpPort;
+
 
 exports.handleLogin = function(message, session) {
     const email = message['info']['email'];
@@ -23,12 +25,12 @@ exports.handleLogin = function(message, session) {
             const hashedPassword = hashPassword(password, salt);
 
             if (hashedPassword === user.password) {
-                // 여기서 필요한 정보를 데이터베이스로부터 가져옵니다.
-                const friendsList = dbManager.getFriendsList(user.id);
-                const recentChats = dbManager.getRecentChats(user.id);
-                const groups = dbManager.getUserGroups(user.id);
+                // // 여기서 필요한 정보를 데이터베이스로부터 가져옵니다.
+                // const friendsList = dbManager.getFriendsList(user.id);
+                // const recentChats = dbManager.getRecentChats(user.id);
+                // const groups = dbManager.getUserGroups(user.id);
                 // 프로필 이미지 URL을 생성합니다.
-                const profileImageUrl = `http://127.0.0.1:${httpPort}/profile_picture/${user.profile_picture}`;
+                const profileImageUrl = `http://${serverAddr}:${httpPort}/profile_picture/${user.profile_picture}`;
 
                 response = {
                     command: 'LOGIN',
@@ -39,10 +41,10 @@ exports.handleLogin = function(message, session) {
                         email: user.email,
                         profile_img_url: profileImageUrl,
                         status: user.status
-                    },
-                    friendsList: friendsList,
-                    recentChats: recentChats,
-                    groups: groups
+                    }
+                    // friendsList: friendsList,
+                    // recentChats: recentChats,
+                    // groups: groups
                     // 기타 필요한 정보를 여기에 추가
                 };
             } else {

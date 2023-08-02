@@ -89,7 +89,8 @@ class LoginController(QObject):
     def handle_login_success(self, msg):
         # Create an instance of the chatting window and display it
         self.main_widget.close()
-        self.chatting_controller = ChattingController()
+        # self.chatting_controller = ChattingController()
+        print(msg)
         
     def handle_login_fail(self, msg):
         warningBox(self.login_window, msg)
