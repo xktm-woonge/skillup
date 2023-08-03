@@ -90,38 +90,20 @@ class Client:
 
 
     def request_verification_code(self, email):
-        # 인증 요청 메시지 작성
-        message = json.dumps({
-            "command": "VERIFICATIONCODE",
-            "info": {"email": email}
-        })
-        # 인증 요청 전송
+        message = create_message("VERIFICATIONCODE", {"email": email})
         self.send_message(message)
 
     def verify_verification_code(self, email, verification_code):
-        message = json.dumps({
-            "command": "VERIFY",
-            "info": {"email": email,
-                     "verification_code": verification_code}
-        })
+        message = create_message("VERIFY", {"email": email, "verification_code": verification_code})
         self.send_message(message)
 
     def register_user(self, email, password, salt):
         # 서버에 등록 요청을 보내고, 서버의 응답 결과를 반환
-        message = json.dumps({
-            "command": "REGISTER",
-            "info": {"email": email,
-                    "password": password,
-                    "salt": salt}
-        })
+        message = create_message("REGISTER", {"email": email, "password": password, "salt": salt})
         self.send_message(message)
 
     def login(self, email, password):
-        message = json.dumps({
-            "command": "LOGIN",
-            "info": {"email": email,
-                    "password": password}
-        })
+        message = create_message("LOGIN", {"email": email, "password": password})
         self.send_message(message)
     
     def is_connected(self):
