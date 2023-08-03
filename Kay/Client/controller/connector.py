@@ -61,8 +61,6 @@ class ClientThread(QThread):
                 self.send_email_fail.emit(message)
             elif status == 'DUPLICATE':
                 self.duplicate_registration.emit(message)
-        # elif message == 'The account has already been registered':
-        #     self.duplicate_registration.emit()
         elif command == 'VERIFY':
             if status == 'SUCCESS':
                 self.verify_success.emit(message)

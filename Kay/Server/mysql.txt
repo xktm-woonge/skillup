@@ -1,0 +1,35 @@
+// 사용자 테이블(User)
+CREATE TABLE Users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    email VARCHAR(255) UNIQUE,
+    profile_picture VARCHAR(255),
+    status ENUM('online', 'offline'),
+    password CHAR(128),
+    salt CHAR(32)
+);
+
+// 친구 테이블(Friends)
+CREATE TABLE Friends (
+    user_id INT,
+    friend_id INT,
+    PRIMARY KEY(user_id, friend_id),
+    FOREIGN KEY(user_id) REFERENCES Users(id),
+    FOREIGN KEY(friend_id) REFERENCES Users(id)
+);
+
+// 대화 테이블(Conversations)
+CREATE TABLE Conversations (
+    id INT AUTO_INCREMENT PRIMARY KEY
+);
+
+// 메시지 테이블(Messages)
+CREATE TABLE Messages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    sender_id INT,
+    conversation_id INT,
+    message_text TEXT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(sender_id) REFERENCES Users(id),
+    FOREIGN KEY(conversation_id) REFERENCES Conversations(id)
+);

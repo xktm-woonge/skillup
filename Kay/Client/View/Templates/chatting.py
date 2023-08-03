@@ -54,12 +54,13 @@ class ChattingWindow(QWidget):
         self.profile_setting_button = QPushButton()
         self.profile_setting_button.setFixedSize(50, 50)
         
-        # 온라인 상태를 표시하기 위한 QLabel 추가
-        self.status_label = QLabel()
-        self.status_label.setFixedSize(10, 10)
-        self.status_label.move(5, 5)  # 상태 원의 위치를 조정합니다
-        self.status_label.setStyleSheet("QLabel { background-color: green; border-radius: 5px; }")
-        self.status_label.setParent(self.profile_setting_button)
+        # # 온라인 상태를 표시하기 위한 QLabel 추가
+        # self.status_label = QLabel()
+        # self.status_label.setFixedSize(10, 10)
+        # self.status_label.move(5, 5)  # 상태 원의 위치를 조정합니다
+        # self.status_label.setStyleSheet(
+        #     "QLabel { background-color: green; border-radius: 5px; }")
+        # self.status_label.setParent(self.profile_setting_button)
 
         self.notification_button.setObjectName('notification_button')
         self.friend_list_button.setObjectName('friend_list_button')
@@ -76,19 +77,19 @@ class ChattingWindow(QWidget):
         # Middle Area
         middle_area_widget = QWidget()
         middle_area_widget.setFixedSize(self.middle_width, self.height)
-        middle_area = QVBoxLayout(middle_area_widget)
-        middle_area.setContentsMargins(0, 0, 0, 0)  # Middle layout border gap removal
-        middle_area.setSpacing(0)  # Gap removal between widgets inside middle layout
+        self.middle_area = QVBoxLayout(middle_area_widget)
+        self.middle_area.setContentsMargins(0, 0, 0, 0)  # Middle layout border gap removal
+        self.middle_area.setSpacing(0)  # Gap removal between widgets inside middle layout
         middle_label = QLabel('Middle Area', self)
-        middle_area.addWidget(middle_label)
+        self.middle_area.addWidget(middle_label)
 
         # Chat Screen
         right_area_widget = QWidget()
-        right_area = QVBoxLayout(right_area_widget)
-        right_area.setContentsMargins(0, 0, 0, 0)  # Chat screen layout border gap removal
-        right_area.setSpacing(0)  # Gap removal between widgets inside chat screen layout
+        self.right_area = QVBoxLayout(right_area_widget)
+        self.right_area.setContentsMargins(0, 0, 0, 0)  # Chat screen layout border gap removal
+        self.right_area.setSpacing(0)  # Gap removal between widgets inside chat screen layout
         chat_label = QLabel('Chat Screen', self)
-        right_area.addWidget(chat_label)
+        self.right_area.addWidget(chat_label)
 
         hbox.addWidget(side_bar)
         hbox.addWidget(middle_area_widget)

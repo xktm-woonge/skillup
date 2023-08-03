@@ -1,11 +1,12 @@
 // ./controller/login_controller.js
 
+const serverAddr = config.serverAddr;
+const httpPort = config.httpPort;
 const dbManager = require('../model/dbManager');
 const config = require('../config/config.js');
 const logger = require('../utils/logger');
 const { hashPassword } = require('../utils/security');
-const serverAddr = config.serverAddr;
-const httpPort = config.httpPort;
+const responseFormatter = require('../utils/responseFormatter');
 
 
 exports.handleLogin = function(message, session) {
@@ -15,11 +16,9 @@ exports.handleLogin = function(message, session) {
     dbManager.getUserByEmail(email, (error, user, fields) => {
         let response;
         if (error) {
-            response = {command: 'LOGIN', status: 'FAIL', message: '로그인에 실패했습니다.'};
-            session.socket.write(JSON.stringify(response));
+            response = responseFormatter.formatResponse('LOGIN', 'FAIL', '로그인에 실패했습니다.');
         } else if (!user) {
-            response = {command: 'LOGIN', status: 'UNREGISTERED', message: '존재하지 않는 계정입니다.'};
-            session.socket.write(JSON.stringify(response));
+            response = responseFormatter.formatResponse('LOGIN', 'UNREGISTERED', '존재하지 않는 계정입니다.');
         } else {
             const salt = user.salt;
             const hashedPassword = hashPassword(password, salt);
@@ -32,10 +31,7 @@ exports.handleLogin = function(message, session) {
                 // 프로필 이미지 URL을 생성합니다.
                 const profileImageUrl = `http://${serverAddr}:${httpPort}/profile_picture/${user.profile_picture}`;
 
-                response = {
-                    command: 'LOGIN',
-                    status: 'SUCCESS',
-                    message: '로그인에 성공했습니다.',
+                response = responseFormatter.formatResponse('LOGIN', 'SUCCESS', '로그인에 성공했습니다.', {
                     user: {
                         name: user.name,
                         email: user.email,
@@ -46,11 +42,11 @@ exports.handleLogin = function(message, session) {
                     // recentChats: recentChats,
                     // groups: groups
                     // 기타 필요한 정보를 여기에 추가
-                };
+                });
             } else {
-                response = {command: 'LOGIN', status: 'FAIL', message: '비밀번호가 잘못되었습니다.'};
+                response = responseFormatter.formatResponse('LOGIN', 'FAIL', '비밀번호가 잘못되었습니다.');
             }
-            session.socket.write(JSON.stringify(response));
         }
+        session.socket.write(JSON.stringify(response));
     });
 }
