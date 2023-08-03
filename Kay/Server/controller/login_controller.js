@@ -1,13 +1,13 @@
 // ./controller/login_controller.js
 
-const serverAddr = config.serverAddr;
-const httpPort = config.httpPort;
 const dbManager = require('../model/dbManager');
 const config = require('../config/config.js');
 const logger = require('../utils/logger');
 const { hashPassword } = require('../utils/security');
 const responseFormatter = require('../utils/responseFormatter');
 
+const serverAddr = config.serverAddr;
+const httpPort = config.httpPort;
 
 exports.handleLogin = function(message, session) {
     const email = message['info']['email'];

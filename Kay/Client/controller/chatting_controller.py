@@ -7,10 +7,10 @@ from view.templates import ChattingWindow
 # from view.templates import NotificationsListWidget, FriendListWidget, ChatListWidget, ProfileSettingWidget
 
 class ChattingController(QObject):
-    def __init__(self, msg):
+    def __init__(self, data):
         super().__init__()
-        self.msg = msg
-        self.profile_img_url = msg['user']['profile_img_url']
+        self.data = data
+        self.profile_img_url = data['user']['profile_img_url']
 
         self.chatting_window = ChattingWindow()
         self.set_user_info('online')

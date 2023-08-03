@@ -4,4 +4,4 @@ const config = {
     httpPort: 3000
   };
   
-  module.exports = config;  
+module.exports = config;  

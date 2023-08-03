@@ -21,7 +21,7 @@ class ClientThread(QThread):
     verify_fail = pyqtSignal(str)
     register_success = pyqtSignal(str)
     duplicate_registration = pyqtSignal(str)
-    login_success = pyqtSignal(str)
+    login_success = pyqtSignal(dict)
     login_fail = pyqtSignal(str)
     non_existent_email = pyqtSignal(str)
     
@@ -55,6 +55,7 @@ class ClientThread(QThread):
         command = str_received_message['command']
         status = str_received_message['status']
         message = str_received_message['message']
+        data = str_received_message['data']
 
         if command == 'VERIFICATIONCODE':
             if status == 'FAIL':
@@ -68,7 +69,7 @@ class ClientThread(QThread):
                 self.verify_fail.emit(message)
         elif command == 'LOGIN':
             if status == 'SUCCESS':
-                self.login_success.emit(message)
+                self.login_success.emit(data)
             elif status == 'FAIL':
                 self.login_fail.emit(message)
             elif status == 'UNREGISTERED':
