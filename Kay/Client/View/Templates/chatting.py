@@ -54,13 +54,13 @@ class ChattingWindow(QWidget):
         self.profile_setting_button = QPushButton()
         self.profile_setting_button.setFixedSize(50, 50)
         
-        # # 온라인 상태를 표시하기 위한 QLabel 추가
-        # self.status_label = QLabel()
-        # self.status_label.setFixedSize(10, 10)
-        # self.status_label.move(5, 5)  # 상태 원의 위치를 조정합니다
+        # 온라인 상태를 표시하기 위한 QLabel 추가
+        self.status_label = QLabel()
+        self.status_label.setFixedSize(10, 10)
+        self.status_label.move(5, 5)  # 상태 원의 위치를 조정합니다
         # self.status_label.setStyleSheet(
         #     "QLabel { background-color: green; border-radius: 5px; }")
-        # self.status_label.setParent(self.profile_setting_button)
+        self.status_label.setParent(self.profile_setting_button)
 
         self.notification_button.setObjectName('notification_button')
         self.friend_list_button.setObjectName('friend_list_button')

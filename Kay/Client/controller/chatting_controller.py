@@ -11,9 +11,10 @@ class ChattingController(QObject):
         super().__init__()
         self.data = data
         self.profile_img_url = data['user']['profile_img_url']
+        self.status = data['user']['status']
 
         self.chatting_window = ChattingWindow()
-        self.set_user_info('online')
+        self.set_user_info()
         self.chatting_window.show()
 
         # # Connect button click signals to slots
@@ -50,14 +51,14 @@ class ChattingController(QObject):
     #     self.chatting_window.middle_area.addWidget(profile_setting_widget)
     #     # Similarly, add a widget to the right area if needed
         
-    def set_user_info(self, online):
+    def set_user_info(self):
         # 프로필 사진 설정
         profile_pic = QPixmap(self.profile_img_url)
         profile_pic_resized = profile_pic.scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.chatting_window.profile_setting_button.setIcon(QIcon(profile_pic_resized))
 
         # 온라인 상태 설정
-        if online:
+        if self.status == 'online':
             self.chatting_window.status_label.setStyleSheet("QLabel { background-color: green; border-radius: 5px; }")
         else:
             self.chatting_window.status_label.setStyleSheet("QLabel { background-color: gray; border-radius: 5px; }")

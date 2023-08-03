@@ -36,13 +36,21 @@ exports.handleLogin = function(message, session) {
                         name: user.name,
                         email: user.email,
                         profile_img_url: profileImageUrl,
-                        status: user.status
+                        status: "online"
                     }
                     // friendsList: friendsList,
                     // recentChats: recentChats,
                     // groups: groups
                     // 기타 필요한 정보를 여기에 추가
                 });
+                
+                // Update the user status to 'online'
+                dbManager.updateUserStatus(email, 'online', (error, results, fields) => {
+                    if (error) {
+                        logger.error('Failed to update user status:', error);
+                    }
+                });
+
             } else {
                 response = responseFormatter.formatResponse('LOGIN', 'FAIL', '비밀번호가 잘못되었습니다.');
             }

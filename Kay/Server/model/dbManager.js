@@ -73,3 +73,8 @@ exports.getUserGroups = function(userId, callback) {
     return callback(null, results, fields);
   });
 };
+
+exports.updateUserStatus = function(email, status, callback) {
+  const sql = `UPDATE users SET status = ? WHERE email = ?`;
+  pool.query(sql, [status, email], callback);
+}
