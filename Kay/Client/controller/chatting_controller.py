@@ -1,8 +1,8 @@
 # ./controller/chatting_controller.py
 
-from PyQt5.QtCore import QObject, pyqtSlot
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QUrl, QSize, QObject, pyqtSlot
 from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest
 from view.templates import ChattingWindow
 # from view.templates import NotificationsListWidget, FriendListWidget, ChatListWidget, ProfileSettingWidget
 
@@ -53,15 +53,43 @@ class ChattingController(QObject):
         
     def set_user_info(self):
         # 프로필 사진 설정
-        profile_pic = QPixmap(self.profile_img_url)
-        profile_pic_resized = profile_pic.scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        self.chatting_window.profile_setting_button.setIcon(QIcon(profile_pic_resized))
+        self.load_profile_picture()
+        # profile_pic = QPixmap(r"D:\g_Project\2023_skillup_chatting\Kay\Server\images\base_profile.png")
+    
+        # 원격 URL로부터 이미지 로드 (URL이 정상적인지 확인)
+        # profile_pic = QPixmap(self.profile_img_url)
+
+        # if profile_pic.isNull():
+        #     print("Failed to load image!")
+        # else:
+        #     profile_pic_resized = profile_pic.scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        #     self.chatting_window.profile_setting_button.setIcon(QIcon(profile_pic_resized))
+
 
         # 온라인 상태 설정
         if self.status == 'online':
             self.chatting_window.status_label.setStyleSheet("QLabel { background-color: green; border-radius: 5px; }")
         else:
             self.chatting_window.status_label.setStyleSheet("QLabel { background-color: gray; border-radius: 5px; }")
+
+    def load_profile_picture(self):
+        url = QUrl(self.profile_img_url)
+        request = QNetworkRequest(url)
+        self.manager = QNetworkAccessManager()
+        reply = self.manager.get(request)
+        reply.finished.connect(self.on_image_load)
+
+    def on_image_load(self):
+        reply = self.sender()
+        img_data = reply.readAll()
+        pixmap = QPixmap()
+        if pixmap.loadFromData(img_data):
+            profile_pic_resized = pixmap.scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            icon_size = QSize(40, 40)
+            self.chatting_window.profile_setting_button.setIconSize(icon_size)
+            self.chatting_window.profile_setting_button.setIcon(QIcon(profile_pic_resized))
+        else:
+            print("Failed to load image!")
 
     def _clear_middle_right_areas(self):
         # Clear widgets in middle_area and right_area

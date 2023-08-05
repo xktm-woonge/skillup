@@ -43,18 +43,19 @@ exports.handleLogin = function(message, session) {
                     // groups: groups
                     // 기타 필요한 정보를 여기에 추가
                 });
-                
-                // Update the user status to 'online'
-                dbManager.updateUserStatus(email, 'online', (error, results, fields) => {
-                    if (error) {
-                        logger.error('Failed to update user status:', error);
-                    }
-                });
 
             } else {
                 response = responseFormatter.formatResponse('LOGIN', 'FAIL', '비밀번호가 잘못되었습니다.');
             }
         }
         session.socket.write(JSON.stringify(response));
+        if (response['status'] === 'SUCCESS') {
+            // Update the user status to 'online'
+            dbManager.updateUserStatus(email, 'online', (error, results, fields) => {
+                if (error) {
+                    logger.error('Failed to update user status:', error);
+                }
+            });
+        }
     });
 }
