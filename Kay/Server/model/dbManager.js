@@ -28,6 +28,10 @@ exports.createUser = function(email, password, salt, callback) {
 exports.getUserByEmail = function(email, callback) {
   const sql = `SELECT * FROM users WHERE email = ?`;
   pool.query(sql, [email], (error, results, fields) => {
+
+      console.log('Error:', error);
+      console.log('Results:', results);
+
       if (error) {
           return callback(error, null, null);
       }

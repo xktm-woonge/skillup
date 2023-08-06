@@ -2,6 +2,8 @@
 from controller.login_controller import LoginController
 from controller.register_controller import RegisterController
 from controller.chatting_controller import ChattingController
+from controller.rest_api_connector import RestApiThread
+
 # except ImportError:
 #     import sys
 #     from pathlib import Path
@@ -12,5 +14,6 @@ from controller.chatting_controller import ChattingController
 __all__ = [
     "LoginController",
     "RegisterController",
-    "ChattingController"
+    "ChattingController",
+    "RestApiThread",
 ]

@@ -1,3 +1,5 @@
+// ./model/auth_router.js
+
 const express = require('express');
 const router = express.Router();
 const registerController = require('../controller/register_controller');

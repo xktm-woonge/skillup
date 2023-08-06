@@ -1,18 +1,7 @@
 # ./controller/connector.py
 
 from PyQt5.QtCore import QThread, pyqtSignal
-import json
-
-try:
-    from model.rest_api import Client
-    from utils import *
-except ImportError:
-    import sys
-    from pathlib import Path
-    sys.path.append(str(Path(__file__).parents[1]))
-    from model.rest_api import Client
-    from utils import *
-    
+from model.rest_api import RESTClient
 
 class RestApiThread(QThread):
     send_email_success = pyqtSignal(str)
@@ -25,54 +14,34 @@ class RestApiThread(QThread):
     login_fail = pyqtSignal(str)
     non_existent_email = pyqtSignal(str)
     
-    def __init__(self):
+    def __init__(self, base_url):
         super().__init__()
-        self.client = Client('localhost', 8000, self.handle_message_received)
-
-    def run(self):
-        self.client.connect()
-
-    def send_message(self, message):
-        self.client.send_message(message)
+        self.client = RESTClient(base_url)
 
     def request_verification_code(self, email):
-        self.client.request_verification_code(email)
+        result = self.client.request_verification_code(email)
+        if result.get('status') == 'FAIL':
+            self.send_email_fail.emit(result['message'])
+        elif result.get('status') == 'DUPLICATE':
+            self.duplicate_registration.emit(result['message'])
 
     def verify_verification_code(self, email, verification_code):
-        self.client.verify_verification_code(email, verification_code)
-        
+        result = self.client.verify_verification_code(email, verification_code)
+        if result.get('status') == 'SUCCESS':
+            self.verify_success.emit(result['message'])
+        elif result.get('status') == 'FAIL':
+            self.verify_fail.emit(result['message'])
+
     def register_user(self, email, password, salt):
-        self.client.register_user(email, password, salt)
-        
+        result = self.client.register_user(email, password, salt)
+        if result.get('status') == 'SUCCESS':
+            self.register_success.emit(result['message'])
+
     def login(self, email, password):
-        self.client.login(email, password)
-
-    def close(self):
-        self.client.close()
-
-    def handle_message_received(self, received_message):
-        str_received_message = json.loads(received_message)
-        command = str_received_message['command']
-        status = str_received_message['status']
-        message = str_received_message['message']
-        data = str_received_message['data']
-
-        if command == 'VERIFICATIONCODE':
-            if status == 'FAIL':
-                self.send_email_fail.emit(message)
-            elif status == 'DUPLICATE':
-                self.duplicate_registration.emit(message)
-        elif command == 'VERIFY':
-            if status == 'SUCCESS':
-                self.verify_success.emit(message)
-            elif status == 'FAIL':
-                self.verify_fail.emit(message)
-        elif command == 'LOGIN':
-            if status == 'SUCCESS':
-                self.login_success.emit(data)
-            elif status == 'FAIL':
-                self.login_fail.emit(message)
-            elif status == 'UNREGISTERED':
-                self.non_existent_email.emit(message)
-        elif command == 'REGISTER' and status == 'SUCCESS':
-            self.register_success.emit(message)
+        result = self.client.login(email, password)
+        if result.get('status') == 'SUCCESS':
+            self.login_success.emit(result['data'])
+        elif result.get('status') == 'FAIL':
+            self.login_fail.emit(result['message'])
+        elif result.get('status') == 'UNREGISTERED':
+            self.non_existent_email.emit(result['message'])

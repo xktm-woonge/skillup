@@ -44,22 +44,17 @@ class RegisterController(QObject):
     @pyqtSlot()
     def request_verification_code(self):
         email = self.register_window.emailField.text()
-        
+
         if not validate_email(self.register_window.emailField.text()):
             msg = "이메일 양식이 틀렸습니다."
             warningBox(self.register_window, msg)
             self.register_window.emailField.setFocus()
             return
-        
-        # 서버와 연결 확인 후 연결 상태에 따라 다른 동작 실행
-        if self.client_thread.client.is_connected:
-            self.client_thread.request_verification_code(email)
-            self.start_countdown()  # 인증요청 버튼 클릭 시 카운트다운 시작
-            self.register_window.verifyField.setEnabled(True)
-            self.register_window.verifyField.setFocus()
-        else:
-            msg = "서버에 연결할 수 없습니다. 네트워크 상태를 확인해주세요."
-            warningBox(self.register_window, msg)
+
+        self.start_countdown()  # 인증요청 버튼 클릭 시 카운트다운 시작
+        self.register_window.verifyField.setEnabled(True)
+        self.register_window.verifyField.setFocus()
+        self.client_thread.request_verification_code(email)
 
     @pyqtSlot()
     def verify_verification_code(self):
