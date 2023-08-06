@@ -1,5 +1,3 @@
-// ./controller/login_controller.js
-
 const dbManager = require('../model/dbManager');
 const config = require('../config/config.js');
 const logger = require('../utils/logger');
@@ -9,9 +7,9 @@ const responseFormatter = require('../utils/responseFormatter');
 const serverAddr = config.serverAddr;
 const httpPort = config.httpPort;
 
-exports.handleLogin = function(message, session) {
-    const email = message['info']['email'];
-    const password = message['info']['password'];
+exports.handleLogin = function(req, res) {
+    const email = req.body.info.email;
+    const password = req.body.info.password;
 
     dbManager.getUserByEmail(email, (error, user, fields) => {
         let response;
@@ -24,11 +22,6 @@ exports.handleLogin = function(message, session) {
             const hashedPassword = hashPassword(password, salt);
 
             if (hashedPassword === user.password) {
-                // // 여기서 필요한 정보를 데이터베이스로부터 가져옵니다.
-                // const friendsList = dbManager.getFriendsList(user.id);
-                // const recentChats = dbManager.getRecentChats(user.id);
-                // const groups = dbManager.getUserGroups(user.id);
-                // 프로필 이미지 URL을 생성합니다.
                 const profileImageUrl = `http://${serverAddr}:${httpPort}/profile_picture/${user.profile_picture}`;
 
                 response = responseFormatter.formatResponse('LOGIN', 'SUCCESS', '로그인에 성공했습니다.', {
@@ -38,24 +31,20 @@ exports.handleLogin = function(message, session) {
                         profile_img_url: profileImageUrl,
                         status: "online"
                     }
-                    // friendsList: friendsList,
-                    // recentChats: recentChats,
-                    // groups: groups
-                    // 기타 필요한 정보를 여기에 추가
                 });
-
             } else {
                 response = responseFormatter.formatResponse('LOGIN', 'FAIL', '비밀번호가 잘못되었습니다.');
             }
         }
-        session.socket.write(JSON.stringify(response));
-        if (response['status'] === 'SUCCESS') {
-            // Update the user status to 'online'
+        
+        if (response.status === 'SUCCESS') {
             dbManager.updateUserStatus(email, 'online', (error, results, fields) => {
                 if (error) {
                     logger.error('Failed to update user status:', error);
                 }
             });
         }
+
+        res.json(response);
     });
-}
+};

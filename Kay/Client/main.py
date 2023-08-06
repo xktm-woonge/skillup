@@ -1,13 +1,13 @@
 # ./main.py
 from PyQt5.QtWidgets import QApplication
-from controller.connector import ClientThread
 from controller.login_controller import LoginController
+from model.rest_api import RESTClient
 from utils import *
 
 if __name__ == '__main__':
     app = QApplication([])
     clmn.Init()
-    client_thread = ClientThread()
-    login_controller = LoginController(client_thread)
-    client_thread.start()
+    base_url = "http://yourserver.com/api"  # 서버의 REST API 엔드포인트 주소
+    rest_client = RESTClient(base_url)
+    login_controller = LoginController(rest_client)
     app.exec_()

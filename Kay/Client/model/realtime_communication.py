@@ -13,7 +13,7 @@ except ImportError:
     sys.path.append(str(Path(__file__).parents[1]))
     from utils import *
 
-class Client:
+class RealTimeClient:
     def __init__(self, host, port, message_callback):
         self.host = host
         self.port = port

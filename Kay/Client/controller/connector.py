@@ -4,17 +4,17 @@ from PyQt5.QtCore import QThread, pyqtSignal
 import json
 
 try:
-    from model.client_model import Client
+    from model.rest_api import Client
     from utils import *
 except ImportError:
     import sys
     from pathlib import Path
     sys.path.append(str(Path(__file__).parents[1]))
-    from model.client_model import Client
+    from model.rest_api import Client
     from utils import *
     
 
-class ClientThread(QThread):
+class RestApiThread(QThread):
     send_email_success = pyqtSignal(str)
     send_email_fail = pyqtSignal(str)
     verify_success = pyqtSignal(str)
