@@ -17,13 +17,13 @@ class RESTClient:
             return {"status": "FAIL", "message": str(e)}
 
     def request_verification_code(self, email):
-        return self._request("POST", "auth/verificationCode", {"email": email})
+        return self._request("POST", "register/sendEmail_api", {"email": email})
 
     def verify_verification_code(self, email, verification_code):
-        return self._request("POST", "auth/verify", {"email": email, "verification_code": verification_code})
+        return self._request("POST", "register/confirmCertNum_api", {"email": email, "verification_code": verification_code})
 
     def register_user(self, email, password, salt):
-        return self._request("POST", "auth/register", {"email": email, "password": password, "salt": salt})
+        return self._request("POST", "register/addUser_api", {"email": email, "password": password, "salt": salt})
 
     def login(self, email, password):
-        return self._request("POST", "auth/login", {"email": email, "password": password})
+        return self._request("POST", "login_api", {"email": email, "password": password})

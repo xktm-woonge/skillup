@@ -13,7 +13,7 @@ app.use(express.json());
 
 // 라우터 설정
 const authRouter = require('./model/auth_router');
-app.use('/auth', authRouter);
+app.use('', authRouter);
 
 app.listen(httpPort, () => {
     console.log(`HTTP Server listening on port ${httpPort}`);
