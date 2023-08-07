@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'login_page/css/login.css' %}">
+    <link rel="stylesheet" href="{% static 'com/css/com.css' %}">
+    <title>LOGIN</title>
+</head>
+<body>
+    <div class="page_view">
+        <div class="GNB">
+            <div class="setting_img_box">
+                {% comment %} <img src="{% static 'com/icon/free-icon-font-settings-3917035.svg'%}" alt="" class="setting_img"> {% endcomment %}
+                <object class="setting_img" data="{% static 'com/icon/free-icon-font-settings-3917035.svg' %}" type="image/svg+xml"></object>
+            </div>
+        </div> 
+        <div class="main_view">
+            <div class="login_box">
+                <div class="login_logo">
+                    <p>chat program</p>
+                </div>
+                <div class="login_form">
+                    <p>로그인</p>
+                    <form method="post" id="send_login_user_info">
+                        {% csrf_token %}
+                        <div class="login_user">
+                            <input type="text" name='email' placeholder="Email">
+                            <input type="password" name='password' placeholder="Password">
+                            <div class="button_box">
+                                <input type="submit" value="로그인" name="login" class="login_btn">
+                                <input type="button" value="회원가입" name="register" class="goto_register_btn" onclick="location.href='{% url 'register_page:register' %}'">
+                            </div>
+                        </div>  
+                    </form>
+                </div>
+                <div class="footer_box">
+                    <div class="find_id_pw">
+                        ID/PW 찾기
+                    </div>
+                    <div class="inquiry_manager">
+                        관리자 문의
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    
+    <script src="{% static 'login_page/js/login.js' %}"></script>
+</body>
+</html>

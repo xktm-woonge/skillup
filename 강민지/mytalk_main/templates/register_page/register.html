@@ -1,0 +1,73 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'register_page/css/register.css' %}">
+    <link rel="stylesheet" href="{% static 'com/css/com.css' %}">
+    <title>register</title>
+</head>
+<body>
+    <div class="page_view">
+        <div class="GNB">
+            <div class="user_img_box">
+                <img src="{% static 'com/icon/user-regular.svg'%}" alt="" class="user_img">
+            </div>
+            <div class="setting_img_box">
+                <img src="{% static 'com/icon/free-icon-font-settings-3917035.svg'%}" alt="" class="setting_img">
+            </div>
+        </div>
+        <div class="main_view">
+            <div class="register_form">
+                <div class="header_box">
+                    <div class="back_img_box" onclick="goBack()">
+                        <img src="{% static 'com/icon/free-icon-font-angle-small-left-3916946.svg'%}" alt="Back Icon" class="back_img">
+                    </div>
+                    <div class="register_text">
+                        <p>회원가입</p>
+                    </div>
+                </div>
+                <div class="email_box">
+                    <form method="post" id="register_email">
+                        {% csrf_token %}
+                        <input type="email" name="email" placeholder="Email" class="email_input">
+                        <input type="submit" value="인증발송" name="email_cert" class="email_btn">
+                    </form>
+                </div>
+                <div class="cert_num_box">
+                    <form method="post" id="register_cert_num">
+                        {% csrf_token %}
+                        <input type="number" name="cert_num" class="cert_num_input">
+                        <input type="submit" value="인증" class="cert_num_btn"> 
+                    </form>
+                </div>
+                <div class="send_user_info_box">
+                    <form method="post" id="send_user_info">
+                        {% csrf_token %}
+                        <input type="password" name="password" id="regi_pw_input" placeholder="Password" class="password_input" onkeyup='pwCheck();pwIsSame();'>
+                        <input type="password" name="password_check" id="regi_pw_conf_input" placeholder="Password Confirm" class="password_confirm_input" onkeyup="pwIsSame();"> 
+                        <div>
+                            <label id="len_label" class="pw_len_none">8~16자 사이의 길이를 가진 비밀번호</label>
+                        </div>
+                        <div>
+                            <label id="reg_label" class="pw_reg_none">대문자, 소문자, 숫자, 특수기호를 각 1개 이상 포함</label>
+                        </div>
+                        <input type="submit" value="회원가입" name="requset_register" class="register_submit_btn">
+                    </form>
+                </div>
+                <div class="footer_box">
+                    <div class="find_id_pw">
+                        ID/PW 찾기
+                    </div>
+                    <div class="inquiry_manager">
+                        관리자 문의
+                    </div>
+                </div>
+            </div>    
+        </div>
+    </div>
+
+<script src="{% static 'register_page/js/register.js' %}"></script>
+</body>
+</html>

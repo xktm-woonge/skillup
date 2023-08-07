@@ -1,0 +1,76 @@
+:root{
+    padding: 0;
+    margin: 0;
+    --svg-color: purple;
+}
+body{
+    padding: 0;
+    margin: 0;
+}
+.page_view{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    padding: 0;
+    margin: 0;
+}
+.GNB{
+    display: block;
+    width: 72px;
+    height: 100vh;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    flex-basis: 1;
+    background: var(--background, #FAFAFA);
+    /* 08dp */
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.10);
+    position: fixed; /* 추가 */
+    top: 0; /* 추가 */
+    left: 0; /* 추가 */
+}
+.user_img{
+    width: 32px;
+    height: 32px;
+    margin: 20px;
+}
+.setting_img_box{
+    position: fixed;
+    bottom: 0;
+}
+.setting_img{
+    fill: red;
+    width: 32px;
+    height: 32px;
+    margin: 20px;
+}
+.side_bar{
+    width: 500px;
+    height: 100vh;
+    background-color: red;
+}
+.main_view {
+    flex: 1;
+    width: 100vw;
+    height: 100vh;
+    display: flex; /* inline-flex에서 flex로 수정 */
+    padding: 0px 674px 0px 0px;
+    justify-content: center; /* 추가 */
+    align-items: center; /* 추가 */
+    background: var(--gray-50, #F0F0F0);
+    position: absolute;
+    vertical-align: middle;
+    margin-left: 72px;
+}
+.footer_box{
+    position: relative;
+}
+.find_id_pw{
+    position: fixed;
+    margin-left: 24px;
+    left: 0;
+}
+.inquiry_manager{
+    position: fixed;
+    margin-right: 24px;
+    right: 0;
+}
