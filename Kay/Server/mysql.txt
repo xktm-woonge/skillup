@@ -19,8 +19,20 @@ CREATE TABLE Friends (
 );
 
 // 대화 테이블(Conversations)
-CREATE TABLE Conversations (
-    id INT AUTO_INCREMENT PRIMARY KEY
+CREATE TABLE conversations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    type ENUM('private', 'group') NOT NULL DEFAULT 'private',
+    name VARCHAR(255) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+// 대화방 참여자 테이블
+CREATE TABLE ConversationParticipants (
+    conversation_id INT,
+    user_id INT,
+    PRIMARY KEY(conversation_id, user_id),
+    FOREIGN KEY(conversation_id) REFERENCES Conversations(id),
+    FOREIGN KEY(user_id) REFERENCES Users(id)
 );
 
 // 메시지 테이블(Messages)
