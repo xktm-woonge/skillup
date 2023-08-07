@@ -12,8 +12,8 @@ app.use('/profile_picture', express.static(__dirname + '/images'));
 app.use(express.json());
 
 // 라우터 설정
-const authRouter = require('./model/auth_router');
-app.use('', authRouter);
+const router = require('./model/router');
+app.use('', router);
 
 app.listen(httpPort, () => {
     console.log(`HTTP Server listening on port ${httpPort}`);

@@ -1,4 +1,4 @@
-// ./model/auth_router.js
+// ./model/router.js
 
 const express = require('express');
 const router = express.Router();
