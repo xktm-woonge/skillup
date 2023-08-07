@@ -6,6 +6,8 @@ const { generateVerificationCode } = require('../utils/generateVerificationCode'
 const dbManager = require('../model/dbManager');
 const { sendEmail } = require('../model/emailService');
 
+let verificationCodes = {};
+
 exports.handleVerificationCodeRequest = function(req, res) {
     const email = req.body.email;
 
@@ -26,7 +28,7 @@ exports.handleVerificationCodeRequest = function(req, res) {
             if (error) {
                 response = responseFormatter.formatResponse('FAIL', '이메일 전송에 실패했습니다.');
             } else {
-                req.session.verificationCode = verificationCode;
+                verificationCodes[email] = verificationCode;
                 response = responseFormatter.formatResponse('SUCCESS', '이메일 전송에 성공했습니다.');
             }
             res.json(response);
@@ -35,9 +37,10 @@ exports.handleVerificationCodeRequest = function(req, res) {
 };
 
 exports.handleVerify = function(req, res) {
+    const email = req.body.email;
     const received_code = req.body.verification_code;
 
-    if (received_code === req.session.verificationCode) {
+    if (received_code === verificationCodes[email]) {
         response = responseFormatter.formatResponse('SUCCESS', '인증에 성공했습니다.');
     } else {
         response = responseFormatter.formatResponse('FAIL', '인증에 실패했습니다. 다시 확인해 주세요.');

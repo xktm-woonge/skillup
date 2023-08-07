@@ -7,21 +7,27 @@ from view.templates import ChattingWindow
 # from view.templates import NotificationsListWidget, FriendListWidget, ChatListWidget, ProfileSettingWidget
 
 class ChattingController(QObject):
-    def __init__(self, data):
+    def __init__(self, userInfo, api_thread):
         super().__init__()
-        self.data = data
-        self.profile_img_url = data['user']['profile_img_url']
-        self.status = data['user']['status']
+        self.userInfo = userInfo
+        self.api_thread = api_thread
+
+        # self.profile_img_url = data['user']['profile_img_url']
+        # self.status = data['user']['status']
 
         self.chatting_window = ChattingWindow()
         self.set_user_info()
         self.chatting_window.show()
 
+        self.connect_slot()
+
+    def connect_slot(self):
         # # Connect button click signals to slots
         # self.chatting_window.notification_button.clicked.connect(self.show_notifications)
         # self.chatting_window.friend_list_button.clicked.connect(self.show_friend_list)
         # self.chatting_window.chat_window_button.clicked.connect(self.show_chats)
         # self.chatting_window.profile_setting_button.clicked.connect(self.show_profile_settings)
+        pass
 
     # @pyqtSlot()
     # def show_notifications(self):

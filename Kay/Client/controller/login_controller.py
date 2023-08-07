@@ -1,7 +1,7 @@
 # controller/login_controller.py
 
 from PyQt5.QtCore import QObject, pyqtSlot, Qt
-from PyQt5.QtWidgets import QWidget, QStackedWidget, QVBoxLayout, QMessageBox
+from PyQt5.QtWidgets import QWidget, QStackedWidget, QVBoxLayout
 
 try:
     from controller.register_controller import RegisterController
@@ -19,15 +19,17 @@ except ImportError:
 
 
 class LoginController(QObject):
-    def __init__(self, client_thread):
+    def __init__(self, api_thread):
         super().__init__()
-        self.client_thread = client_thread
+        self.api_thread = api_thread
 
         self.main_widget = QWidget()  # 부모 위젯 생성
         self.stacked_widget = QStackedWidget()  # QStackedWidget 생성
 
         self.login_window = LoginWindow()
-        self.register_controller = RegisterController(self.client_thread)
+        self.register_controller = RegisterController(self.api_thread)
+        self.login_email = self.login_window.emailField.text()
+        self.login_password = self.login_window.passwordField.text()
         
         self.stacked_widget.addWidget(self.login_window)  # 로그인 창 페이지 추가
         self.stacked_widget.addWidget(self.register_controller.register_window)  # 회원가입 창 페이지 추가
@@ -46,9 +48,9 @@ class LoginController(QObject):
         self.login_window.registerButton.clicked.connect(self.show_register_window)
         self.login_window.loginButton.clicked.connect(self.handle_login)
         self.register_controller.back_button_clicked.connect(self.show_login_window)
-        self.client_thread.login_success.connect(self.handle_login_success)
-        self.client_thread.login_fail.connect(self.handle_login_fail)
-        self.client_thread.non_existent_email.connect(self.handle_non_existent_email)
+        self.api_thread.login_success.connect(self.handle_login_success)
+        self.api_thread.login_fail.connect(self.handle_login_fail)
+        self.api_thread.non_existent_email.connect(self.handle_non_existent_email)
         
         # Enter key press event on emailField and passwordField
         self.login_window.emailField.returnPressed.connect(self.login_window.loginButton.click)
@@ -65,31 +67,36 @@ class LoginController(QObject):
 
     @pyqtSlot()
     def handle_login(self):
-        if not self.login_window.emailField.text():
+        if not self.login_email:
             msg = "이메일을 입력해 주세요."
             warningBox(self.login_window, msg)
             self.login_window.emailField.setFocus()
             return
         
-        if not validate_email(self.login_window.emailField.text()):
+        if not validate_email(self.login_email):
             msg = "이메일 양식이 틀렸습니다."
             warningBox(self.login_window, msg)
             self.login_window.emailField.setFocus()
             return
             
-        if not self.login_window.passwordField.text():
+        if not self.login_password:
             msg = "비밀번호를 입력해 주세요."
             warningBox(self.login_window, msg)
             self.login_window.passwordField.setFocus()
             return
             
-        self.client_thread.login(self.login_window.emailField.text(),
-                                 self.login_window.passwordField.text())
+        self.api_thread.login(self.login_email,
+                                 self.login_password)
         
-    def handle_login_success(self, data):
-        # Create an instance of the chatting window and display it
-        self.main_widget.close()
-        self.chatting_controller = ChattingController(data)
+    def handle_login_success(self):
+        result = self.api_thread.get_userInfo(self.email)
+        if result.get('status') == 'SUCCESS':
+            # Create an instance of the chatting window and display it
+            self.chatting_controller = ChattingController(
+                result.get('data'), self.api_thread)
+            self.main_widget.close()
+        else:
+            warningBox(self.login_window, result.get('message'))
         
     def handle_login_fail(self, msg):
         warningBox(self.login_window, msg)

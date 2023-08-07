@@ -27,3 +27,6 @@ class RESTClient:
 
     def login(self, email, password):
         return self._request("POST", "login_api", {"email": email, "password": password})
+    
+    def get_userInfo(self, email):
+        return self._request("GET", "userInfo_api", {"email": email})

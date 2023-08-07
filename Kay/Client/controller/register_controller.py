@@ -19,9 +19,9 @@ except ImportError:
 class RegisterController(QObject):
     back_button_clicked = pyqtSignal()
 
-    def __init__(self, client_thread):
+    def __init__(self, api_thread):
         super().__init__()
-        self.client_thread = client_thread
+        self.api_thread = api_thread
         self.register_window = RegisterWindow()
         self.back_button_was_clicked = False  # 새로운 멤버 추가
         self.verify_email_success = False
@@ -35,11 +35,11 @@ class RegisterController(QObject):
         self.register_window.emailField.getButton().clicked.connect(self.request_verification_code)
         self.register_window.verifyField.getButton().clicked.connect(self.verify_verification_code)
         self.register_window.registerButton.clicked.connect(self.send_register)
-        self.client_thread.send_email_fail.connect(self.handle_email_sent_failure)
-        self.client_thread.verify_success.connect(self.handle_verify_success)
-        self.client_thread.verify_fail.connect(self.handle_verify_fail)
-        self.client_thread.register_success.connect(self.handle_register_success)
-        self.client_thread.duplicate_registration.connect(self.handle_duplicate_registration)
+        self.api_thread.send_email_fail.connect(self.handle_email_sent_failure)
+        self.api_thread.verify_success.connect(self.handle_verify_success)
+        self.api_thread.verify_fail.connect(self.handle_verify_fail)
+        self.api_thread.register_success.connect(self.handle_register_success)
+        self.api_thread.duplicate_registration.connect(self.handle_duplicate_registration)
         
     @pyqtSlot()
     def request_verification_code(self):
@@ -54,7 +54,7 @@ class RegisterController(QObject):
         self.start_countdown()  # 인증요청 버튼 클릭 시 카운트다운 시작
         self.register_window.verifyField.setEnabled(True)
         self.register_window.verifyField.setFocus()
-        self.client_thread.request_verification_code(email)
+        self.api_thread.request_verification_code(email)
 
     @pyqtSlot()
     def verify_verification_code(self):
@@ -65,8 +65,8 @@ class RegisterController(QObject):
             warningBox(self.register_window, msg)
             return
         
-        self.register_window.verifyField.setEnabled(True)        
-        self.client_thread.verify_verification_code(email, verification_code)
+        self.register_window.verifyField.setEnabled(True)
+        self.api_thread.verify_verification_code(email, verification_code)
         
     def handle_verify_success(self, msg):
         self.timer.stop()
@@ -128,7 +128,7 @@ class RegisterController(QObject):
         
         hashed_password, salt = self.encrypt_password()
         
-        self.client_thread.register_user(self.register_window.emailField.text(),
+        self.api_thread.register_user(self.register_window.emailField.text(),
                                          hashed_password, salt)
 
     def hash_password(self, salt: str) -> str:
