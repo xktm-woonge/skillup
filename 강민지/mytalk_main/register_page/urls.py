@@ -5,8 +5,8 @@ app_name = 'register_page'
 
 urlpatterns = [
     path('', views.load_register, name='register'),
-    path('send-email/', views.get_email, name='email_api'),
-    path('confirm-cert-num/', views.conf_ceri_num, name='cert_conf_api'),
-    path('confirm-email/', views.conf_email, name='email_conf_api'),
-    path('add-user/', views.add_user, name='add_user_api'),
+    path('sendEmail_api/', views.get_email, name='email_api'),
+    path('confirmCertNum_api/', views.conf_ceri_num, name='cert_conf_api'),
+    path('confirmEmail_api/', views.conf_email, name='email_conf_api'),
+    path('addUser_api/', views.add_user, name='add_user_api'),
 ]

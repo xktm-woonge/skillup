@@ -8,7 +8,7 @@ function submitEmailData(){
 
     if (emailData.get('email')){
         // REST API
-        fetch('/register/send-email/',{
+        fetch('/register/sendEmail_api/',{
             method:'POST',
             body:emailData
         })
@@ -54,7 +54,7 @@ function confirmEmailCertification(){
 
     if (emailCertNum.get('cert_num')){
         // 인증 번호 REST API
-        fetch('/register/confirm-cert-num/',{
+        fetch('/register/confirmCertNum_api/',{
             method:'POST',
             body:emailCertNum
         })
@@ -87,7 +87,7 @@ function confirmCurrentEmail(){
     console.log(emailData.get('email'));
     
     if (emailData.get('email')){
-        fetch('/register/confirm-email/',{
+        fetch('/register/confirmEmail_api/',{
             method:'POST',
             body:emailData
         })
@@ -116,7 +116,7 @@ function addUserInfo(){
     var passwordData = new FormData(document.getElementById('send_user_info'));
 
     if (pwCheck() && pwIsSame()){
-        fetch('/register/add-user/',{
+        fetch('/register/addUser_api/',{
             method:'POST',
             body:passwordData,
         })
