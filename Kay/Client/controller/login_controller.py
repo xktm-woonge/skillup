@@ -28,8 +28,6 @@ class LoginController(QObject):
 
         self.login_window = LoginWindow()
         self.register_controller = RegisterController(self.api_thread)
-        self.login_email = self.login_window.emailField.text()
-        self.login_password = self.login_window.passwordField.text()
         
         self.stacked_widget.addWidget(self.login_window)  # 로그인 창 페이지 추가
         self.stacked_widget.addWidget(self.register_controller.register_window)  # 회원가입 창 페이지 추가
@@ -67,29 +65,30 @@ class LoginController(QObject):
 
     @pyqtSlot()
     def handle_login(self):
-        if not self.login_email:
+        if not self.login_window.emailField.text():
             msg = "이메일을 입력해 주세요."
             warningBox(self.login_window, msg)
             self.login_window.emailField.setFocus()
             return
         
-        if not validate_email(self.login_email):
+        if not validate_email(self.login_window.emailField.text()):
             msg = "이메일 양식이 틀렸습니다."
             warningBox(self.login_window, msg)
             self.login_window.emailField.setFocus()
             return
             
-        if not self.login_password:
+        if not self.login_window.passwordField.text():
             msg = "비밀번호를 입력해 주세요."
             warningBox(self.login_window, msg)
             self.login_window.passwordField.setFocus()
             return
             
-        self.api_thread.login(self.login_email,
-                                 self.login_password)
+        self.api_thread.login(self.login_window.emailField.text(),
+                                 self.login_window.passwordField.text())
         
-    def handle_login_success(self):
-        result = self.api_thread.get_userInfo(self.email)
+    def handle_login_success(self, token):
+        result = self.api_thread.get_userInfo(
+            self.login_window.emailField.text(), token)
         if result.get('status') == 'SUCCESS':
             # Create an instance of the chatting window and display it
             self.chatting_controller = ChattingController(

@@ -1,7 +1,7 @@
 # ./controller/register_controller.py
 
 from PyQt5.QtCore import QTimer, QObject, pyqtSignal, pyqtSlot, Qt
-from PyQt5.QtWidgets import QMessageBox, QLineEdit
+from PyQt5.QtWidgets import QLineEdit
 import os
 import hashlib
 

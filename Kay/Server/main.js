@@ -15,6 +15,12 @@ app.use(express.json());
 const router = require('./model/router');
 app.use('', router);
 
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
+  });
+  
+
 app.listen(httpPort, () => {
     console.log(`HTTP Server listening on port ${httpPort}`);
 });

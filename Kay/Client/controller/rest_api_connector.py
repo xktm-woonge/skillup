@@ -19,7 +19,7 @@ class RestApiThread(QThread):
     verify_fail = pyqtSignal(str)
     register_success = pyqtSignal(str)
     duplicate_registration = pyqtSignal(str)
-    login_success = pyqtSignal()
+    login_success = pyqtSignal(str)
     login_fail = pyqtSignal(str)
     non_existent_email = pyqtSignal(str)
     get_userInfo_success = pyqtSignal(dict)
@@ -51,12 +51,12 @@ class RestApiThread(QThread):
     def login(self, email, password):
         result = self.restClient.login(email, password)
         if result.get('status') == 'SUCCESS':
-            self.login_success.emit()
+            self.login_success.emit(result['data']['token'])
         elif result.get('status') == 'FAIL':
             self.login_fail.emit(result['message'])
         elif result.get('status') == 'UNREGISTERED':
             self.non_existent_email.emit(result['message'])
 
-    def get_userInfo(self, email):
-        result = self.restClient.get_userInfo(email)
+    def get_userInfo(self, email, token):
+        result = self.restClient.get_userInfo(email, token)
         return result

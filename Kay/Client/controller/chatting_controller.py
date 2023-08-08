@@ -7,9 +7,9 @@ from view.templates import ChattingWindow
 # from view.templates import NotificationsListWidget, FriendListWidget, ChatListWidget, ProfileSettingWidget
 
 class ChattingController(QObject):
-    def __init__(self, userInfo, api_thread):
+    def __init__(self, token, api_thread):
         super().__init__()
-        self.userInfo = userInfo
+        self.token = token
         self.api_thread = api_thread
 
         # self.profile_img_url = data['user']['profile_img_url']

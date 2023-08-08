@@ -1,7 +1,6 @@
 // ./model/dbManager.js
 
 const mysql = require('mysql');
-// const path = require('path');
 const config = require('../config/config.js');
 const serverAddr = config.serverAddr;
 
@@ -29,52 +28,13 @@ exports.getUserByEmail = function(email, callback) {
   const sql = `SELECT * FROM users WHERE email = ?`;
   pool.query(sql, [email], (error, results, fields) => {
 
-      console.log('Error:', error);
-      console.log('Results:', results);
-
       if (error) {
           return callback(error, null, null);
       }
 
       let user = results[0];
-      // // assuming 'profile_picture' is the correct column name in your table
-      // user.profile_picture = path.join("/uploads", user.profile_picture);
-
+      
       return callback(null, user, fields);
-  });
-};
-
-
-exports.getFriendsList = function(userId, callback) {
-  const sql = 'SELECT friends.* FROM friends JOIN users_friends ON friends.id = users_friends.friend_id WHERE users_friends.user_id = ?';
-  pool.query(sql, [userId], (error, results, fields) => {
-    if (error) {
-      return callback(error, null, null);
-    }
-
-    return callback(null, results, fields);
-  });
-};
-
-exports.getRecentChats = function(userId, callback) {
-  const sql = 'SELECT chats.* FROM chats JOIN users_chats ON chats.id = users_chats.chat_id WHERE users_chats.user_id = ? ORDER BY chats.timestamp DESC LIMIT 10';
-  pool.query(sql, [userId], (error, results, fields) => {
-    if (error) {
-      return callback(error, null, null);
-    }
-
-    return callback(null, results, fields);
-  });
-};
-
-exports.getUserGroups = function(userId, callback) {
-  const sql = 'SELECT groups.* FROM groups JOIN users_groups ON groups.id = users_groups.group_id WHERE users_groups.user_id = ?';
-  pool.query(sql, [userId], (error, results, fields) => {
-    if (error) {
-      return callback(error, null, null);
-    }
-
-    return callback(null, results, fields);
   });
 };
 
@@ -82,3 +42,18 @@ exports.updateUserStatus = function(email, status, callback) {
   const sql = `UPDATE users SET status = ? WHERE email = ?`;
   pool.query(sql, [status, email], callback);
 }
+
+// 친구 목록 가져오기
+exports.getFriendsByUserId = function(user_id, callback) {
+  const query = `SELECT * FROM Friends JOIN Users ON Friends.friend_id = Users.id WHERE Friends.user_id = ?`;
+  pool.query(query, [user_id], callback);
+};
+
+// 대화 목록 및 대화 내용 가져오기
+exports.getConversationsByUserId = function(user_id, callback) {
+  const query = `SELECT * FROM Conversations
+                 JOIN ConversationParticipants ON Conversations.id = ConversationParticipants.conversation_id
+                 JOIN Messages ON Conversations.id = Messages.conversation_id
+                 WHERE ConversationParticipants.user_id = ?`;
+  pool.query(query, [user_id], callback);
+};

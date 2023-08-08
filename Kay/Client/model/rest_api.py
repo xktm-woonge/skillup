@@ -6,9 +6,11 @@ class RESTClient:
     def __init__(self, base_url):
         self.base_url = base_url
 
-    def _request(self, method, endpoint, data=None):
+    def _request(self, method, endpoint, data=None, token=None):
         url = f"{self.base_url}/{endpoint}"
         headers = {"Content-Type": "application/json"}
+        if token:
+            headers["Authorization"] = f"Bearer {token}"
         try:
             response = requests.request(method, url, json=data, headers=headers)
             response.raise_for_status()
@@ -28,5 +30,5 @@ class RESTClient:
     def login(self, email, password):
         return self._request("POST", "login_api", {"email": email, "password": password})
     
-    def get_userInfo(self, email):
-        return self._request("GET", "userInfo_api", {"email": email})
+    def get_userInfo(self, email, token):
+        return self._request("GET", "userInfo_api", {"email": email}, token)
