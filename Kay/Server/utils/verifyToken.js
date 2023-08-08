@@ -14,7 +14,7 @@ function verifyToken(req, res, next) {
     if (err) return res.status(500).send({ status: 'FAIL', message: 'Failed to authenticate token.' });
 
     // 토큰이 검증되면, 이후 처리를 위해 사용자 ID를 저장
-    req.userId = decoded.id;
+    req.userId = decoded.email;
     next();
   });
 }

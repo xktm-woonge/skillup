@@ -54,7 +54,7 @@ class RegisterController(QObject):
         self.start_countdown()  # 인증요청 버튼 클릭 시 카운트다운 시작
         self.register_window.verifyField.setEnabled(True)
         self.register_window.verifyField.setFocus()
-        self.api_thread.request_verification_code(email)
+        self.api_thread.execute('request_verification_code', email)
 
     @pyqtSlot()
     def verify_verification_code(self):
@@ -66,7 +66,7 @@ class RegisterController(QObject):
             return
         
         self.register_window.verifyField.setEnabled(True)
-        self.api_thread.verify_verification_code(email, verification_code)
+        self.api_thread.execute('verify_verification_code', email, verification_code)
         
     def handle_verify_success(self, msg):
         self.timer.stop()
@@ -128,8 +128,10 @@ class RegisterController(QObject):
         
         hashed_password, salt = self.encrypt_password()
         
-        self.api_thread.register_user(self.register_window.emailField.text(),
-                                         hashed_password, salt)
+        self.api_thread.execute('register_user',
+                                self.register_window.emailField.text(),
+                                hashed_password, 
+                                salt)
 
     def hash_password(self, salt: str) -> str:
         password_bytes = self.register_window.passwordField.text().encode('utf-8')

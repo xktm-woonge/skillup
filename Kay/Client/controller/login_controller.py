@@ -83,12 +83,14 @@ class LoginController(QObject):
             self.login_window.passwordField.setFocus()
             return
             
-        self.api_thread.login(self.login_window.emailField.text(),
-                                 self.login_window.passwordField.text())
+        self.api_thread.execute('login', 
+                                self.login_window.emailField.text(),
+                                self.login_window.passwordField.text())
         
     def handle_login_success(self, token):
-        result = self.api_thread.get_userInfo(
-            self.login_window.emailField.text(), token)
+        result = self.api_thread.get_userInfo(self.login_window.emailField.text(), 
+                                        token)
+                                        
         if result.get('status') == 'SUCCESS':
             # Create an instance of the chatting window and display it
             self.chatting_controller = ChattingController(

@@ -13,6 +13,7 @@ except ImportError:
     from utils import *
 
 class RestApiThread(QThread):
+    # 시그널 정의
     send_email_success = pyqtSignal(str)
     send_email_fail = pyqtSignal(str)
     verify_success = pyqtSignal(str)
@@ -22,12 +23,22 @@ class RestApiThread(QThread):
     login_success = pyqtSignal(str)
     login_fail = pyqtSignal(str)
     non_existent_email = pyqtSignal(str)
-    get_userInfo_success = pyqtSignal(dict)
-    get_userInfo_fail = pyqtSignal(str)
 
     def __init__(self, base_url):
         super().__init__()
         self.restClient = RESTClient(base_url)
+        self.command = None
+        self.args = None
+
+    def run(self):
+        if self.command == 'request_verification_code':
+            self.request_verification_code(*self.args)
+        elif self.command == 'verify_verification_code':
+            self.verify_verification_code(*self.args)
+        elif self.command == 'register_user':
+            self.register_user(*self.args)
+        elif self.command == 'login':
+            self.login(*self.args)
 
     def request_verification_code(self, email):
         result = self.restClient.request_verification_code(email)
@@ -60,3 +71,8 @@ class RestApiThread(QThread):
     def get_userInfo(self, email, token):
         result = self.restClient.get_userInfo(email, token)
         return result
+    
+    def execute(self, command, *args):
+        self.command = command
+        self.args = args
+        self.start()
