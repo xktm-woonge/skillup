@@ -5,11 +5,28 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, \
 from PyQt5.QtCore import Qt, QFile
 from PyQt5.QtGui import QIcon, QPixmap, QImage, QPainter
 from PyQt5.QtSvg import QSvgRenderer
-from PyQt5.Qt import QSize
+from PyQt5.Qt import QSize, QSizePolicy
 from xml.etree import ElementTree
 import re
 from pathlib import Path
 import sys
+
+
+class SidebarWidget(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setFixedWidth(50)
+
+    def enterEvent(self, event):
+        self.setFixedWidth(150)
+        self.parent().expandSidebar()
+        QWidget.enterEvent(self, event)
+
+    def leaveEvent(self, event):
+        self.setFixedWidth(50)
+        self.parent().collapseSidebar()
+        QWidget.leaveEvent(self, event)
+
 
 class ChattingWindow(QWidget):
     def __init__(self):
@@ -26,18 +43,28 @@ class ChattingWindow(QWidget):
         # Keep track of the current selected button
         self.currentButton = None
 
+        self.sidebar_expanded = False
+        self.sidebar_labels = []
+
         self.initUI()
+
+        # Initialize labels as hidden
+        self.notification_label.hide()
+        self.friend_list_label.hide()
+        self.chat_window_label.hide()
+        self.profile_setting_label.hide()
+        self.setup_label.hide()
+
         self.connect_slot()
 
     def initUI(self):
         hbox = QHBoxLayout()
-        hbox.setContentsMargins(0, 0, 0, 0)  # Main layout border gap removal
-        hbox.setSpacing(0)  # Gap removal between widgets inside main layout
+        hbox.setContentsMargins(0, 0, 0, 0)
+        hbox.setSpacing(0)
 
         # Side Bar
-        side_bar = QWidget()
+        side_bar = SidebarWidget(self)
         side_bar.setObjectName('sidebar')
-        side_bar.setFixedWidth(self.sidebar_width)  # setFixedSize를 이용하여 크기 고정
 
         side_layout = QVBoxLayout(side_bar)
         side_layout.setContentsMargins(0, 0, 0, 0)  # Side layout border gap removal
@@ -74,25 +101,73 @@ class ChattingWindow(QWidget):
         self.status_label = QLabel()
         self.status_label.setFixedSize(10, 10)
         self.status_label.move(5, 5)  # 상태 원의 위치를 조정합니다
-        # self.status_label.setStyleSheet(
-        #     "QLabel { background-color: green; border-radius: 5px; }")
         self.status_label.setParent(self.profile_setting_button)
+
+        setup_path = f'{Path(__file__).parents[1]}/static/icon/cog_outline_icon_139752.svg'
+        setup_icon = QIcon(setup_path)
+        self.setup_button = QPushButton()
+        self.setup_button.setIcon(setup_icon)
+        self.setup_button.setIconSize(QSize(*self.sidebar_icon_size))
+        self.setup_button.setFixedSize(*self.sidebar_button_size)
+        self.setup_button.setProperty('icon_path', setup_path)
 
         self.notification_button.setObjectName('notification_button')
         self.friend_list_button.setObjectName('friend_list_button')
         self.chat_window_button.setObjectName('chat_window_button')
         self.profile_setting_button.setObjectName('profile_setting_button')
+        self.setup_button.setObjectName('setup_button')
+
+        self.notification_label = QLabel('알림', self)
+        self.sidebar_labels.append(self.notification_label)
+
+        self.friend_list_label = QLabel('친구 목록', self)
+        self.sidebar_labels.append(self.friend_list_label)
+
+        self.chat_window_label = QLabel('대화 내용', self)
+        self.sidebar_labels.append(self.chat_window_label)
+
+        self.profile_setting_label = QLabel('내 정보', self)
+        self.sidebar_labels.append(self.profile_setting_label)
+
+        self.setup_label = QLabel('설정', self)
+        self.sidebar_labels.append(self.setup_label)
+
+        # Notification button with label
+        notification_hbox = QHBoxLayout()
+        notification_hbox.addWidget(self.notification_button)
+        notification_hbox.addWidget(self.notification_label)
+        side_layout.addLayout(notification_hbox)
+
+        # Friend list button with label
+        friend_list_hbox = QHBoxLayout()
+        friend_list_hbox.addWidget(self.friend_list_button)
+        friend_list_hbox.addWidget(self.friend_list_label)
+        side_layout.addLayout(friend_list_hbox)
+
+        # Chat window button with label
+        chat_window_hbox = QHBoxLayout()
+        chat_window_hbox.addWidget(self.chat_window_button)
+        chat_window_hbox.addWidget(self.chat_window_label)
+        side_layout.addLayout(chat_window_hbox)
+
+        # Profile setting button
+        profile_setting_hbox = QHBoxLayout()
+        profile_setting_hbox.addWidget(self.profile_setting_button)
+        profile_setting_hbox.addWidget(self.profile_setting_label)
+        side_layout.addLayout(profile_setting_hbox)
 
         # Add widgets to the side layout
-        side_layout.addWidget(self.notification_button, 0, Qt.AlignTop)
-        side_layout.addWidget(self.friend_list_button, 0, Qt.AlignTop)
-        side_layout.addWidget(self.chat_window_button, 0, Qt.AlignTop)
-        side_layout.addWidget(self.profile_setting_button, 0, Qt.AlignTop)
         side_layout.addStretch(1)
+
+        setup_hbox = QHBoxLayout()
+        setup_hbox.addWidget(self.setup_button)
+        setup_hbox.addWidget(self.setup_label)
+        side_layout.addLayout(setup_hbox)
 
         # Middle Area
         middle_area_widget = QWidget()
         middle_area_widget.setFixedSize(self.middle_width, self.height)
+        middle_area_widget.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
         self.middle_area = QVBoxLayout(middle_area_widget)
         self.middle_area.setContentsMargins(0, 0, 0, 0)  # Middle layout border gap removal
         self.middle_area.setSpacing(0)  # Gap removal between widgets inside middle layout
@@ -102,10 +177,12 @@ class ChattingWindow(QWidget):
         # Chat Screen
         right_area_widget = QWidget()
         self.right_area = QVBoxLayout(right_area_widget)
+        right_area_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.right_area.setContentsMargins(0, 0, 0, 0)  # Chat screen layout border gap removal
         self.right_area.setSpacing(0)  # Gap removal between widgets inside chat screen layout
         chat_label = QLabel('Chat Screen', self)
         self.right_area.addWidget(chat_label)
+
 
         hbox.addWidget(side_bar)
         hbox.addWidget(middle_area_widget)
@@ -165,6 +242,14 @@ class ChattingWindow(QWidget):
         button.setStyleSheet("background-color: rgb(79, 42, 184);")
 
         self.currentButton = button
+
+    def expandSidebar(self):
+        for label in self.sidebar_labels:
+            label.show()
+
+    def collapseSidebar(self):
+        for label in self.sidebar_labels:
+            label.hide()
 
     def _setStyle(self):
         qss_file = QFile(f'{Path(__file__).parents[1]}/static/chatting.qss')

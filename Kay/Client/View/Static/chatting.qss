@@ -1,14 +1,11 @@
-#notification_button, #friend_list_button, #chat_window_button, #profile_setting_button { 
+#notification_button, 
+#friend_list_button, 
+#chat_window_button, 
+#profile_setting_button,
+#setup_button { 
     border: none;
 }
 
 #sidebar { 
     background-color: white;
-}
-
-QPushButton#notification_button:hover, 
-QPushButton#friend_list_button:hover, 
-QPushButton#chat_window_button:hover, 
-QPushButton#profile_setting_button:hover {
-    background-color: rgb(235, 208, 255); /* Very light purple */
 }
