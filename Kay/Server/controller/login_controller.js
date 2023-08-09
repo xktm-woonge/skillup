@@ -8,8 +8,6 @@ const { hashPassword } = require('../utils/security');
 const responseFormatter = require('../utils/responseFormatter');
 
 const jwtSecretKey = process.env.JWT_SECRET_KEY;  // JWT 비밀키, 실제 서비스에서는 환경변수 등으로 보호되어야 합니다.
-const serverAddr = config.serverAddr;
-const httpPort = config.httpPort;
 
 exports.handleLogin = function(req, res) {
     const email = req.body.email;

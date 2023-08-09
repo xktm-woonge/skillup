@@ -82,7 +82,7 @@ class ChattingController(QObject):
             self.chatting_window.status_label.setStyleSheet("QLabel { background-color: gray; border-radius: 5px; }")
 
     def load_profile_picture(self):
-        url = QUrl(self.userInfo['profile_img_url'])
+        url = QUrl(self.userInfo['profile_picture'])
         request = QNetworkRequest(url)
         self.manager = QNetworkAccessManager()
         reply = self.manager.get(request)
