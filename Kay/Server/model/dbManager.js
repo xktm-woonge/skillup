@@ -70,7 +70,7 @@ exports.getFriendsInfoByUserId = function(userId, callback) {
   pool.query(sql, [userId, userId, userId], callback);
 };
 
-exports.getUserInfoByEmail = function(email, callback) {
+exports.getUserInfoByUserId = function(email, callback) {
   const sql = `
     SELECT profile_picture, status
     FROM users

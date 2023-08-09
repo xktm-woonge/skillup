@@ -5,7 +5,7 @@ const responseFormatter = require('../utils/responseFormatter');
 
 exports.get_userInfo = function(req, res) {
   // 토큰에서 추출한 사용자 ID를 사용
-  const userId = req.body.email;
+  const userId = req.userId;
 
   // 사용자의 프로필 정보 가져오기
   dbManager.getUserInfoByUserId(userId, (error, userInfo) => {

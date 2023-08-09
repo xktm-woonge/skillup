@@ -7,8 +7,11 @@ from view.templates import ChattingWindow
 # from view.templates import NotificationsListWidget, FriendListWidget, ChatListWidget, ProfileSettingWidget
 
 class ChattingController(QObject):
-    def __init__(self, token, api_thread):
+    def __init__(self, data, token, api_thread):
         super().__init__()
+        self.userInfo = data['userInfo']
+        self.friendsInfo = data['friendsInfo']
+        self.conversations = data['conversations']
         self.token = token
         self.api_thread = api_thread
 
@@ -73,13 +76,13 @@ class ChattingController(QObject):
 
 
         # 온라인 상태 설정
-        if self.status == 'online':
+        if self.userInfo['status'] == 'online':
             self.chatting_window.status_label.setStyleSheet("QLabel { background-color: green; border-radius: 5px; }")
         else:
             self.chatting_window.status_label.setStyleSheet("QLabel { background-color: gray; border-radius: 5px; }")
 
     def load_profile_picture(self):
-        url = QUrl(self.profile_img_url)
+        url = QUrl(self.userInfo['profile_img_url'])
         request = QNetworkRequest(url)
         self.manager = QNetworkAccessManager()
         reply = self.manager.get(request)
