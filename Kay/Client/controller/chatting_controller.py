@@ -15,9 +15,6 @@ class ChattingController(QObject):
         self.token = token
         self.api_thread = api_thread
 
-        # self.profile_img_url = data['user']['profile_img_url']
-        # self.status = data['user']['status']
-
         self.chatting_window = ChattingWindow()
         self.set_user_info()
         self.chatting_window.show()
