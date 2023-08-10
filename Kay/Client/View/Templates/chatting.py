@@ -58,15 +58,13 @@ class ChattingWindow(QWidget):
         self.connect_slot()
 
     def initUI(self):
-        hbox = QHBoxLayout()
-        hbox.setContentsMargins(0, 0, 0, 0)
-        hbox.setSpacing(0)
 
         # Side Bar
-        side_bar = SidebarWidget(self)
-        side_bar.setObjectName('sidebar')
+        self.sidebar = SidebarWidget(self)
+        self.sidebar.setObjectName('sidebar')
+        self.sidebar.setGeometry(0, 0, self.sidebar_width, self.height)
 
-        side_layout = QVBoxLayout(side_bar)
+        side_layout = QVBoxLayout(self.sidebar)
         side_layout.setContentsMargins(0, 0, 0, 0)  # Side layout border gap removal
         side_layout.setSpacing(0)  # Gap removal between widgets inside side layout
 
@@ -118,18 +116,23 @@ class ChattingWindow(QWidget):
         self.setup_button.setObjectName('setup_button')
 
         self.notification_label = QLabel('알림', self)
+        self.notification_label.setObjectName('notification_label')
         self.sidebar_labels.append(self.notification_label)
 
         self.friend_list_label = QLabel('친구 목록', self)
+        self.friend_list_label.setObjectName('friend_list_label')
         self.sidebar_labels.append(self.friend_list_label)
 
         self.chat_window_label = QLabel('대화 내용', self)
+        self.chat_window_label.setObjectName('chat_window_label')
         self.sidebar_labels.append(self.chat_window_label)
 
         self.profile_setting_label = QLabel('내 정보', self)
+        self.profile_setting_label.setObjectName('profile_setting_label')
         self.sidebar_labels.append(self.profile_setting_label)
 
         self.setup_label = QLabel('설정', self)
+        self.setup_label.setObjectName('setup_label')
         self.sidebar_labels.append(self.setup_label)
 
         # Notification button with label
@@ -165,30 +168,24 @@ class ChattingWindow(QWidget):
         side_layout.addLayout(setup_hbox)
 
         # Middle Area
-        middle_area_widget = QWidget()
-        middle_area_widget.setFixedSize(self.middle_width, self.height)
-        middle_area_widget.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
-        self.middle_area = QVBoxLayout(middle_area_widget)
+        self.middle_area_widget = QWidget(self)
+        self.middle_area_widget.setGeometry(50, 0, self.middle_width, self.height)
+        self.middle_area = QVBoxLayout(self.middle_area_widget)
         self.middle_area.setContentsMargins(0, 0, 0, 0)  # Middle layout border gap removal
         self.middle_area.setSpacing(0)  # Gap removal between widgets inside middle layout
         middle_label = QLabel('Middle Area', self)
         self.middle_area.addWidget(middle_label)
 
         # Chat Screen
-        right_area_widget = QWidget()
-        self.right_area = QVBoxLayout(right_area_widget)
-        right_area_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.right_area_widget = QWidget(self)
+        self.right_area_widget.setGeometry(50 + self.middle_width, 0, self.right_width, self.height)
+        self.right_area = QVBoxLayout(self.right_area_widget)
+        self.right_area_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.right_area.setContentsMargins(0, 0, 0, 0)  # Chat screen layout border gap removal
         self.right_area.setSpacing(0)  # Gap removal between widgets inside chat screen layout
         chat_label = QLabel('Chat Screen', self)
         self.right_area.addWidget(chat_label)
 
-
-        hbox.addWidget(side_bar)
-        hbox.addWidget(middle_area_widget)
-        hbox.addWidget(right_area_widget)
-
-        self.setLayout(hbox)
         self._setStyle()
 
         self.setWindowTitle('WeChat Style')
@@ -242,6 +239,28 @@ class ChattingWindow(QWidget):
         button.setStyleSheet("background-color: rgb(79, 42, 184);")
 
         self.currentButton = button
+
+    def enterEvent(self, event):
+        self.sidebar.raise_()  # Make sure sidebar is above other widgets
+        QWidget.enterEvent(self, event)
+
+    def leaveEvent(self, event):
+        self.sidebar.raise_()  # Make sure sidebar is above other widgets
+        QWidget.leaveEvent(self, event)
+
+    def resizeEvent(self, event):
+        height = event.size().height()
+
+        # 사이드바의 높이를 현재 창의 높이와 일치시킵니다.
+        self.sidebar.setFixedHeight(height)
+
+        # Middle Area의 높이를 현재 창의 높이와 일치시킵니다.
+        self.middle_area_widget.setFixedHeight(height)
+
+        # Chat Screen의 높이를 현재 창의 높이와 일치시킵니다.
+        self.right_area_widget.setFixedHeight(height)
+
+        super().resizeEvent(event)  # 이벤트의 부모 처리를 호출합니다.
 
     def expandSidebar(self):
         for label in self.sidebar_labels:
