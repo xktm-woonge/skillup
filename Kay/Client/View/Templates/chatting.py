@@ -40,6 +40,7 @@ class ButtonLabelWidget(QWidget):
         super().__init__(parent)
         self.button = button
         self.label = label
+        self.original_icon = QIcon(self.button.property('icon_path'))  # Save the original icon
 
         layout = QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)  # Remove layout border gap
@@ -51,10 +52,16 @@ class ButtonLabelWidget(QWidget):
 
     def enterEvent(self, event):
         self.setStyleSheet("background-color: rgb(79, 42, 184);")
+        icon_path = self.button.property('icon_path')
+        white_icon = change_svg_color(icon_path, "#FFFFFF")  # 흰색으로 변경
+        self.button.setIcon(white_icon)
+        self.label.setStyleSheet("color: white;")
         QWidget.enterEvent(self, event)
 
     def leaveEvent(self, event):
+        self.button.setIcon(self.original_icon)  # Restore the original icon
         self.setStyleSheet("")
+        self.label.setStyleSheet("")
         QWidget.leaveEvent(self, event)
 
 
@@ -230,32 +237,6 @@ class ChattingWindow(QWidget):
         self.notification_button.clicked.connect(self.handleButtonClicked)
         self.friend_list_button.clicked.connect(self.handleButtonClicked)
         self.chat_window_button.clicked.connect(self.handleButtonClicked)
-
-    def change_svg_color(self, path, color):
-        tree = ElementTree.parse(path)
-        root = tree.getroot()
-
-        # SVG의 네임스페이스 정의
-        namespaces = {'ns': 'http://www.w3.org/2000/svg'}
-
-        for element in root.findall(".//ns:path", namespaces):
-            element.attrib['fill'] = color  # 직접 'fill' 속성을 설정합니다.
-
-        # 변환된 XML을 문자열로 변환
-        xml = ElementTree.tostring(root, encoding='unicode')
-
-        renderer = QSvgRenderer()
-        renderer.load(bytearray(xml.encode('utf-8')))
-
-        image = QImage(35, 35, QImage.Format_ARGB32)
-        image.fill(Qt.transparent)
-
-        painter = QPainter(image)
-        renderer.render(painter)
-        painter.end()
-
-        pixmap = QPixmap.fromImage(image)
-        return QIcon(pixmap)
         
     def handleButtonClicked(self):
         button = self.sender()
@@ -267,7 +248,7 @@ class ChattingWindow(QWidget):
             self.currentButton.setStyleSheet("")
 
         icon_path = button.property('icon_path')
-        clicked_icon = self.change_svg_color(icon_path, "#FFFFFF")  # 흰색으로 변경
+        clicked_icon = change_svg_color(icon_path, "#FFFFFF")  # 흰색으로 변경
         button.setIcon(clicked_icon)
         button.setStyleSheet("background-color: rgb(79, 42, 184);")
 
@@ -322,6 +303,32 @@ class ChattingWindow(QWidget):
 
         # 移动窗口
         self.move(x, y)
+        
+def change_svg_color(path, color):
+    tree = ElementTree.parse(path)
+    root = tree.getroot()
+
+    # SVG의 네임스페이스 정의
+    namespaces = {'ns': 'http://www.w3.org/2000/svg'}
+
+    for element in root.findall(".//ns:path", namespaces):
+        element.attrib['fill'] = color  # 직접 'fill' 속성을 설정합니다.
+
+    # 변환된 XML을 문자열로 변환
+    xml = ElementTree.tostring(root, encoding='unicode')
+
+    renderer = QSvgRenderer()
+    renderer.load(bytearray(xml.encode('utf-8')))
+
+    image = QImage(35, 35, QImage.Format_ARGB32)
+    image.fill(Qt.transparent)
+
+    painter = QPainter(image)
+    renderer.render(painter)
+    painter.end()
+
+    pixmap = QPixmap.fromImage(image)
+    return QIcon(pixmap)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
