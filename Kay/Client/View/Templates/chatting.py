@@ -51,15 +51,17 @@ class ButtonLabelWidget(QWidget):
         self.setLayout(layout)
 
     def enterEvent(self, event):
+        if self.button != self.parent().parent().profile_setting_button:
+            icon_path = self.button.property('icon_path')
+            white_icon = change_svg_color(icon_path, "#FFFFFF")  # 흰색으로 변경
+            self.button.setIcon(white_icon)
         self.setStyleSheet("background-color: rgb(79, 42, 184);")
-        icon_path = self.button.property('icon_path')
-        white_icon = change_svg_color(icon_path, "#FFFFFF")  # 흰색으로 변경
-        self.button.setIcon(white_icon)
         self.label.setStyleSheet("color: white;")
         QWidget.enterEvent(self, event)
 
     def leaveEvent(self, event):
-        self.button.setIcon(self.original_icon)  # Restore the original icon
+        if self.button != self.parent().parent().profile_setting_button:
+            self.button.setIcon(self.original_icon)  # Restore the original icon
         self.setStyleSheet("")
         self.label.setStyleSheet("")
         QWidget.leaveEvent(self, event)
@@ -197,7 +199,7 @@ class ChattingWindow(QWidget):
 
         # Profile setting button
         self.profile_setting_button_label_widget = ButtonLabelWidget(
-            self.profile_setting_button, self.profile_setting_label)
+            self.profile_setting_button, self.profile_setting_label, self)
         side_layout.addWidget(self.profile_setting_button_label_widget)
 
         # Add widgets to the side layout
