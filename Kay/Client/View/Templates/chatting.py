@@ -7,9 +7,16 @@ from PyQt5.QtGui import QIcon, QPixmap, QImage, QPainter
 from PyQt5.QtSvg import QSvgRenderer
 from PyQt5.Qt import QSize, QSizePolicy
 from xml.etree import ElementTree
-import re
 from pathlib import Path
 import sys
+
+try:
+    from utils import *
+except ImportError:
+    import sys
+    from pathlib import Path
+    sys.path.append(str(Path(__file__).parents[2]))
+    from utils import *
 
 
 class SidebarWidget(QWidget):
@@ -62,6 +69,9 @@ class ChattingWindow(QWidget):
 
         self.sidebar_icon_size = (30, 30)
         self.sidebar_button_size = (50, 50)
+        
+        self.font = get_NotoSan_font()
+        self.font.setPointSize(12)
 
         # Keep track of the current selected button
         self.currentButton = None
@@ -138,23 +148,28 @@ class ChattingWindow(QWidget):
         self.profile_setting_button.setObjectName('profile_setting_button')
         self.setup_button.setObjectName('setup_button')
 
-        self.notification_label = QLabel('알림', self)
+        self.notification_label = QLabel('  알림', self)
+        self.notification_label.setFont(self.font)
         self.notification_label.setObjectName('notification_label')
         self.sidebar_labels.append(self.notification_label)
 
-        self.friend_list_label = QLabel('친구 목록', self)
+        self.friend_list_label = QLabel('  친구 목록', self)
+        self.friend_list_label.setFont(self.font)
         self.friend_list_label.setObjectName('friend_list_label')
         self.sidebar_labels.append(self.friend_list_label)
 
-        self.chat_window_label = QLabel('대화 내용', self)
+        self.chat_window_label = QLabel('  대화 내용', self)
+        self.chat_window_label.setFont(self.font)
         self.chat_window_label.setObjectName('chat_window_label')
         self.sidebar_labels.append(self.chat_window_label)
 
-        self.profile_setting_label = QLabel('내 정보', self)
+        self.profile_setting_label = QLabel('  내 정보', self)
+        self.profile_setting_label.setFont(self.font)
         self.profile_setting_label.setObjectName('profile_setting_label')
         self.sidebar_labels.append(self.profile_setting_label)
 
-        self.setup_label = QLabel('설정', self)
+        self.setup_label = QLabel('  설정', self)
+        self.setup_label.setFont(self.font)
         self.setup_label.setObjectName('setup_label')
         self.sidebar_labels.append(self.setup_label)
 
