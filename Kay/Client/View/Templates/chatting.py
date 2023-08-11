@@ -28,6 +28,29 @@ class SidebarWidget(QWidget):
         QWidget.leaveEvent(self, event)
 
 
+class ButtonLabelWidget(QWidget):
+    def __init__(self, button, label, parent=None):
+        super().__init__(parent)
+        self.button = button
+        self.label = label
+
+        layout = QHBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)  # Remove layout border gap
+        layout.setSpacing(0)                    # Remove gap between widgets inside the layout
+        layout.addWidget(button)
+        layout.addWidget(label)
+
+        self.setLayout(layout)
+
+    def enterEvent(self, event):
+        self.setStyleSheet("background-color: rgb(79, 42, 184);")
+        QWidget.enterEvent(self, event)
+
+    def leaveEvent(self, event):
+        self.setStyleSheet("")
+        QWidget.leaveEvent(self, event)
+
+
 class ChattingWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -136,36 +159,31 @@ class ChattingWindow(QWidget):
         self.sidebar_labels.append(self.setup_label)
 
         # Notification button with label
-        notification_hbox = QHBoxLayout()
-        notification_hbox.addWidget(self.notification_button)
-        notification_hbox.addWidget(self.notification_label)
-        side_layout.addLayout(notification_hbox)
+        self.notification_button_label_widget = ButtonLabelWidget(
+            self.notification_button, self.notification_label)
+        side_layout.addWidget(self.notification_button_label_widget)
 
         # Friend list button with label
-        friend_list_hbox = QHBoxLayout()
-        friend_list_hbox.addWidget(self.friend_list_button)
-        friend_list_hbox.addWidget(self.friend_list_label)
-        side_layout.addLayout(friend_list_hbox)
+        self.friend_list_button_label_widget = ButtonLabelWidget(
+            self.friend_list_button, self.friend_list_label)
+        side_layout.addWidget(self.friend_list_button_label_widget)
 
         # Chat window button with label
-        chat_window_hbox = QHBoxLayout()
-        chat_window_hbox.addWidget(self.chat_window_button)
-        chat_window_hbox.addWidget(self.chat_window_label)
-        side_layout.addLayout(chat_window_hbox)
+        self.chat_window_button_label_widget = ButtonLabelWidget(
+            self.chat_window_button, self.chat_window_label)
+        side_layout.addWidget(self.chat_window_button_label_widget)
 
         # Profile setting button
-        profile_setting_hbox = QHBoxLayout()
-        profile_setting_hbox.addWidget(self.profile_setting_button)
-        profile_setting_hbox.addWidget(self.profile_setting_label)
-        side_layout.addLayout(profile_setting_hbox)
+        self.profile_setting_button_label_widget = ButtonLabelWidget(
+            self.profile_setting_button, self.profile_setting_label)
+        side_layout.addWidget(self.profile_setting_button_label_widget)
 
         # Add widgets to the side layout
         side_layout.addStretch(1)
 
-        setup_hbox = QHBoxLayout()
-        setup_hbox.addWidget(self.setup_button)
-        setup_hbox.addWidget(self.setup_label)
-        side_layout.addLayout(setup_hbox)
+        self.setup_button_label_widget = ButtonLabelWidget(
+            self.setup_button, self.setup_label)
+        side_layout.addWidget(self.setup_button_label_widget)
 
         # Middle Area
         self.middle_area_widget = QWidget(self)
