@@ -42,6 +42,9 @@ class ButtonLabelWidget(QWidget):
         self.label = label
         self.original_icon = QIcon(self.button.property('icon_path'))  # Save the original icon
 
+        # 이렇게 연결
+        self.button.clicked.connect(self.handleButtonClicked)
+
         layout = QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)  # Remove layout border gap
         layout.setSpacing(0)                    # Remove gap between widgets inside the layout
@@ -50,6 +53,9 @@ class ButtonLabelWidget(QWidget):
 
         self.setLayout(layout)
 
+    def handleButtonClicked(self):
+        self.parent().parent().handleButtonClicked(self.button)
+
     def enterEvent(self, event):
         if self.button != self.parent().parent().profile_setting_button:
             icon_path = self.button.property('icon_path')
@@ -57,6 +63,7 @@ class ButtonLabelWidget(QWidget):
             self.button.setIcon(white_icon)
         self.setStyleSheet("background-color: rgb(79, 42, 184);")
         self.label.setStyleSheet("color: white;")
+        self.setCursor(Qt.PointingHandCursor)  # 손모양 커서로 변경
         QWidget.enterEvent(self, event)
 
     def leaveEvent(self, event):
@@ -64,6 +71,7 @@ class ButtonLabelWidget(QWidget):
             self.button.setIcon(self.original_icon)  # Restore the original icon
         self.setStyleSheet("")
         self.label.setStyleSheet("")
+        self.setCursor(Qt.ArrowCursor)  # 일반 화살표 커서로 변경
         QWidget.leaveEvent(self, event)
 
 
@@ -236,13 +244,14 @@ class ChattingWindow(QWidget):
         self.show()
 
     def connect_slot(self):
-        self.notification_button.clicked.connect(self.handleButtonClicked)
-        self.friend_list_button.clicked.connect(self.handleButtonClicked)
-        self.chat_window_button.clicked.connect(self.handleButtonClicked)
-        
-    def handleButtonClicked(self):
-        button = self.sender()
+        # self.notification_button_label_widget.clicked.connect(self.handleButtonClicked)
+        # self.friend_list_button_label_widget.clicked.connect(self.handleButtonClicked)
+        # self.chat_window_button_label_widget.clicked.connect(self.handleButtonClicked)
+        pass
 
+        
+    def handleButtonClicked(self, button):
+        # 여기서는 'self.sender()'를 사용하지 않습니다. 버튼이 인자로 전달됩니다.
         if self.currentButton is not None:
             icon_path = self.currentButton.property('icon_path')
             icon = QIcon(icon_path)
