@@ -262,6 +262,10 @@ class ChattingWindow(QWidget):
         clicked_icon = change_svg_color(icon_path, "#FFFFFF")  # 흰색으로 변경
         button.setIcon(clicked_icon)
         button.setStyleSheet("background-color: rgb(79, 42, 184);")
+        
+        # 사이드바 너비를 축소
+        self.sidebar.setFixedWidth(50)
+        self.collapseSidebar()
 
         self.currentButton = button
 
