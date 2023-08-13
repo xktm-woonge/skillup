@@ -1,9 +1,8 @@
-# ./model/client_model.py
+# ./model/realtime_communication.py
 
 import socket
 import threading
 import time
-import json
 
 try:
     from utils import *

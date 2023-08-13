@@ -3,7 +3,16 @@
 from PyQt5.QtCore import Qt, QUrl, QSize, QObject, pyqtSlot
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest
-from view.templates import ChattingWindow
+
+try:
+    from utils import *
+    from view.templates import ChattingWindow
+except ImportError:
+    import sys
+    from pathlib import Path
+    sys.path.append(str(Path(__file__).parents[1]))
+    from utils import *
+    from view.templates import ChattingWindow
 # from view.templates import NotificationsListWidget, FriendListWidget, ChatListWidget, ProfileSettingWidget
 
 class ChattingController(QObject):
@@ -94,7 +103,7 @@ class ChattingController(QObject):
             self.chatting_window.profile_setting_button.setIconSize(icon_size)
             self.chatting_window.profile_setting_button.setIcon(QIcon(profile_pic_resized))
         else:
-            print("Failed to load image!")
+            clmn.HLOG.warning("Failed to load image!")
 
     def _clear_middle_right_areas(self):
         # Clear widgets in middle_area and right_area

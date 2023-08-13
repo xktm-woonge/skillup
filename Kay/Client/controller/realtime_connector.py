@@ -3,13 +3,13 @@
 from PyQt5.QtCore import QThread, pyqtSignal
 
 try:
-    from model.realtime_communication import RealtimeClient
+    from model import *
     from utils import *
 except ImportError:
     import sys
     from pathlib import Path
     sys.path.append(str(Path(__file__).parents[1]))
-    from model.realtime_communication import RealtimeClient
+    from model import *
     from utils import *
 
 
@@ -18,7 +18,7 @@ class RealtimeThread(QThread):
 
     def __init__(self):
         super().__init__()
-        self.realtime_client = RealtimeClient('localhost', 8000, self.handle_message_received)
+        self.realtime_client = RealTimeClient('localhost', 8000, self.handle_message_received)
 
     def run(self):
         self.realtime_client.connect()
