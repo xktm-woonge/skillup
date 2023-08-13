@@ -20,6 +20,11 @@ except ImportError:
 
 
 class SidebarWidget(QWidget):
+    """사이드바 넓이를 조절하는 class
+
+    Args:
+        QWidget (_type_): _description_
+    """
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setFixedWidth(50)
@@ -36,6 +41,11 @@ class SidebarWidget(QWidget):
 
 
 class ButtonLabelWidget(QWidget):
+    """사이드바내 버튼과 레이블을 하나로 묶은 class
+
+    Args:
+        QWidget (_type_): _description_
+    """
     def __init__(self, button, label, parent=None):
         super().__init__(parent)
         self.button = button
@@ -57,6 +67,13 @@ class ButtonLabelWidget(QWidget):
         self.parent().parent().handleButtonClicked(self.button)
 
     def enterEvent(self, event):
+        if self.parent().parent().currentButton:
+            self.parent().parent().currentButton.setStyleSheet("") 
+            if self.parent().parent().currentButton != self.parent().parent().profile_setting_button:
+                currentButton_iconPath = self.parent().parent().currentButton.property('icon_path')
+                black_icon = change_svg_color(currentButton_iconPath, "#000000")
+                self.parent().parent().currentButton.setIcon(black_icon)
+            
         if self.button != self.parent().parent().profile_setting_button:
             icon_path = self.button.property('icon_path')
             white_icon = change_svg_color(icon_path, "#FFFFFF")  # 흰색으로 변경
@@ -67,11 +84,20 @@ class ButtonLabelWidget(QWidget):
         QWidget.enterEvent(self, event)
 
     def leaveEvent(self, event):
-        if self.button != self.parent().parent().profile_setting_button:
+        if (self.button != self.parent().parent().profile_setting_button and
+            self.button != self.parent().parent().currentButton):
             self.button.setIcon(self.original_icon)  # Restore the original icon
+                
         self.setStyleSheet("")
         self.label.setStyleSheet("")
         self.setCursor(Qt.ArrowCursor)  # 일반 화살표 커서로 변경
+        
+        if (self.parent().parent().currentButton and
+            self.parent().parent().currentButton != self.parent().parent().profile_setting_button):
+            currentButton_iconPath = self.parent().parent().currentButton.property('icon_path')
+            white_icon = change_svg_color(currentButton_iconPath, "#FFFFFF")
+            self.parent().parent().currentButton.setIcon(white_icon)
+            self.parent().parent().currentButton.setStyleSheet("background-color: rgb(79, 42, 184);")
         QWidget.leaveEvent(self, event)
 
 
@@ -104,8 +130,6 @@ class ChattingWindow(QWidget):
         self.chat_window_label.hide()
         self.profile_setting_label.hide()
         self.setup_label.hide()
-
-        self.connect_slot()
 
     def initUI(self):
 
@@ -242,30 +266,24 @@ class ChattingWindow(QWidget):
         self.setGeometry(300, 300, 1250, 600)  # Adjusted as per your requirement
         self.setMinimumSize(QSize(1250, 600))
         self.show()
-
-    def connect_slot(self):
-        # self.notification_button_label_widget.clicked.connect(self.handleButtonClicked)
-        # self.friend_list_button_label_widget.clicked.connect(self.handleButtonClicked)
-        # self.chat_window_button_label_widget.clicked.connect(self.handleButtonClicked)
-        pass
-
         
     def handleButtonClicked(self, button):
-        # 여기서는 'self.sender()'를 사용하지 않습니다. 버튼이 인자로 전달됩니다.
-        if self.currentButton is not None:
-            icon_path = self.currentButton.property('icon_path')
-            icon = QIcon(icon_path)
-            self.currentButton.setIcon(icon)
-            self.currentButton.setStyleSheet("")
+        if button != self.profile_setting_button:
+            if self.currentButton is not None:
+                icon_path = self.currentButton.property('icon_path')
+                icon = QIcon(icon_path)
+                self.currentButton.setIcon(icon)
+                self.currentButton.setStyleSheet("")
 
-        icon_path = button.property('icon_path')
-        clicked_icon = change_svg_color(icon_path, "#FFFFFF")  # 흰색으로 변경
-        button.setIcon(clicked_icon)
+            icon_path = button.property('icon_path')
+            clicked_icon = change_svg_color(icon_path, "#FFFFFF")  # 흰색으로 변경
+            button.setIcon(clicked_icon)
+        
         button.setStyleSheet("background-color: rgb(79, 42, 184);")
         
-        # 사이드바 너비를 축소
-        self.sidebar.setFixedWidth(50)
-        self.collapseSidebar()
+        # # 사이드바 너비를 축소
+        # self.sidebar.setFixedWidth(50)
+        # self.collapseSidebar()
 
         self.currentButton = button
 
