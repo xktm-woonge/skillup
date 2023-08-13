@@ -1,34 +1,14 @@
-# ./controller/realtime_connector.py
+# controller/realtime_connector.py
 
-from PyQt5.QtCore import QThread, pyqtSignal
+from model.realtime_communication import RealtimeCommunication
 
-try:
-    from model import *
-    from utils import *
-except ImportError:
-    import sys
-    from pathlib import Path
-    sys.path.append(str(Path(__file__).parents[1]))
-    from model import *
-    from utils import *
+class RealtimeConnector:
+    def __init__(self, url):
+        self.realtime_communication = RealtimeCommunication(url, self.on_message_received)
+        self.realtime_communication.start()
 
-
-class RealtimeThread(QThread):
-    message_received = pyqtSignal(str)
-
-    def __init__(self):
-        super().__init__()
-        self.realtime_client = RealTimeClient('localhost', 8000, self.handle_message_received)
-
-    def run(self):
-        self.realtime_client.connect()
+    def on_message_received(self, message):
+        print(f"Received message: {message}")
 
     def send_message(self, message):
-        self.realtime_client.send_message(message)
-
-    def handle_message_received(self, received_message):
-        # 메시지 처리 로직
-        pass
-
-    def close(self):
-        self.realtime_client.close()
+        self.realtime_communication.send_message(message)
