@@ -57,7 +57,7 @@ class ButtonLabelWidget(QWidget):
 
         layout = QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)  # Remove layout border gap
-        layout.setSpacing(0)                    # Remove gap between widgets inside the layout
+        layout.setSpacing(0)                   # Remove gap between widgets inside the layout
         layout.addWidget(button)
         layout.addWidget(label)
 
@@ -87,17 +87,19 @@ class ButtonLabelWidget(QWidget):
         if (self.button != self.parent().parent().profile_setting_button and
             self.button != self.parent().parent().currentButton):
             self.button.setIcon(self.original_icon)  # Restore the original icon
-                
-        self.setStyleSheet("")
-        self.label.setStyleSheet("")
-        self.setCursor(Qt.ArrowCursor)  # 일반 화살표 커서로 변경
         
         if (self.parent().parent().currentButton and
             self.parent().parent().currentButton != self.parent().parent().profile_setting_button):
             currentButton_iconPath = self.parent().parent().currentButton.property('icon_path')
             white_icon = change_svg_color(currentButton_iconPath, "#FFFFFF")
             self.parent().parent().currentButton.setIcon(white_icon)
+        
+        if self.parent().parent().currentButton:
             self.parent().parent().currentButton.setStyleSheet("background-color: rgb(79, 42, 184);")
+            
+        self.setStyleSheet("")
+        self.label.setStyleSheet("")
+        self.setCursor(Qt.ArrowCursor)  # 일반 화살표 커서로 변경
         QWidget.leaveEvent(self, event)
 
 
@@ -247,7 +249,7 @@ class ChattingWindow(QWidget):
         self.middle_area = QVBoxLayout(self.middle_area_widget)
         self.middle_area.setContentsMargins(0, 0, 0, 0)  # Middle layout border gap removal
         self.middle_area.setSpacing(0)  # Gap removal between widgets inside middle layout
-        middle_label = QLabel('Middle Area', self)
+        middle_label = QLabel('', self)
         self.middle_area.addWidget(middle_label)
 
         # Chat Screen
@@ -257,12 +259,12 @@ class ChattingWindow(QWidget):
         self.right_area_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.right_area.setContentsMargins(0, 0, 0, 0)  # Chat screen layout border gap removal
         self.right_area.setSpacing(0)  # Gap removal between widgets inside chat screen layout
-        chat_label = QLabel('Chat Screen', self)
+        chat_label = QLabel('', self)
         self.right_area.addWidget(chat_label)
 
         self._setStyle()
 
-        self.setWindowTitle('WeChat Style')
+        self.setWindowTitle('Chatting')
         self.setGeometry(300, 300, 1250, 600)  # Adjusted as per your requirement
         self.setMinimumSize(QSize(1250, 600))
         self.show()
