@@ -272,20 +272,18 @@ class ChattingWindow(QWidget):
     def handleButtonClicked(self, button):
         if button != self.profile_setting_button:
             if self.currentButton is not None:
+                self.currentButton.setStyleSheet("")
+                
+            if self.currentButton != self.profile_setting_button:
                 icon_path = self.currentButton.property('icon_path')
                 icon = QIcon(icon_path)
                 self.currentButton.setIcon(icon)
-                self.currentButton.setStyleSheet("")
 
             icon_path = button.property('icon_path')
             clicked_icon = change_svg_color(icon_path, "#FFFFFF")  # 흰색으로 변경
             button.setIcon(clicked_icon)
         
         button.setStyleSheet("background-color: rgb(79, 42, 184);")
-        
-        # # 사이드바 너비를 축소
-        # self.sidebar.setFixedWidth(50)
-        # self.collapseSidebar()
 
         self.currentButton = button
 

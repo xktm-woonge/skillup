@@ -22,7 +22,6 @@ class ChattingController(QObject):
         self.connect_slot()
 
     def connect_slot(self):
-        # # Connect button click signals to slots
         # self.chatting_window.notification_button.clicked.connect(self.show_notifications)
         # self.chatting_window.friend_list_button.clicked.connect(self.show_friend_list)
         # self.chatting_window.chat_window_button.clicked.connect(self.show_chats)
