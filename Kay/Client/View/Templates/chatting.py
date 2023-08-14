@@ -274,10 +274,10 @@ class ChattingWindow(QWidget):
             if self.currentButton is not None:
                 self.currentButton.setStyleSheet("")
                 
-            if self.currentButton != self.profile_setting_button:
-                icon_path = self.currentButton.property('icon_path')
-                icon = QIcon(icon_path)
-                self.currentButton.setIcon(icon)
+                if self.currentButton != self.profile_setting_button:
+                    icon_path = self.currentButton.property('icon_path')
+                    icon = QIcon(icon_path)
+                    self.currentButton.setIcon(icon)
 
             icon_path = button.property('icon_path')
             clicked_icon = change_svg_color(icon_path, "#FFFFFF")  # 흰색으로 변경
