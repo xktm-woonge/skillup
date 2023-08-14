@@ -30,7 +30,7 @@ class ChattingWindow(QWidget):
         self.right_width = 900
         self.height = 600
 
-        self.sidebar_icon_size = (30, 30)
+        self.sidebar_icon_size = (25, 25)
         self.sidebar_button_size = (50, 50)
         
         self.font = get_NotoSan_font()
@@ -187,17 +187,17 @@ class ChattingWindow(QWidget):
         self.setMinimumSize(QSize(1250, 600))
         self.show()
         
-    # def connect_slot(self):
-    #     self.chatting_window.notification_button.clicked.connect(self.show_notifications)
-    #     # self.chatting_window.friend_list_button.clicked.connect(self.show_friend_list)
-    #     # self.chatting_window.chat_window_button.clicked.connect(self.show_chats)
-    #     # self.chatting_window.profile_setting_button.clicked.connect(self.show_profile_settings)
+    def connect_slot(self):
+        self.notification_button.clicked.connect(self.show_notifications)
+        # self.chatting_window.friend_list_button.clicked.connect(self.show_friend_list)
+        # self.chatting_window.chat_window_button.clicked.connect(self.show_chats)
+        # self.chatting_window.profile_setting_button.clicked.connect(self.show_profile_settings)
 
-    # @pyqtSlot()
-    # def show_notifications(self):
-    #     self._clear_middle_right_areas()
-    #     notifications_list_widget = NotificationsListWidget()
-    #     self.chatting_window.middle_area.addWidget(notifications_list_widget)
+    @pyqtSlot()
+    def show_notifications(self):
+        self._clear_middle_right_areas()
+        notifications_list_widget = NotificationsListWidget()
+        self.middle_area.addWidget(notifications_list_widget)
         # Similarly, add a widget to the right area if needed
 
     # @pyqtSlot()
@@ -224,7 +224,7 @@ class ChattingWindow(QWidget):
     def _clear_middle_right_areas(self):
         # Clear widgets in middle_area and right_area
         for i in reversed(range(self.chatting_window.middle_area.count())): 
-            self.chatting_window.middle_area.itemAt(i).widget().setParent(None)
+            self.middle_area.itemAt(i).widget().setParent(None)
         # Do the same for the right area
         
     def handleButtonClicked(self, button):
@@ -276,7 +276,7 @@ class ChattingWindow(QWidget):
             label.hide()
 
     def _setStyle(self):
-        qss_file = QFile(f'{Path(__file__).parents[1]}/static/chatting.qss')
+        qss_file = QFile(f'{Path(__file__).parents[1]}/static/chatting_main.qss')
         qss_file.open(QFile.ReadOnly | QFile.Text)
         style_sheet = qss_file.readAll()
         self.setStyleSheet(str(style_sheet, encoding='utf-8'))

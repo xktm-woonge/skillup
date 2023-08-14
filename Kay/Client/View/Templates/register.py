@@ -250,26 +250,6 @@ class RegisterWindow(QWidget):
         else:
             return False
 
-    # def hideLastCharacter(self):
-    #     password = self.passwordField.text()
-    #     encrypted_text = '●' * len(password)
-    #     self.passwordField.setText(encrypted_text)  # 设置所有字符加密
-
-    #     password1 = self.passwordField.text()
-    #     password2 = self.passwordConfirmField.text()
-
-    #     if password1:
-    #         password = self.passwordField.text()
-    #         encrypted_text = '●' * len(password)
-    #         self.passwordField.setText(encrypted_text)  # 设置加密的文本
-
-    #     if password2:
-    #         password = self.passwordConfirmField.text()
-    #         encrypted_text = '●' * len(password)
-    #         self.passwordConfirmField.setText(encrypted_text)  # 设置加密的文本
-
-    #     self.timer.stop()  # 停止定时器
-
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

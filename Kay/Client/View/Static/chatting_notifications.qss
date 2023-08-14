@@ -1,0 +1,25 @@
+/* chatting_notifications.qss */
+
+#header {
+    background-color: rgb(79, 42, 184); /* 지정한 보라색으로 변경합니다. */
+}
+
+QLabel#header_label {
+    font-size: 13px;
+    color: white;
+}
+
+QSlider::groove:horizontal {
+    height: 20px;
+    border-radius: 10px;
+    background: rgb(79, 42, 184);
+    border: 2px solid white;
+}
+
+QSlider::handle:horizontal {
+    width: 18px;
+    height: 18px;
+    border-radius: 9px;
+    background: white;
+    margin: -1px 0;
+}
