@@ -10,16 +10,16 @@ QLabel#header_label {
 }
 
 QSlider::groove:horizontal {
-    height: 20px;
-    border-radius: 10px;
+    height: 10px;  /* 기존보다 작은 높이 */
+    border-radius: 5px;  /* border-radius도 더 작게 설정 */
     background: rgb(79, 42, 184);
     border: 2px solid white;
 }
 
 QSlider::handle:horizontal {
-    width: 18px;
-    height: 18px;
-    border-radius: 9px;
+    width: 8px;   /* 핸들의 너비를 작게 설정 */
+    height: 8px;  /* 핸들의 높이를 작게 설정 */
+    border-radius: 4px; /* border-radius도 더 작게 설정 */
     background: white;
-    margin: -1px 0;
+    margin: 1 1px; /* 좌우 마진을 추가해서 핸들이 groove 안에서 적절히 위치하도록 함 */
 }

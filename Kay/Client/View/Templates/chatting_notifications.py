@@ -70,12 +70,14 @@ class NotificationsListWidget(QWidget):
 
         # ON/OFF Slider
         self.toggle_slider = QSlider(Qt.Horizontal, self)
-        self.toggle_slider.setFixedSize(60, 25)
+        self.toggle_slider.setFixedWidth(25)
         self.toggle_slider.setRange(0, 1)
 
         svg_button = QPushButton("SVG")  # Replace this with your SVG button
+
         header_layout.addWidget(header_label)
         header_layout.addWidget(self.toggle_slider)
+        header_layout.addStretch(1)  # 중앙 공백 추가
         header_layout.addWidget(svg_button)
         header.setLayout(header_layout)
         layout.addWidget(header)
