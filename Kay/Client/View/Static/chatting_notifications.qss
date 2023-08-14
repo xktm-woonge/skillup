@@ -24,3 +24,7 @@ QSlider::handle:horizontal {
     background: white;
     margin: 1 1px; /* 좌우 마진을 추가해서 핸들이 groove 안에서 적절히 위치하도록 함 */
 }
+
+#more_button { 
+    border: none;
+}

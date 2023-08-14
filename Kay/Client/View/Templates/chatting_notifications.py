@@ -2,7 +2,8 @@ import sys
 from pathlib import Path
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QScrollArea, QPushButton, QHBoxLayout, QApplication, QSlider
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont, QPixmap
+from PyQt5.QtGui import QFont, QPixmap, QIcon
+from PyQt5.Qt import QSize
 
 try:
     from utils import *
@@ -58,6 +59,8 @@ class NotificationsListWidget(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         
         header_font = get_NotoSan_font()
+        self.more_icon_size = (30, 30)
+        self.more_button_size = (30, 30)
 
         # Header
         header = QWidget(self)
@@ -75,12 +78,20 @@ class NotificationsListWidget(QWidget):
         
         # self.toggle_slider.valueChanged.connect(self.on_toggle_changed)
 
-        svg_button = QPushButton("SVG")  # Replace this with your SVG button
+        more_icon_path = f'{Path(__file__).parents[1]}/static/icon/-more-horiz_90225.svg'
+        more_icon = QIcon(more_icon_path)
+        more_icon_white = change_svg_color(more_icon_path, "#FFFFFF")  # 흰색으로 변경
+        self.more_button = QPushButton()
+        self.more_button.setIcon(more_icon_white)
+        self.more_button.setIconSize(QSize(*self.more_icon_size))
+        self.more_button.setFixedSize(*self.more_button_size)
+        self.more_button.setProperty('icon_path', more_icon_path)
+        self.more_button.setObjectName('more_button')
 
         header_layout.addWidget(header_label)
         header_layout.addWidget(self.toggle_slider)
         header_layout.addStretch(1)  # 중앙 공백 추가
-        header_layout.addWidget(svg_button)
+        header_layout.addWidget(self.more_button)
         header.setLayout(header_layout)
         layout.addWidget(header)
 
