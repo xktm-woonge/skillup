@@ -7,6 +7,7 @@
 QLabel#header_label {
     font-size: 13px;
     color: white;
+    margin-bottom:2px;
 }
 
 QSlider::groove:horizontal {

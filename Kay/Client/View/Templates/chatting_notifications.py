@@ -72,6 +72,8 @@ class NotificationsListWidget(QWidget):
         self.toggle_slider = QSlider(Qt.Horizontal, self)
         self.toggle_slider.setFixedWidth(25)
         self.toggle_slider.setRange(0, 1)
+        
+        # self.toggle_slider.valueChanged.connect(self.on_toggle_changed)
 
         svg_button = QPushButton("SVG")  # Replace this with your SVG button
 
@@ -103,6 +105,12 @@ class NotificationsListWidget(QWidget):
         with open(f'{Path(__file__).parents[1]}/static/chatting_notifications.qss', 'r', encoding='utf-8') as file:
             qss = file.read()
             self.setStyleSheet(qss)
+            
+    # def on_toggle_changed(self, value):
+    #     if value == 0:
+    #         self.toggle_label.setText("OFF")
+    #     else:
+    #         self.toggle_label.setText("ON")
 
 
 if __name__ == "__main__":
