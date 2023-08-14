@@ -1,106 +1,24 @@
-# ./view/templates/chatting.py
+# ./view/templates/chatting_main.py
 
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, \
-                            QHBoxLayout, QApplication, QDesktopWidget
-from PyQt5.QtCore import Qt, QFile
-from PyQt5.QtGui import QIcon, QPixmap, QImage, QPainter
-from PyQt5.QtSvg import QSvgRenderer
+                            QApplication, QDesktopWidget
+from PyQt5.QtCore import QFile, pyqtSlot
+from PyQt5.QtGui import QIcon
 from PyQt5.Qt import QSize, QSizePolicy
-from xml.etree import ElementTree
 from pathlib import Path
 import sys
 
 try:
     from utils import *
+    from view.templates.chatting_sidebar import SidebarWidget
+    from view.templates.chatting_sidebar import ButtonLabelWidget
 except ImportError:
     import sys
     from pathlib import Path
     sys.path.append(str(Path(__file__).parents[2]))
     from utils import *
-
-
-class SidebarWidget(QWidget):
-    """사이드바 넓이를 조절하는 class
-
-    Args:
-        QWidget (_type_): _description_
-    """
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.setFixedWidth(50)
-
-    def enterEvent(self, event):
-        self.setFixedWidth(150)
-        self.parent().expandSidebar()
-        QWidget.enterEvent(self, event)
-
-    def leaveEvent(self, event):
-        self.setFixedWidth(50)
-        self.parent().collapseSidebar()
-        QWidget.leaveEvent(self, event)
-
-
-class ButtonLabelWidget(QWidget):
-    """사이드바내 버튼과 레이블을 하나로 묶은 class
-
-    Args:
-        QWidget (_type_): _description_
-    """
-    def __init__(self, button, label, parent=None):
-        super().__init__(parent)
-        self.button = button
-        self.label = label
-        self.original_icon = QIcon(self.button.property('icon_path'))  # Save the original icon
-
-        # 이렇게 연결
-        self.button.clicked.connect(self.handleButtonClicked)
-
-        layout = QHBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)  # Remove layout border gap
-        layout.setSpacing(0)                   # Remove gap between widgets inside the layout
-        layout.addWidget(button)
-        layout.addWidget(label)
-
-        self.setLayout(layout)
-
-    def handleButtonClicked(self):
-        self.parent().parent().handleButtonClicked(self.button)
-
-    def enterEvent(self, event):
-        if self.parent().parent().currentButton:
-            self.parent().parent().currentButton.setStyleSheet("") 
-            if self.parent().parent().currentButton != self.parent().parent().profile_setting_button:
-                currentButton_iconPath = self.parent().parent().currentButton.property('icon_path')
-                black_icon = change_svg_color(currentButton_iconPath, "#000000")
-                self.parent().parent().currentButton.setIcon(black_icon)
-            
-        if self.button != self.parent().parent().profile_setting_button:
-            icon_path = self.button.property('icon_path')
-            white_icon = change_svg_color(icon_path, "#FFFFFF")  # 흰색으로 변경
-            self.button.setIcon(white_icon)
-        self.setStyleSheet("background-color: rgb(79, 42, 184);")
-        self.label.setStyleSheet("color: white;")
-        self.setCursor(Qt.PointingHandCursor)  # 손모양 커서로 변경
-        QWidget.enterEvent(self, event)
-
-    def leaveEvent(self, event):
-        if (self.button != self.parent().parent().profile_setting_button and
-            self.button != self.parent().parent().currentButton):
-            self.button.setIcon(self.original_icon)  # Restore the original icon
-        
-        if (self.parent().parent().currentButton and
-            self.parent().parent().currentButton != self.parent().parent().profile_setting_button):
-            currentButton_iconPath = self.parent().parent().currentButton.property('icon_path')
-            white_icon = change_svg_color(currentButton_iconPath, "#FFFFFF")
-            self.parent().parent().currentButton.setIcon(white_icon)
-        
-        if self.parent().parent().currentButton:
-            self.parent().parent().currentButton.setStyleSheet("background-color: rgb(79, 42, 184);")
-            
-        self.setStyleSheet("")
-        self.label.setStyleSheet("")
-        self.setCursor(Qt.ArrowCursor)  # 일반 화살표 커서로 변경
-        QWidget.leaveEvent(self, event)
+    from view.templates.chatting_sidebar import SidebarWidget
+    from view.templates.chatting_sidebar import ButtonLabelWidget
 
 
 class ChattingWindow(QWidget):
@@ -269,6 +187,46 @@ class ChattingWindow(QWidget):
         self.setMinimumSize(QSize(1250, 600))
         self.show()
         
+    # def connect_slot(self):
+    #     self.chatting_window.notification_button.clicked.connect(self.show_notifications)
+    #     # self.chatting_window.friend_list_button.clicked.connect(self.show_friend_list)
+    #     # self.chatting_window.chat_window_button.clicked.connect(self.show_chats)
+    #     # self.chatting_window.profile_setting_button.clicked.connect(self.show_profile_settings)
+
+    # @pyqtSlot()
+    # def show_notifications(self):
+    #     self._clear_middle_right_areas()
+    #     notifications_list_widget = NotificationsListWidget()
+    #     self.chatting_window.middle_area.addWidget(notifications_list_widget)
+        # Similarly, add a widget to the right area if needed
+
+    # @pyqtSlot()
+    # def show_friend_list(self):
+    #     self._clear_middle_right_areas()
+    #     friend_list_widget = FriendListWidget()
+    #     self.chatting_window.middle_area.addWidget(friend_list_widget)
+    #     # Similarly, add a widget to the right area if needed
+
+    # @pyqtSlot()
+    # def show_chats(self):
+    #     self._clear_middle_right_areas()
+    #     chat_list_widget = ChatListWidget()
+    #     self.chatting_window.middle_area.addWidget(chat_list_widget)
+    #     # Similarly, add a widget to the right area if needed
+
+    # @pyqtSlot()
+    # def show_profile_settings(self):
+    #     self._clear_middle_right_areas()
+    #     profile_setting_widget = ProfileSettingWidget()
+    #     self.chatting_window.middle_area.addWidget(profile_setting_widget)
+    #     # Similarly, add a widget to the right area if needed
+    
+    def _clear_middle_right_areas(self):
+        # Clear widgets in middle_area and right_area
+        for i in reversed(range(self.chatting_window.middle_area.count())): 
+            self.chatting_window.middle_area.itemAt(i).widget().setParent(None)
+        # Do the same for the right area
+        
     def handleButtonClicked(self, button):
         if button != self.profile_setting_button:
             if self.currentButton is not None:
@@ -337,31 +295,6 @@ class ChattingWindow(QWidget):
         # 移动窗口
         self.move(x, y)
         
-def change_svg_color(path, color):
-    tree = ElementTree.parse(path)
-    root = tree.getroot()
-
-    # SVG의 네임스페이스 정의
-    namespaces = {'ns': 'http://www.w3.org/2000/svg'}
-
-    for element in root.findall(".//ns:path", namespaces):
-        element.attrib['fill'] = color  # 직접 'fill' 속성을 설정합니다.
-
-    # 변환된 XML을 문자열로 변환
-    xml = ElementTree.tostring(root, encoding='unicode')
-
-    renderer = QSvgRenderer()
-    renderer.load(bytearray(xml.encode('utf-8')))
-
-    image = QImage(35, 35, QImage.Format_ARGB32)
-    image.fill(Qt.transparent)
-
-    painter = QPainter(image)
-    renderer.render(painter)
-    painter.end()
-
-    pixmap = QPixmap.fromImage(image)
-    return QIcon(pixmap)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

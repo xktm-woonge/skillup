@@ -64,6 +64,12 @@ class ChattingController(QObject):
     #     profile_setting_widget = ProfileSettingWidget()
     #     self.chatting_window.middle_area.addWidget(profile_setting_widget)
     #     # Similarly, add a widget to the right area if needed
+    
+    def _clear_middle_right_areas(self):
+        # Clear widgets in middle_area and right_area
+        for i in reversed(range(self.chatting_window.middle_area.count())): 
+            self.chatting_window.middle_area.itemAt(i).widget().setParent(None)
+        # Do the same for the right area
         
     def set_user_info(self):
         # 프로필 사진 설정
@@ -104,12 +110,6 @@ class ChattingController(QObject):
             self.chatting_window.profile_setting_button.setIcon(QIcon(profile_pic_resized))
         else:
             clmn.HLOG.warning("Failed to load image!")
-
-    def _clear_middle_right_areas(self):
-        # Clear widgets in middle_area and right_area
-        for i in reversed(range(self.chatting_window.middle_area.count())): 
-            self.chatting_window.middle_area.itemAt(i).widget().setParent(None)
-        # Do the same for the right area
 
 
 # class ChattingController(QObject):
