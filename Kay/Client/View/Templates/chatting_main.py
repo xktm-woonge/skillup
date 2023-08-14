@@ -1,7 +1,7 @@
 # ./view/templates/chatting_main.py
 
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, \
-                            QApplication, QDesktopWidget
+                            QApplication, QDesktopWidget, QStackedWidget
 from PyQt5.QtCore import QFile, pyqtSlot
 from PyQt5.QtGui import QIcon
 from PyQt5.Qt import QSize, QSizePolicy
@@ -12,6 +12,7 @@ try:
     from utils import *
     from view.templates.chatting_sidebar import SidebarWidget
     from view.templates.chatting_sidebar import ButtonLabelWidget
+    from view.templates.chatting_notifications import NotificationsListWidget
 except ImportError:
     import sys
     from pathlib import Path
@@ -19,6 +20,7 @@ except ImportError:
     from utils import *
     from view.templates.chatting_sidebar import SidebarWidget
     from view.templates.chatting_sidebar import ButtonLabelWidget
+    from view.templates.chatting_notifications import NotificationsListWidget
 
 
 class ChattingWindow(QWidget):
@@ -55,8 +57,11 @@ class ChattingWindow(QWidget):
 
         # Side Bar
         self.sidebar = SidebarWidget(self)
-        self.sidebar.setObjectName('sidebar')
         self.sidebar.setGeometry(0, 0, self.sidebar_width, self.height)
+        # Sidebar 스타일
+        self.sidebar.setStyleSheet("""
+            background-color: white;
+        """)
 
         side_layout = QVBoxLayout(self.sidebar)
         side_layout.setContentsMargins(0, 0, 0, 0)  # Side layout border gap removal
@@ -160,25 +165,22 @@ class ChattingWindow(QWidget):
         self.setup_button_label_widget = ButtonLabelWidget(
             self.setup_button, self.setup_label)
         side_layout.addWidget(self.setup_button_label_widget)
-
+        
         # Middle Area
-        self.middle_area_widget = QWidget(self)
+        self.middle_area_widget = QStackedWidget(self)
         self.middle_area_widget.setGeometry(50, 0, self.middle_width, self.height)
-        self.middle_area = QVBoxLayout(self.middle_area_widget)
-        self.middle_area.setContentsMargins(0, 0, 0, 0)  # Middle layout border gap removal
-        self.middle_area.setSpacing(0)  # Gap removal between widgets inside middle layout
-        middle_label = QLabel('', self)
-        self.middle_area.addWidget(middle_label)
-
-        # Chat Screen
-        self.right_area_widget = QWidget(self)
+        
+        # 예시로 NotificationsListWidget을 추가합니다.
+        # 다른 위젯도 여기에 추가하면 됩니다.
+        self.notifications_list_widget = NotificationsListWidget()
+        self.middle_area_widget.addWidget(self.notifications_list_widget)
+        
+        # Right Area
+        self.right_area_widget = QStackedWidget(self)
         self.right_area_widget.setGeometry(50 + self.middle_width, 0, self.right_width, self.height)
-        self.right_area = QVBoxLayout(self.right_area_widget)
-        self.right_area_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.right_area.setContentsMargins(0, 0, 0, 0)  # Chat screen layout border gap removal
-        self.right_area.setSpacing(0)  # Gap removal between widgets inside chat screen layout
-        chat_label = QLabel('', self)
-        self.right_area.addWidget(chat_label)
+        
+        # 예시로 QLabel을 추가합니다. 실제로 필요한 위젯을 추가하세요.
+        self.right_area_widget.addWidget(QLabel('Right Area', self))
 
         self._setStyle()
 
@@ -189,43 +191,17 @@ class ChattingWindow(QWidget):
         
     def connect_slot(self):
         self.notification_button.clicked.connect(self.show_notifications)
-        # self.chatting_window.friend_list_button.clicked.connect(self.show_friend_list)
-        # self.chatting_window.chat_window_button.clicked.connect(self.show_chats)
-        # self.chatting_window.profile_setting_button.clicked.connect(self.show_profile_settings)
 
     @pyqtSlot()
     def show_notifications(self):
         self._clear_middle_right_areas()
-        notifications_list_widget = NotificationsListWidget()
-        self.middle_area.addWidget(notifications_list_widget)
+        self.middle_area_widget.setCurrentWidget(self.notifications_list_widget)
         # Similarly, add a widget to the right area if needed
-
-    # @pyqtSlot()
-    # def show_friend_list(self):
-    #     self._clear_middle_right_areas()
-    #     friend_list_widget = FriendListWidget()
-    #     self.chatting_window.middle_area.addWidget(friend_list_widget)
-    #     # Similarly, add a widget to the right area if needed
-
-    # @pyqtSlot()
-    # def show_chats(self):
-    #     self._clear_middle_right_areas()
-    #     chat_list_widget = ChatListWidget()
-    #     self.chatting_window.middle_area.addWidget(chat_list_widget)
-    #     # Similarly, add a widget to the right area if needed
-
-    # @pyqtSlot()
-    # def show_profile_settings(self):
-    #     self._clear_middle_right_areas()
-    #     profile_setting_widget = ProfileSettingWidget()
-    #     self.chatting_window.middle_area.addWidget(profile_setting_widget)
-    #     # Similarly, add a widget to the right area if needed
     
     def _clear_middle_right_areas(self):
         # Clear widgets in middle_area and right_area
-        for i in reversed(range(self.chatting_window.middle_area.count())): 
-            self.middle_area.itemAt(i).widget().setParent(None)
-        # Do the same for the right area
+        self.middle_area_widget.setCurrentIndex(-1)
+        self.right_area_widget.setCurrentIndex(-1)
         
     def handleButtonClicked(self, button):
         if button != self.profile_setting_button:
