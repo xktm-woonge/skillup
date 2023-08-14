@@ -75,11 +75,11 @@ class NotificationsListWidget(QWidget):
         self.toggle_slider = QSlider(Qt.Horizontal, self)
         self.toggle_slider.setFixedWidth(25)
         self.toggle_slider.setRange(0, 1)
+        self.toggle_slider.setObjectName("toggle_slider")
         
         # self.toggle_slider.valueChanged.connect(self.on_toggle_changed)
 
         more_icon_path = f'{Path(__file__).parents[1]}/static/icon/-more-horiz_90225.svg'
-        more_icon = QIcon(more_icon_path)
         more_icon_white = change_svg_color(more_icon_path, "#FFFFFF")  # 흰색으로 변경
         self.more_button = QPushButton()
         self.more_button.setIcon(more_icon_white)
@@ -97,25 +97,23 @@ class NotificationsListWidget(QWidget):
 
         # Notifications Area
         notifications_area = QWidget(self)
-        notifications_layout = QVBoxLayout()
+        self.notifications_layout = QVBoxLayout()
         scroll_area = QScrollArea()
         scroll_area.setWidgetResizable(True)
         scroll_area.setWidget(notifications_area)
-        notifications_area.setLayout(notifications_layout)
+        notifications_area.setLayout(self.notifications_layout)
         layout.addWidget(scroll_area)
 
         self.setLayout(layout)
         self._setStyle()
-
-        # Example Notifications
-        for i in range(6):
-            notification = NotificationWidget('image.png', 'Title', 'Content Content Content Content Content', '2023-08-13')
-            notifications_layout.addWidget(notification)
             
     def _setStyle(self):
         with open(f'{Path(__file__).parents[1]}/static/chatting_notifications.qss', 'r', encoding='utf-8') as file:
             qss = file.read()
             self.setStyleSheet(qss)
+            
+        self.more_button.setCursor(Qt.PointingHandCursor)
+        self.toggle_slider.setCursor(Qt.PointingHandCursor)
             
     # def on_toggle_changed(self, value):
     #     if value == 0:
@@ -127,5 +125,9 @@ class NotificationsListWidget(QWidget):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = NotificationsListWidget()
+    # Example Notifications
+    for i in range(10):
+        notification = NotificationWidget('image.png', 'Title', 'Content Content Content Content Content', '2023-08-13')
+        window.notifications_layout.addWidget(notification)
     window.show()
     sys.exit(app.exec_())

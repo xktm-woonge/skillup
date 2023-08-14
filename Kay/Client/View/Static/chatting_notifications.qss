@@ -12,7 +12,7 @@ QLabel#header_label {
 
 QSlider::groove:horizontal {
     height: 10px;  /* 기존보다 작은 높이 */
-    border-radius: 5px;  /* border-radius도 더 작게 설정 */
+    border-radius: 6px;  /* border-radius도 더 작게 설정 */
     background: rgb(79, 42, 184);
     border: 2px solid white;
 }
