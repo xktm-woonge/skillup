@@ -29,15 +29,9 @@ QSlider::handle:horizontal {
     border: none;
 }
 
-NotificationWidget {
-    background-color: white;
-    border-radius: 5px;
-    padding: 10px;
-    margin: 5px 0;
-}
-
 #base_widget{
     background-color: white;
+    border-radius: 10px;
 }
 
 NotificationWidget QLabel {

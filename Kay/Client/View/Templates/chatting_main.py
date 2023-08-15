@@ -48,9 +48,10 @@ class ChattingWindow(QWidget):
         # 다른 위젯도 여기에 추가하면 됩니다.
         self.notifications_list_widget = NotificationsListWidget()
         for i in range(10):
-            notification = NotificationWidget('image.png', 'Title', 'Content Content Content Content Content', '2023-08-13')
+            notification = NotificationWidget(r'D:\g_Project\2023_skillup_chatting\Kay\Client\view\static\img\sidebar_friends_icon.png', '시스템 알림', 
+                                          '테스트테스트테스트테스트asdgsd', '2023-08-13 20:00:00')
             self.notifications_list_widget.notifications_layout.addWidget(notification)
-        
+        x
         self.middle_area_widget.addWidget(self.notifications_list_widget)
         
         # Right Area

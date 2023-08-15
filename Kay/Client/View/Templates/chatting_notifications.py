@@ -41,7 +41,7 @@ class NotificationWidget(QWidget):
         super(NotificationWidget, self).__init__(parent)
         self.delete_icon_size = (15, 15)
 
-        self.setFixedSize(275, 130)
+        self.setFixedSize(285, 130)
         
         # Create a base widget
         base_widget = QWidget(self)
@@ -175,6 +175,8 @@ class NotificationsListWidget(QWidget):
         # Notifications Area
         notifications_area = QWidget(self)
         self.notifications_layout = QVBoxLayout()
+        self.notifications_layout.setSpacing(0)  # 여기서 5는 원하는 간격(픽셀)입니다.
+
         self.scroll_area = QScrollArea()
         self.scroll_area.setWidgetResizable(True)
         self.scroll_area.setWidget(notifications_area)
