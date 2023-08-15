@@ -2,7 +2,7 @@ import sys
 from pathlib import Path
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QScrollArea, QPushButton, QHBoxLayout, QApplication, QSlider
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFontMetrics, QPixmap, QPainter, QPainterPath, QColor
+from PyQt5.QtGui import QPixmap, QPainter, QPainterPath, QColor, QIcon
 from PyQt5.Qt import QSize
 
 try:
@@ -28,9 +28,8 @@ class ElidedLabel(QLabel):
         return super(ElidedLabel, self).resizeEvent(event)
 
     def elideText(self):
-        # If the text length is more than 30 characters, trim and elide it
         if len(self.text()) > 30:
-            trimmed_text = self.text()[:30]
+            trimmed_text = self.text()[:27]  # 27자까지만 표시
             elided = trimmed_text + "..."
             super(ElidedLabel, self).setText(elided)
         else:
@@ -40,8 +39,10 @@ class ElidedLabel(QLabel):
 class NotificationWidget(QWidget):
     def __init__(self, image_path, title, content, date, parent=None):
         super(NotificationWidget, self).__init__(parent)
-        self.setFixedSize(280, 130)
+        self.delete_icon_size = (15, 15)
 
+        self.setFixedSize(275, 130)
+        
         # Create a base widget
         base_widget = QWidget(self)
         base_widget.setObjectName('base_widget')
@@ -58,19 +59,21 @@ class NotificationWidget(QWidget):
         text_layout = QVBoxLayout()
         title_label = ElidedLabel(title, base_widget)  # QLabel 대신 ElidedLabel 사용
         title_label.setObjectName("title_label")
-        title_label.setFont(font.NOTOSAN_FONT)
+        title_label.setFont(font.NOTOSAN_FONT_BOLD)
+        
+        # 내용이 15자를 초과할 경우 줄바꿈 처리
+        if len(content) > 15:
+            content = content[:15] + "\n" + content[15:]
         
         content_label = ElidedLabel(content, base_widget)  # QLabel 대신 ElidedLabel 사용
         content_label.setWordWrap(True)
-        font_metric = QFontMetrics(font.NOTOSAN_FONT)
-        content_label.setMaximumHeight(font_metric.height() * 2 + 5)  # Setting max height for two lines of text
         content_label.setAlignment(Qt.AlignTop)
         content_label.setObjectName("content_label")
-        content_label.setFont(font.NOTOSAN_FONT)
+        content_label.setFont(font.NOTOSAN_FONT_REGULAR)
         
         date_label = QLabel(date, base_widget)
         date_label.setObjectName("date_label")
-        date_label.setFont(font.NOTOSAN_FONT)
+        date_label.setFont(font.NOTOSAN_FONT_MEDIUM)
         
         text_layout.addWidget(title_label, alignment=Qt.AlignTop)
         text_layout.addWidget(content_label, alignment=Qt.AlignTop)
@@ -78,9 +81,15 @@ class NotificationWidget(QWidget):
         layout.addLayout(text_layout)
 
         # Delete Button
-        delete_button = QPushButton('X', base_widget)
-        delete_button.setFixedSize(15, 15)
-        layout.addWidget(delete_button, alignment=Qt.AlignTop)
+        delete_icon_path = f'{Path(__file__).parents[1]}/static/icon/-clear_90704.svg'
+        delete_icon = QIcon(delete_icon_path)
+        self.delete_button = QPushButton()
+        self.delete_button.setIcon(delete_icon)
+        self.delete_button.setIconSize(QSize(*self.delete_icon_size))
+        self.delete_button.setFixedSize(*self.delete_icon_size)
+        self.delete_button.setObjectName("delete_button")
+        self.delete_button.setCursor(Qt.PointingHandCursor)
+        layout.addWidget(self.delete_button, alignment=Qt.AlignTop)
 
         self._setStyle()
 
@@ -122,7 +131,7 @@ class NotificationsListWidget(QWidget):
         self.height = 600
         self.more_icon_size = (30, 30)
         self.more_button_size = (30, 30)
-        header_font = font.NOTOSAN_FONT
+        header_font = font.NOTOSAN_FONT_BOLD
         
         self.setFixedWidth(self.middle_width)
         self.setMinimumHeight(self.height)
@@ -198,7 +207,7 @@ if __name__ == "__main__":
     # Example Notifications
     for i in range(10):
         notification = NotificationWidget(r'D:\g_Project\2023_skillup_chatting\Kay\Client\view\static\img\sidebar_friends_icon.png', '시스템 알림', 
-                                          '테스트테스트테스트테스트   테스트테스트테스트테스트  테스트테스트테스트테스트  테스트테스트테스트테스트', '2023-08-13')
+                                          '테스트테스트테스트테스트asdgsd', '2023-08-13 20:00:00')
         window.notifications_layout.addWidget(notification)
     window.show()
     sys.exit(app.exec_())

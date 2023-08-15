@@ -29,33 +29,15 @@ QSlider::handle:horizontal {
     border: none;
 }
 
-NotificationsListWidget QScrollBar:vertical {
-    width: 5px;
-    background: transparent;
-    border: none;
-}
-
-NotificationsListWidget QScrollBar::handle:vertical {
-    background: #aaa; 
-    border: none;
-    min-height: 10px;
-    border-radius: 2.5px;
-}
-
-NotificationsListWidget QScrollBar::add-page:vertical, NotificationsListWidget QScrollBar::sub-page:vertical {
-    background: none; 
-    border-radius: 2.5px;
-}
-
-NotificationsListWidget QScrollBar::add-line:vertical, NotificationsListWidget QScrollBar::sub-line:vertical {
-    height: 0px;
-}
-
 NotificationWidget {
     background-color: white;
     border-radius: 5px;
     padding: 10px;
     margin: 5px 0;
+}
+
+#base_widget{
+    background-color: white;
 }
 
 NotificationWidget QLabel {
@@ -64,7 +46,6 @@ NotificationWidget QLabel {
 
 NotificationWidget QLabel[objectName="title_label"] {
     font-size: 12px;
-    font-weight: bold;
     color: black;
     max-height: 15px;
     text-overflow: ellipsis;
@@ -72,7 +53,7 @@ NotificationWidget QLabel[objectName="title_label"] {
 
 NotificationWidget QLabel[objectName="content_label"] {
     font-size: 12px;
-    max-height: 30px;
+    max-height: 35px;
     text-overflow: ellipsis;
     color: black;
 }
@@ -97,6 +78,7 @@ NotificationsListWidget QScrollBar:vertical {
 NotificationsListWidget QScrollBar::handle:vertical {
     background-color: #aaa;
     min-height: 20px;
+    border: none;
     border-radius: 2.5px;
 }
 
@@ -109,9 +91,15 @@ NotificationsListWidget QScrollBar::sub-line:vertical {
 
 NotificationsListWidget QScrollBar::add-page:vertical, 
 NotificationsListWidget QScrollBar::sub-page:vertical {
-    background: transparent;
+    background: none;
+    border-radius: 2.5px;
 }
 
-#base_widget{
-    background-color: white;
+QPushButton#delete_button {
+    background: transparent;
+    border: none;
+}
+
+QScrollArea {
+    border: none;
 }

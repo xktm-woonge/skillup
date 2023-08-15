@@ -37,7 +37,7 @@ class Sidebar(QWidget):
 
         self.setObjectName("sidebar")
 
-        self.font = font.NOTOSAN_FONT
+        self.font = font.NOTOSAN_FONT_BOLD
         self.font.setPointSize(11)
         self.currentButton = None
 

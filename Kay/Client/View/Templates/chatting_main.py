@@ -47,9 +47,9 @@ class ChattingWindow(QWidget):
         # 예시로 NotificationsListWidget을 추가합니다.
         # 다른 위젯도 여기에 추가하면 됩니다.
         self.notifications_list_widget = NotificationsListWidget()
-        # for i in range(10):
-        #     notification = NotificationWidget('image.png', 'Title', 'Content Content Content Content Content', '2023-08-13')
-        #     self.notifications_list_widget.notifications_layout.addWidget(notification)
+        for i in range(10):
+            notification = NotificationWidget('image.png', 'Title', 'Content Content Content Content Content', '2023-08-13')
+            self.notifications_list_widget.notifications_layout.addWidget(notification)
         
         self.middle_area_widget.addWidget(self.notifications_list_widget)
         

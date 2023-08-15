@@ -79,7 +79,7 @@ class RegisterWindow(QWidget):
         self.backButton.move(30, 30)
 
         titleLabel = QLabel('회원가입', self)
-        titleLabel.setFont(font.NOTOSAN_FONT)
+        titleLabel.setFont(font.NOTOSAN_FONT_BOLD)
         titleLabel.setObjectName('title')
         titleLabel.move(160, 24)
 
