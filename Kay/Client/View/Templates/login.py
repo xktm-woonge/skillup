@@ -55,7 +55,7 @@ class LoginWindow(QWidget):
         # 제목 레이블
         titleLabel = QLabel('로그인')
         titleLabel.setObjectName('title')
-        titleLabel.setFont(get_NotoSan_font())
+        titleLabel.setFont(font.NOTOSAN_FONT)
         titleLabel.setAlignment(Qt.AlignCenter)  # 가운데 정렬
         layout.addWidget(titleLabel)
         

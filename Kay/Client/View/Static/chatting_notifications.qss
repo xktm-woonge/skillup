@@ -1,7 +1,7 @@
 /* chatting_notifications.qss */
 
 #header {
-    background-color: rgb(79, 42, 184); /* 지정한 보라색으로 변경합니다. */
+    background-color: rgb(79, 42, 184);
 }
 
 QLabel#header_label {
@@ -11,18 +11,18 @@ QLabel#header_label {
 }
 
 QSlider::groove:horizontal {
-    height: 10px;  /* 기존보다 작은 높이 */
-    border-radius: 6px;  /* border-radius도 더 작게 설정 */
+    height: 10px;
+    border-radius: 6px;
     background: rgb(79, 42, 184);
     border: 2px solid white;
 }
 
 QSlider::handle:horizontal {
-    width: 8px;   /* 핸들의 너비를 작게 설정 */
-    height: 8px;  /* 핸들의 높이를 작게 설정 */
-    border-radius: 4px; /* border-radius도 더 작게 설정 */
+    width: 8px;
+    height: 8px;
+    border-radius: 4px;
     background: white;
-    margin: 1 1px; /* 좌우 마진을 추가해서 핸들이 groove 안에서 적절히 위치하도록 함 */
+    margin: 1 1px;
 }
 
 #more_button { 
@@ -49,4 +49,69 @@ NotificationsListWidget QScrollBar::add-page:vertical, NotificationsListWidget Q
 
 NotificationsListWidget QScrollBar::add-line:vertical, NotificationsListWidget QScrollBar::sub-line:vertical {
     height: 0px;
+}
+
+NotificationWidget {
+    background-color: white;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 5px 0;
+}
+
+NotificationWidget QLabel {
+    border: none;
+}
+
+NotificationWidget QLabel[objectName="title_label"] {
+    font-size: 12px;
+    font-weight: bold;
+    color: black;
+    max-height: 15px;
+    text-overflow: ellipsis;
+}
+
+NotificationWidget QLabel[objectName="content_label"] {
+    font-size: 12px;
+    max-height: 30px;
+    text-overflow: ellipsis;
+    color: black;
+}
+
+NotificationWidget QLabel[objectName="date_label"] {
+    font-size: 10px;
+    color: gray;
+}
+
+NotificationWidget QLabel[objectName="img_label"] {
+    border-radius: 5px;
+}
+
+/* ScrollBar Customization */
+NotificationsListWidget QScrollBar:vertical {
+    border: none;
+    background: transparent;
+    width: 5px;
+    margin: 0;
+}
+
+NotificationsListWidget QScrollBar::handle:vertical {
+    background-color: #aaa;
+    min-height: 20px;
+    border-radius: 2.5px;
+}
+
+NotificationsListWidget QScrollBar::add-line:vertical,
+NotificationsListWidget QScrollBar::sub-line:vertical {
+    border: none;
+    background: none;
+    height: 0;
+}
+
+NotificationsListWidget QScrollBar::add-page:vertical, 
+NotificationsListWidget QScrollBar::sub-page:vertical {
+    background: transparent;
+}
+
+#base_widget{
+    background-color: white;
 }

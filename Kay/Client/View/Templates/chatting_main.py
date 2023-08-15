@@ -128,5 +128,6 @@ class ChattingWindow(QWidget):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+    font.Init()
     ex = ChattingWindow()
     sys.exit(app.exec_())

@@ -2,10 +2,15 @@ from PyQt5.QtGui import QFont, QFontDatabase
 from pathlib import Path
 
 
+NOTOSAN_FONT = None
+
+def Init():
+    global NOTOSAN_FONT
+    NOTOSAN_FONT = get_NotoSan_font()
+
 def get_NotoSan_font():
     # 폰트 파일 경로
     font_path = f'{str(Path(__file__).parents[1])}/view/static/noto-sans-kr/Noto_Sans_KR/NotoSansKR-Bold.otf'
-    # font_path = r'D:\Skillup\2023_chatting\Kay\Client\view\static\noto-sans-kr\Noto_Sans_KR\NotoSansKR-Bold.otf'
 
     # 폰트 등록
     font_id = QFontDatabase.addApplicationFont(font_path)

@@ -2,7 +2,7 @@ import sys
 from pathlib import Path
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QScrollArea, QPushButton, QHBoxLayout, QApplication, QSlider
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont, QPixmap, QIcon
+from PyQt5.QtGui import QFontMetrics, QPixmap
 from PyQt5.Qt import QSize
 
 try:
@@ -12,43 +12,81 @@ except ImportError:
     from pathlib import Path
     sys.path.append(str(Path(__file__).parents[2]))
     from utils import *
+    
+    
+# 이 클래스는 QLabel을 상속하여 텍스트가 넘치면 '...'로 줄이는 기능을 구현합니다.
+class ElidedLabel(QLabel):
+    def __init__(self, *args, **kwargs):
+        super(ElidedLabel, self).__init__(*args, **kwargs)
+
+    def setText(self, text):
+        super(ElidedLabel, self).setText(text)
+        self.elideText()
+
+    def resizeEvent(self, event):
+        self.elideText()
+        return super(ElidedLabel, self).resizeEvent(event)
+
+    def elideText(self):
+        metrics = QFontMetrics(self.font())
+        # Elide the text and set the '...' version as the display text
+        elided = metrics.elidedText(self.text(), Qt.ElideRight, self.width())
+        super(ElidedLabel, self).setText(elided)
+        
 
 class NotificationWidget(QWidget):
     def __init__(self, image_path, title, content, date, parent=None):
         super(NotificationWidget, self).__init__(parent)
-        self.setFixedSize(290, 85)
+        self.setFixedSize(270, 100)
 
-        layout = QHBoxLayout()
-        layout.setSpacing(10)
+        # Create a base widget
+        base_widget = QWidget(self)
+        base_widget.setObjectName('base_widget')
+        layout = QHBoxLayout(base_widget)
 
         # Image
-        img_label = QLabel(self)
+        img_label = QLabel(base_widget)
         pixmap = QPixmap(image_path)
-        img_label.setPixmap(pixmap.scaled(50, 50, Qt.KeepAspectRatio))
+        img_label.setPixmap(pixmap.scaled(40, 40, Qt.KeepAspectRatio))
         layout.addWidget(img_label)
 
         # Text Area
         text_layout = QVBoxLayout()
-        title_label = QLabel(title)
-        title_label.setFont(QFont('Arial', 10))
-        content_label = QLabel(content)
-        content_label.setFont(QFont('Arial', 8))
+        title_label = ElidedLabel(title, base_widget)  # QLabel 대신 ElidedLabel 사용
+        title_label.setObjectName("title_label")
+        title_label.setFont(font.NOTOSAN_FONT)
+        
+        content_label = ElidedLabel(content, base_widget)  # QLabel 대신 ElidedLabel 사용
         content_label.setWordWrap(True)
         content_label.setMaximumHeight(34)
         content_label.setScaledContents(True)
-        date_label = QLabel(date)
-        date_label.setFont(QFont('Arial', 8))
+        content_label.setObjectName("content_label")
+        content_label.setFont(font.NOTOSAN_FONT)
+        
+        date_label = QLabel(date, base_widget)
+        date_label.setObjectName("date_label")
+        date_label.setFont(font.NOTOSAN_FONT)
+        
         text_layout.addWidget(title_label)
         text_layout.addWidget(content_label)
         text_layout.addWidget(date_label)
         layout.addLayout(text_layout)
 
         # Delete Button
-        delete_button = QPushButton('X', self)
+        delete_button = QPushButton('X', base_widget)
         delete_button.setFixedSize(15, 15)
         layout.addWidget(delete_button)
 
-        self.setLayout(layout)
+        self._setStyle()
+
+        main_layout = QVBoxLayout(self)
+        main_layout.addWidget(base_widget)
+        self.setLayout(main_layout)
+        
+    def _setStyle(self):
+        with open(f'{Path(__file__).parents[1]}/static/chatting_notifications.qss', 'r', encoding='utf-8') as file:
+            qss = file.read()
+            self.setStyleSheet(qss)
 
 
 class NotificationsListWidget(QWidget):
@@ -60,7 +98,7 @@ class NotificationsListWidget(QWidget):
         self.height = 600
         self.more_icon_size = (30, 30)
         self.more_button_size = (30, 30)
-        header_font = get_NotoSan_font()
+        header_font = font.NOTOSAN_FONT
         
         self.setFixedWidth(self.middle_width)
         self.setMinimumHeight(self.height)
@@ -131,10 +169,12 @@ class NotificationsListWidget(QWidget):
 
 if __name__ == "__main__": 
     app = QApplication(sys.argv)
+    font.Init()
     window = NotificationsListWidget()
     # Example Notifications
     for i in range(10):
-        notification = NotificationWidget('image.png', 'Title', 'Content Content Content Content Content', '2023-08-13')
+        notification = NotificationWidget(r'D:\g_Project\2023_skillup_chatting\Kay\Client\view\static\img\true.png', 'Title', 
+                                          'Content Content Content Content ContentContent Content Content Content Content', '2023-08-13')
         window.notifications_layout.addWidget(notification)
     window.show()
     sys.exit(app.exec_())

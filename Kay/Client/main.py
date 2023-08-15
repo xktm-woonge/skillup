@@ -8,6 +8,7 @@ from utils import *
 if __name__ == '__main__':
     app = QApplication([])
     clmn.Init()
+    font.Init()
     base_url = "http://127.0.0.1:3000"
     api_thread = RestApiThread(base_url)
     login_controller = LoginController(api_thread)
