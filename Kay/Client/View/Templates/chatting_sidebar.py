@@ -29,6 +29,12 @@ class Sidebar(QWidget):
         self.setFixedWidth(self.sidebar_width_collapsed)
         self.setMinimumHeight(self.height)
         
+        # 사이드바 전체 배경색 설정
+        self.setAutoFillBackground(True)
+        p = self.palette()
+        p.setColor(self.backgroundRole(), Qt.white)
+        self.setPalette(p)
+
         self.setObjectName("sidebar")
 
         self.font = get_NotoSan_font()
