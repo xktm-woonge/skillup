@@ -10,17 +10,15 @@ import sys
 
 try:
     from utils import *
-    from view.templates.chatting_sidebar import SidebarWidget
     from view.templates.chatting_sidebar import Sidebar
-    from view.templates.chatting_notifications import NotificationsListWidget
+    from view.templates.chatting_notifications import NotificationsListWidget, NotificationWidget
 except ImportError:
     import sys
     from pathlib import Path
     sys.path.append(str(Path(__file__).parents[2]))
     from utils import *
-    from view.templates.chatting_sidebar import SidebarWidget
     from view.templates.chatting_sidebar import Sidebar
-    from view.templates.chatting_notifications import NotificationsListWidget
+    from view.templates.chatting_notifications import NotificationsListWidget, NotificationWidget
 
 
 class ChattingWindow(QWidget):
@@ -44,16 +42,21 @@ class ChattingWindow(QWidget):
 
         # Middle Area
         self.middle_area_widget = QStackedWidget(self)
-        self.middle_area_widget.setGeometry(50, 0, self.middle_width, self.height)
+        self.middle_area_widget.setGeometry(self.sidebar_width, 0, self.middle_width, self.height)
         
         # 예시로 NotificationsListWidget을 추가합니다.
         # 다른 위젯도 여기에 추가하면 됩니다.
         self.notifications_list_widget = NotificationsListWidget()
+        # for i in range(10):
+        #     notification = NotificationWidget('image.png', 'Title', 'Content Content Content Content Content', '2023-08-13')
+        #     self.notifications_list_widget.notifications_layout.addWidget(notification)
+        
         self.middle_area_widget.addWidget(self.notifications_list_widget)
         
         # Right Area
         self.right_area_widget = QStackedWidget(self)
-        self.right_area_widget.setGeometry(50 + self.middle_width, 0, self.right_width, self.height)
+        self.right_area_widget.setGeometry(
+            self.sidebar_width + self.middle_width, 0, self.right_width, self.height)
         
         # 예시로 QLabel을 추가합니다. 실제로 필요한 위젯을 추가하세요.
         self.right_area_widget.addWidget(QLabel('Right Area', self))

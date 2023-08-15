@@ -54,17 +54,23 @@ class NotificationWidget(QWidget):
 class NotificationsListWidget(QWidget):
     def __init__(self, parent=None):
         super(NotificationsListWidget, self).__init__(parent)
-        self.setFixedSize(300, 600)
+        
+        self.middle_width = 300
+        header_height = 50
+        self.height = 600
+        self.more_icon_size = (30, 30)
+        self.more_button_size = (30, 30)
+        header_font = get_NotoSan_font()
+        
+        self.setFixedWidth(self.middle_width)
+        self.setMinimumHeight(self.height)
+        
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         
-        header_font = get_NotoSan_font()
-        self.more_icon_size = (30, 30)
-        self.more_button_size = (30, 30)
-
         # Header
         header = QWidget(self)
-        header.setFixedSize(300, 50)
+        header.setFixedSize(self.middle_width, header_height)
         header.setObjectName("header")
         header_layout = QHBoxLayout()
         header_label = QLabel(" 알림")
@@ -77,7 +83,7 @@ class NotificationsListWidget(QWidget):
         self.toggle_slider.setRange(0, 1)
         self.toggle_slider.setObjectName("toggle_slider")
         
-        # self.toggle_slider.valueChanged.connect(self.on_toggle_changed)
+        self.toggle_slider.valueChanged.connect(self.on_toggle_changed)
 
         more_icon_path = f'{Path(__file__).parents[1]}/static/icon/-more-horiz_90225.svg'
         more_icon_white = change_svg_color(more_icon_path, "#FFFFFF")  # 흰색으로 변경
@@ -98,31 +104,32 @@ class NotificationsListWidget(QWidget):
         # Notifications Area
         notifications_area = QWidget(self)
         self.notifications_layout = QVBoxLayout()
-        scroll_area = QScrollArea()
-        scroll_area.setWidgetResizable(True)
-        scroll_area.setWidget(notifications_area)
+        self.scroll_area = QScrollArea()
+        self.scroll_area.setWidgetResizable(True)
+        self.scroll_area.setWidget(notifications_area)
         notifications_area.setLayout(self.notifications_layout)
-        layout.addWidget(scroll_area)
+        layout.addWidget(self.scroll_area)
 
         self.setLayout(layout)
         self._setStyle()
             
+    def on_toggle_changed(self, value):
+        pass
+        # if value == 0:
+        #     self.toggle_label.setText("OFF")
+        # else:
+        #     self.toggle_label.setText("ON")
+        
     def _setStyle(self):
         with open(f'{Path(__file__).parents[1]}/static/chatting_notifications.qss', 'r', encoding='utf-8') as file:
             qss = file.read()
             self.setStyleSheet(qss)
-            
+
         self.more_button.setCursor(Qt.PointingHandCursor)
         self.toggle_slider.setCursor(Qt.PointingHandCursor)
-            
-    # def on_toggle_changed(self, value):
-    #     if value == 0:
-    #         self.toggle_label.setText("OFF")
-    #     else:
-    #         self.toggle_label.setText("ON")
 
 
-if __name__ == "__main__":
+if __name__ == "__main__": 
     app = QApplication(sys.argv)
     window = NotificationsListWidget()
     # Example Notifications
