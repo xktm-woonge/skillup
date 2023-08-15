@@ -2,7 +2,7 @@ import sys
 from pathlib import Path
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QScrollArea, QPushButton, QHBoxLayout, QApplication, QSlider
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFontMetrics, QPixmap
+from PyQt5.QtGui import QFontMetrics, QPixmap, QPainter, QPainterPath, QColor
 from PyQt5.Qt import QSize
 
 try:
@@ -28,16 +28,19 @@ class ElidedLabel(QLabel):
         return super(ElidedLabel, self).resizeEvent(event)
 
     def elideText(self):
-        metrics = QFontMetrics(self.font())
-        # Elide the text and set the '...' version as the display text
-        elided = metrics.elidedText(self.text(), Qt.ElideRight, self.width())
-        super(ElidedLabel, self).setText(elided)
-        
+        # If the text length is more than 30 characters, trim and elide it
+        if len(self.text()) > 30:
+            trimmed_text = self.text()[:30]
+            elided = trimmed_text + "..."
+            super(ElidedLabel, self).setText(elided)
+        else:
+            super(ElidedLabel, self).setText(self.text())
+
 
 class NotificationWidget(QWidget):
     def __init__(self, image_path, title, content, date, parent=None):
         super(NotificationWidget, self).__init__(parent)
-        self.setFixedSize(270, 100)
+        self.setFixedSize(280, 130)
 
         # Create a base widget
         base_widget = QWidget(self)
@@ -46,9 +49,10 @@ class NotificationWidget(QWidget):
 
         # Image
         img_label = QLabel(base_widget)
-        pixmap = QPixmap(image_path)
-        img_label.setPixmap(pixmap.scaled(40, 40, Qt.KeepAspectRatio))
-        layout.addWidget(img_label)
+        pixmap = QPixmap(image_path).scaled(40, 40, Qt.KeepAspectRatio)  # Image scaling while keeping the aspect ratio
+        rounded_pixmap = self._getRoundedPixmap(pixmap)
+        img_label.setPixmap(rounded_pixmap)
+        layout.addWidget(img_label, alignment=Qt.AlignTop)
 
         # Text Area
         text_layout = QVBoxLayout()
@@ -58,8 +62,9 @@ class NotificationWidget(QWidget):
         
         content_label = ElidedLabel(content, base_widget)  # QLabel 대신 ElidedLabel 사용
         content_label.setWordWrap(True)
-        content_label.setMaximumHeight(34)
-        content_label.setScaledContents(True)
+        font_metric = QFontMetrics(font.NOTOSAN_FONT)
+        content_label.setMaximumHeight(font_metric.height() * 2 + 5)  # Setting max height for two lines of text
+        content_label.setAlignment(Qt.AlignTop)
         content_label.setObjectName("content_label")
         content_label.setFont(font.NOTOSAN_FONT)
         
@@ -67,21 +72,40 @@ class NotificationWidget(QWidget):
         date_label.setObjectName("date_label")
         date_label.setFont(font.NOTOSAN_FONT)
         
-        text_layout.addWidget(title_label)
-        text_layout.addWidget(content_label)
-        text_layout.addWidget(date_label)
+        text_layout.addWidget(title_label, alignment=Qt.AlignTop)
+        text_layout.addWidget(content_label, alignment=Qt.AlignTop)
+        text_layout.addWidget(date_label, alignment=Qt.AlignBottom)
         layout.addLayout(text_layout)
 
         # Delete Button
         delete_button = QPushButton('X', base_widget)
         delete_button.setFixedSize(15, 15)
-        layout.addWidget(delete_button)
+        layout.addWidget(delete_button, alignment=Qt.AlignTop)
 
         self._setStyle()
 
         main_layout = QVBoxLayout(self)
         main_layout.addWidget(base_widget)
         self.setLayout(main_layout)
+        
+    def _getRoundedPixmap(self, source_pixmap):
+        """Returns a rounded version of the input pixmap."""
+        width, height = source_pixmap.width(), source_pixmap.height()
+        # Create a new transparent pixmap with the desired size
+        target_pixmap = QPixmap(width, height)
+        target_pixmap.fill(QColor(0, 0, 0, 0))
+        
+        painter = QPainter(target_pixmap)
+        painter.setRenderHint(QPainter.Antialiasing)
+        
+        path = QPainterPath()
+        path.addRoundedRect(0, 0, width, height, 5, 5)  # The last two arguments are x and y radius
+        
+        painter.setClipPath(path)
+        painter.drawPixmap(0, 0, source_pixmap)
+        painter.end()
+        
+        return target_pixmap
         
     def _setStyle(self):
         with open(f'{Path(__file__).parents[1]}/static/chatting_notifications.qss', 'r', encoding='utf-8') as file:
@@ -173,8 +197,8 @@ if __name__ == "__main__":
     window = NotificationsListWidget()
     # Example Notifications
     for i in range(10):
-        notification = NotificationWidget(r'D:\g_Project\2023_skillup_chatting\Kay\Client\view\static\img\true.png', 'Title', 
-                                          'Content Content Content Content ContentContent Content Content Content Content', '2023-08-13')
+        notification = NotificationWidget(r'D:\g_Project\2023_skillup_chatting\Kay\Client\view\static\img\sidebar_friends_icon.png', '시스템 알림', 
+                                          '테스트테스트테스트테스트   테스트테스트테스트테스트  테스트테스트테스트테스트  테스트테스트테스트테스트', '2023-08-13')
         window.notifications_layout.addWidget(notification)
     window.show()
     sys.exit(app.exec_())
