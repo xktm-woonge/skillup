@@ -41,7 +41,7 @@ class NotificationWidget(QWidget):
         super(NotificationWidget, self).__init__(parent)
         self.delete_icon_size = (15, 15)
 
-        self.setFixedSize(285, 130)
+        self.setFixedSize(275, 130)
         
         # Create a base widget
         base_widget = QWidget(self)
