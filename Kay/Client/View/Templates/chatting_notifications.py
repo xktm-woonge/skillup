@@ -176,6 +176,10 @@ class NotificationsListWidget(QWidget):
         notifications_area = QWidget(self)
         self.notifications_layout = QVBoxLayout()
         self.notifications_layout.setSpacing(0)  # 여기서 5는 원하는 간격(픽셀)입니다.
+        
+        noMessage_label = QLabel("수신된 알림이 없습니다.")
+        self.notifications_layout.addWidget(noMessage_label)
+        self.notifications_layout.setAlignment(noMessage_label, Qt.AlignCenter)
 
         self.scroll_area = QScrollArea()
         self.scroll_area.setWidgetResizable(True)
@@ -207,9 +211,9 @@ if __name__ == "__main__":
     font.Init()
     window = NotificationsListWidget()
     # Example Notifications
-    for i in range(10):
-        notification = NotificationWidget(r'D:\g_Project\2023_skillup_chatting\Kay\Client\view\static\img\sidebar_friends_icon.png', '시스템 알림', 
-                                          '테스트테스트테스트테스트asdgsd', '2023-08-13 20:00:00')
-        window.notifications_layout.addWidget(notification)
+    # for i in range(10):
+    #     notification = NotificationWidget(r'D:\g_Project\2023_skillup_chatting\Kay\Client\view\static\img\sidebar_friends_icon.png', '시스템 알림', 
+    #                                       '테스트테스트테스트테스트asdgsd', '2023-08-13 20:00:00')
+    #     window.notifications_layout.addWidget(notification)
     window.show()
     sys.exit(app.exec_())

@@ -1,6 +1,6 @@
 # controller/realtime_connector.py
 
-from model.realtime_communication import RealtimeCommunication
+from model.websocket_communication import RealtimeCommunication
 
 class RealtimeConnector:
     def __init__(self, url):

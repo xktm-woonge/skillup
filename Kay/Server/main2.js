@@ -100,3 +100,34 @@ tcpServer.listen(tcpPort, () => {
 httpServer.listen(httpPort, () => {
     console.log(`HTTP Server listening on port ${httpPort}`);
 });
+
+
+
+
+
+// ... (이전 코드)
+
+io.on('connection', (socket) => {
+    console.log('A user connected');
+  
+    socket.on('offer', (offer) => {
+        socket.broadcast.emit('offer', offer); // Offer를 다른 클라이언트에 전송
+    });
+  
+    socket.on('answer', (answer) => {
+        socket.broadcast.emit('answer', answer); // Answer를 다른 클라이언트에 전송
+    });
+  
+    socket.on('ice-candidate', (iceCandidate) => {
+        socket.broadcast.emit('ice-candidate', iceCandidate); // ICE Candidate를 다른 클라이언트에 전송
+    });
+  
+    // 메시지 수신 및 브로드캐스팅
+    socket.on('chat message', (msg) => {
+        io.emit('chat message', msg);
+    });
+  
+    socket.on('disconnect', () => {
+        console.log('A user disconnected');
+    });
+  });
