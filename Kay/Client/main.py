@@ -9,8 +9,7 @@ if __name__ == '__main__':
     app = QApplication([])
     clmn.Init()
     font.Init()
-    base_url = "http://127.0.0.1:3000"
-    api_thread = RestApiThread(base_url)
+    api_thread = RestApiThread(RESTAPI_URL)
     login_controller = LoginController(api_thread)
 
     app.exec_()

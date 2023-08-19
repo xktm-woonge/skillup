@@ -34,12 +34,17 @@ server.listen(httpPort, () => {
 io.on('connection', (socket) => {
   console.log('A user connected');
 
-  // 메시지 수신 및 브로드캐스팅
+  // 기존의 chat message 이벤트 리스너
   socket.on('chat message', (msg) => {
-    io.emit('chat message', msg);
+      io.emit('chat message', msg);
+  });
+
+  // 공지사항 이벤트 리스너 추가
+  socket.on('send notification', (notification) => {
+      io.emit('notification', notification);
   });
 
   socket.on('disconnect', () => {
-    console.log('A user disconnected');
+      console.log('A user disconnected');
   });
 });

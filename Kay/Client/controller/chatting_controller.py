@@ -7,12 +7,14 @@ from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest
 try:
     from utils import *
     from view.templates import ChattingWindow
+    from controller.websocket_connector import WebSocketConnector
 except ImportError:
     import sys
     from pathlib import Path
     sys.path.append(str(Path(__file__).parents[1]))
     from utils import *
     from view.templates import ChattingWindow
+    from controller.websocket_connector import WebSocketConnector
 # from view.templates import NotificationsListWidget, FriendListWidget, ChatListWidget, ProfileSettingWidget
 
 class ChattingController(QObject):
@@ -22,7 +24,8 @@ class ChattingController(QObject):
         self.friendsInfo = data['friendsInfo']
         self.conversations = data['conversations']
         self.token = token
-        self.api_thread = api_thread
+        self.rest_api = api_thread
+        self.websocket_api = WebSocketConnector(WEBSOCKET_URL)
 
         self.chatting_window = ChattingWindow()
         self.set_user_info()
@@ -35,7 +38,7 @@ class ChattingController(QObject):
         # self.chatting_window.friend_list_button.clicked.connect(self.show_friend_list)
         # self.chatting_window.chat_window_button.clicked.connect(self.show_chats)
         # self.chatting_window.profile_setting_button.clicked.connect(self.show_profile_settings)
-        pass
+        self.websocket_api.
 
     # @pyqtSlot()
     # def show_notifications(self):

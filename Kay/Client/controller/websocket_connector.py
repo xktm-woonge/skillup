@@ -2,7 +2,9 @@
 
 from model.websocket_communication import RealtimeCommunication
 
-class RealtimeConnector:
+class WebSocketConnector:
+    
+    
     def __init__(self, url):
         self.realtime_communication = RealtimeCommunication(url, self.on_message_received)
         self.realtime_communication.start()
