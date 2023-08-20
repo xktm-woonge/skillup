@@ -2,13 +2,15 @@
 
 const express = require('express');
 const http = require('http');
-const socketIo = require('socket.io');
+const socketManager = require('./utils/socketManager');
 
 const config = require('./config/config.js');
+const notificationsController = require('./controller/notifications_controller');
+const notificationService = require('./services/notificationService');
 
 const app = express();
 const server = http.createServer(app); // 이 부분은 변경 없음
-const io = socketIo(server); // 이 부분은 변경 없음
+const io = socketManager.initialize(server);  // Socket.io 초기화
 const httpPort = config.httpPort;
 
 // 정적 파일 제공
@@ -26,12 +28,9 @@ app.use((err, req, res, next) => {
     res.status(500).send('Something broke!');
 });
 
-// app.listen 대신 server.listen을 사용하여 서버 시작
-server.listen(httpPort, () => {
-    console.log(`HTTP Server listening on port ${httpPort}`);
-});
-
 io.on('connection', (socket) => {
+  const user_id = socket.handshake.query.user_id;
+  socket.join(user_id);
   console.log('A user connected');
 
   // 기존의 chat message 이벤트 리스너
@@ -47,4 +46,11 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
       console.log('A user disconnected');
   });
+});
+
+notificationsController.initializeNotificationListeners(io);
+
+server.listen(httpPort, () => {
+    console.log(`HTTP Server listening on port ${httpPort}`);
+    notificationService.startNotificationService();  // 추가
 });

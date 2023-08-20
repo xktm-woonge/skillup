@@ -45,3 +45,15 @@ CREATE TABLE Messages (
     FOREIGN KEY(sender_id) REFERENCES Users(id),
     FOREIGN KEY(conversation_id) REFERENCES Conversations(id)
 );
+
+// 알림 테이블(Notifications)
+CREATE TABLE Notifications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,  -- 알림을 받는 사용자의 ID
+    type ENUM('SYSTEM', 'FRIEND_REQUEST') NOT NULL,  -- 알림의 유형
+    content TEXT NOT NULL,  -- 알림 내용
+    sender_id INT,  -- 알림을 보낸 사용자의 ID (시스템 알림의 경우 NULL)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- 알림 생성 시각
+    FOREIGN KEY(user_id) REFERENCES Users(id),
+    FOREIGN KEY(sender_id) REFERENCES Users(id)
+);

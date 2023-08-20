@@ -89,3 +89,8 @@ exports.getUserInfoByUserId = function(email, callback) {
     }
   });
 };
+
+exports.getNotificationsForUser = function(user_id, callback) {
+  const sql = `SELECT * FROM Notifications WHERE user_id = ? ORDER BY created_at DESC`;
+  pool.query(sql, [user_id], callback);
+};
