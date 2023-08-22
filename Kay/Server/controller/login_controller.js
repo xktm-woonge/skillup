@@ -74,15 +74,23 @@ exports.get_userInfo = function(req, res) {
           return res.json(responseFormatter.formatResponse('FAIL', '대화 목록을 불러올 수 없습니다.'));
         }
 
-        // 프로필 이미지를 URL로 변경
-        const profileImageUrl = `http://${serverAddr}:${httpPort}/profile_picture/${userInfo.profile_picture}`;
-        userInfo['profile_picture'] = profileImageUrl
+        // 사용자의 알림 정보 가져오기
+        dbManager.getNotificationsForUser(userId, (error, notifications) => {
+          if (error) {
+            return res.json(responseFormatter.formatResponse('FAIL', '알림 정보를 불러올 수 없습니다.'));
+          }
 
-        res.json(responseFormatter.formatResponse('SUCCESS', '정보를 성공적으로 가져왔습니다.', {
-          userInfo, // 사용자의 프로필 정보 (status, profile_picture 등)
-          friendsInfo,
-          conversations
-        }));
+          // 프로필 이미지를 URL로 변경
+          const profileImageUrl = `http://${serverAddr}:${httpPort}/profile_picture/${userInfo.profile_picture}`;
+          userInfo['profile_picture'] = profileImageUrl
+
+          res.json(responseFormatter.formatResponse('SUCCESS', '정보를 성공적으로 가져왔습니다.', {
+            userInfo, // 사용자의 프로필 정보 (status, profile_picture 등)
+            friendsInfo,
+            conversations,
+            notifications  // 사용자의 알림 정보
+          }));
+        });
       });
     });
   });

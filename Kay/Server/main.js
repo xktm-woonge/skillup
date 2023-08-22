@@ -6,7 +6,6 @@ const socketManager = require('./utils/socketManager');
 
 const config = require('./config/config.js');
 const notificationsController = require('./controller/notifications_controller');
-const notificationService = require('./services/notificationService');
 
 const app = express();
 const server = http.createServer(app); // 이 부분은 변경 없음
@@ -52,5 +51,5 @@ notificationsController.initializeNotificationListeners(io);
 
 server.listen(httpPort, () => {
     console.log(`HTTP Server listening on port ${httpPort}`);
-    notificationService.startNotificationService();  // 추가
+    // notificationService.startNotificationService();  // 추가
 });

@@ -71,13 +71,14 @@ class ChattingWindow(QWidget):
 
     @pyqtSlot()
     def show_notifications(self):
-        self._clear_middle_right_areas()
+        self.clear_middle_areas()
         self.middle_area_widget.setCurrentWidget(self.notifications_list_widget)
         # Similarly, add a widget to the right area if needed
     
-    def _clear_middle_right_areas(self):
-        # Clear widgets in middle_area and right_area
+    def clear_middle_areas(self):
         self.middle_area_widget.setCurrentIndex(-1)
+        
+    def clear_right_areas(self):
         self.right_area_widget.setCurrentIndex(-1)
 
     def enterEvent(self, event):

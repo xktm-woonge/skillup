@@ -7,6 +7,7 @@ from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest
 try:
     from utils import *
     from view.templates import ChattingWindow
+    from view.templates.chatting_notifications import NotificationWidget
     from controller.websocket_connector import WebSocketConnector
 except ImportError:
     import sys
@@ -14,6 +15,7 @@ except ImportError:
     sys.path.append(str(Path(__file__).parents[1]))
     from utils import *
     from view.templates import ChattingWindow
+    from view.templates.chatting_notifications import NotificationWidget
     from controller.websocket_connector import WebSocketConnector
 # from view.templates import NotificationsListWidget, FriendListWidget, ChatListWidget, ProfileSettingWidget
 
@@ -23,6 +25,7 @@ class ChattingController(QObject):
         self.userInfo = data['userInfo']
         self.friendsInfo = data['friendsInfo']
         self.conversations = data['conversations']
+        self.notifications = data['notifications']
         self.token = token
         self.rest_api = api_thread
         self.websocket_api = WebSocketConnector(WEBSOCKET_URL)
@@ -38,7 +41,7 @@ class ChattingController(QObject):
         # self.chatting_window.friend_list_button.clicked.connect(self.show_friend_list)
         # self.chatting_window.chat_window_button.clicked.connect(self.show_chats)
         # self.chatting_window.profile_setting_button.clicked.connect(self.show_profile_settings)
-        self.websocket_api.
+        self.websocket_api.new_notification.connect(self.add_notifications)
 
     # @pyqtSlot()
     # def show_notifications(self):
@@ -68,7 +71,19 @@ class ChattingController(QObject):
     #     self.chatting_window.middle_area.addWidget(profile_setting_widget)
     #     # Similarly, add a widget to the right area if needed
     
-    def _clear_middle_right_areas(self):
+    @pyqtSlot(dict)
+    def add_notifications(self, data):
+        # 데이터에서 필요한 정보 추출
+        image_path = data["image_path"]
+        title = data["title"]
+        content = data["content"]
+        date = data["date"]
+
+        # NotificationWidget 생성 및 추가
+        notification = NotificationWidget(image_path, title, content, date)
+        self.chatting_window.notifications_list_widget.notifications_layout.addWidget(notification)
+    
+    def _clear_middle_areas(self):
         # Clear widgets in middle_area and right_area
         for i in reversed(range(self.chatting_window.middle_area.count())): 
             self.chatting_window.middle_area.itemAt(i).widget().setParent(None)
@@ -77,17 +92,6 @@ class ChattingController(QObject):
     def set_user_info(self):
         # 프로필 사진 설정
         self.load_profile_picture()
-        # profile_pic = QPixmap(r"D:\g_Project\2023_skillup_chatting\Kay\Server\images\base_profile.png")
-    
-        # 원격 URL로부터 이미지 로드 (URL이 정상적인지 확인)
-        # profile_pic = QPixmap(self.profile_img_url)
-
-        # if profile_pic.isNull():
-        #     print("Failed to load image!")
-        # else:
-        #     profile_pic_resized = profile_pic.scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        #     self.chatting_window.profile_setting_button.setIcon(QIcon(profile_pic_resized))
-
 
         # 온라인 상태 설정
         if self.userInfo['status'] == 'online':

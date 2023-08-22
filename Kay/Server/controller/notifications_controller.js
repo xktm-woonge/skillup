@@ -2,6 +2,7 @@
 
 const dbManager = require('../model/dbManager');
 const socketManager = require('../utils/socketManager');
+const websocketSenderFormatter = require('../utils/websocketSenderFormatter');
 const io = socketManager.getIO();
 
 exports.initializeNotificationListeners = function() {
@@ -21,5 +22,6 @@ exports.initializeNotificationListeners = function() {
 };
 
 exports.sendRealtimeNotification = function(user_id, notification) {
-    io.to(user_id).emit('new_notification', notification);
+    const formattedNotification = websocketSenderFormatter.formatNotification(notification);
+    io.to(user_id).emit('new_notification', formattedNotification);
 };

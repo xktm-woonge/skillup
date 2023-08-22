@@ -1,3 +1,5 @@
+# ./view/templates/chatting_notifications.py
+
 import sys
 from pathlib import Path
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QScrollArea, QPushButton, QHBoxLayout, QApplication, QSlider
@@ -71,12 +73,19 @@ class NotificationWidget(QWidget):
         content_label.setObjectName("content_label")
         content_label.setFont(font.NOTOSAN_FONT_REGULAR)
         
+        buttons_layout = QHBoxLayout()
+        self.accept_button = QPushButton("수락", base_widget)
+        self.reject_button = QPushButton("거절", base_widget)
+        buttons_layout.addWidget(self.accept_button)
+        buttons_layout.addWidget(self.reject_button)
+        
         date_label = QLabel(date, base_widget)
         date_label.setObjectName("date_label")
         date_label.setFont(font.NOTOSAN_FONT_MEDIUM)
         
         text_layout.addWidget(title_label, alignment=Qt.AlignTop)
         text_layout.addWidget(content_label, alignment=Qt.AlignTop)
+        text_layout.addLayout(buttons_layout)
         text_layout.addWidget(date_label, alignment=Qt.AlignBottom)
         layout.addLayout(text_layout)
 
@@ -175,11 +184,11 @@ class NotificationsListWidget(QWidget):
         # Notifications Area
         notifications_area = QWidget(self)
         self.notifications_layout = QVBoxLayout()
-        self.notifications_layout.setSpacing(0)  # 여기서 5는 원하는 간격(픽셀)입니다.
+        self.notifications_layout.setSpacing(0)  
         
-        noMessage_label = QLabel("수신된 알림이 없습니다.")
-        self.notifications_layout.addWidget(noMessage_label)
-        self.notifications_layout.setAlignment(noMessage_label, Qt.AlignCenter)
+        # noMessage_label = QLabel("수신된 알림이 없습니다.")
+        # self.notifications_layout.addWidget(noMessage_label)
+        # self.notifications_layout.setAlignment(noMessage_label, Qt.AlignCenter)
 
         self.scroll_area = QScrollArea()
         self.scroll_area.setWidgetResizable(True)
@@ -211,9 +220,9 @@ if __name__ == "__main__":
     font.Init()
     window = NotificationsListWidget()
     # Example Notifications
-    # for i in range(10):
-    #     notification = NotificationWidget(r'D:\g_Project\2023_skillup_chatting\Kay\Client\view\static\img\sidebar_friends_icon.png', '시스템 알림', 
-    #                                       '테스트테스트테스트테스트asdgsd', '2023-08-13 20:00:00')
-    #     window.notifications_layout.addWidget(notification)
+    for i in range(10):
+        notification = NotificationWidget(r'D:\g_Project\2023_skillup_chatting\Kay\Client\view\static\img\sidebar_friends_icon.png', '친구 추가 요청', 
+                                          'adf@naver.com', '2023-08-13 20:00:00')
+        window.notifications_layout.addWidget(notification)
     window.show()
     sys.exit(app.exec_())
