@@ -94,3 +94,11 @@ exports.getNotificationsForUser = function(user_id, callback) {
   const sql = `SELECT * FROM Notifications WHERE user_id = ? ORDER BY created_at DESC`;
   pool.query(sql, [user_id], callback);
 };
+
+exports.insertFriendRequestNotification = function(senderId, receiverId, callback) {
+  const sql = `
+      INSERT INTO Notifications (user_id, type, content, sender_id) 
+      VALUES (?, 'FRIEND_REQUEST', 'New friend request from user '?, ?)
+  `;
+  pool.query(sql, [receiverId, senderId, senderId], callback);
+};

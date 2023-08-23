@@ -1,27 +1,26 @@
 // ./controller/notifications_controller.js
 
 const dbManager = require('../model/dbManager');
-const socketManager = require('../utils/socketManager');
-const websocketSenderFormatter = require('../utils/websocketSenderFormatter');
-const io = socketManager.getIO();
+const websocketController = require('./websocket_controller');
 
-exports.initializeNotificationListeners = function() {
-    io.on('connection', (socket) => {
-        
-        const user_id = socket.handshake.query.user_id;
+exports.handleFriendRequest = function(data, senderId, socket) {
+    const receiverId = data.friendId; // The ID of the user to whom the friend request is being sent
 
-        dbManager.getNotificationsForUser(user_id, (error, notifications) => {
-            if (error) {
-                console.error("Error fetching notifications:", error);
-                return;
-            }
+    // Insert the friend request into the Notifications table
+    dbManager.insertFriendRequestNotification(senderId, receiverId, (error) => {
+        if (error) {
+            console.error("Error inserting friend request notification:", error);
+            return socket.emit('friendRequestError', 'Failed to send friend request.');
+        }
 
-            socket.emit('notifications', notifications);
-        });
+        // Send the friend request as a realtime notification to the receiving user
+        const notification = {
+            type: 'FRIEND_REQUEST',
+            content: 'You have received a new friend request!',
+            sender_id: senderId
+        };
+        websocketController.sendRealtimeMessage(receiverId, notification);
+
+        socket.emit('friendRequestSuccess', 'Friend request sent successfully.');
     });
-};
-
-exports.sendRealtimeNotification = function(user_id, notification) {
-    const formattedNotification = websocketSenderFormatter.formatNotification(notification);
-    io.to(user_id).emit('new_notification', formattedNotification);
 };
