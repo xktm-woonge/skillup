@@ -4,25 +4,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'register_page/css/register.css' %}">
     <link rel="stylesheet" href="{% static 'com/css/com.css' %}">
+    <link rel="stylesheet" href="{% static 'register_page/css/register.css' %}">
     <title>register</title>
 </head>
 <body>
     <div class="page_view">
-        <div class="GNB">
-            <div class="user_img_box">
-                <img src="{% static 'com/icon/user-regular.svg'%}" alt="" class="user_img">
-            </div>
-            <div class="setting_img_box">
-                <img src="{% static 'com/icon/free-icon-font-settings-3917035.svg'%}" alt="" class="setting_img">
-            </div>
-        </div>
+        {% include 'com/GNB.html' %}
         <div class="main_view">
             <div class="register_form">
                 <div class="header_box">
                     <div class="back_img_box" onclick="goBack()">
-                        <img src="{% static 'com/icon/free-icon-font-angle-small-left-3916946.svg'%}" alt="Back Icon" class="back_img">
+                        <img src="{% static 'com/icon/-navigate-before_90417.svg'%}" alt="Back Icon" class="back_img">
                     </div>
                     <div class="register_text">
                         <p>회원가입</p>

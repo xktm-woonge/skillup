@@ -1,0 +1,53 @@
+.GNB{
+    z-index: 3;
+    display: block;
+    width: 72px;
+    height: 100vh;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    background: var(--background, #FAFAFA);
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.10);
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+#able_login{
+    display: none;
+}
+.icon_box{
+    position:relative;
+    width: 72px;
+    height: 7.5%;
+}
+.GNB_img{
+    width: 32px;
+    height: 32px;
+    margin: 20px;
+}
+.GNB_btn{
+    width: 72px;
+    height: 72px;
+    padding: 0;
+    border: 0;
+    background-color: transparent;
+}
+.GNB_btn:hover{
+    background-color: #4F2AB8;
+}
+.GNB_btn:not(.user_btn):hover .GNB_img{
+    filter: invert(100%);
+}
+.user_img{
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: 16px;
+    margin: 12px;
+}
+#setting_icon{
+    position: fixed;
+    bottom: 0;
+}
+.setting_img{
+    fill: red;
+}

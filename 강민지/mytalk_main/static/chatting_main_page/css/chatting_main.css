@@ -1,0 +1,7 @@
+#main_chat{
+    position: absolute;
+    width: calc(75% - 72px);
+    height: 100vh;
+    right: 0;
+    background-color: #F0F0F0;
+}

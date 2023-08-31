@@ -19,30 +19,14 @@
     border-radius: 16px;
 }
 .login_logo{
-    width: 500px;
-    height: 264px;
-    flex-shrink: 0;
-    text-align: center;
-    box-sizing: border-box;
-    background: var(--semi-darker, #4F2AB8);
+    width: 100%;
+    height: calc(100% / 3);
     border-radius: 16px 16px 0px 0px;
 }
-.login_logo>p{
-    margin: 0;
-    color: var(--success-500, #B2EF0E);
-    font-family: Shrikhand;
-    /* font-size: 203.923px; */
-    font-style: normal;
-    font-weight: 400;
-    line-height: 147.279px; /* 72.223% */
-    /* width: 997.086px; */
-    /* transform: rotate(-7.238deg); */
-}
-
 .login_form{
     padding-top: 40px;
-    width: 500px;
-    height: 552px;
+    width: 100%;
+    height: calc(100% - 33%);
     flex-shrink: 0;
     text-align: center;
     align-items: center;
@@ -62,7 +46,7 @@
     font-weight: 700;
     line-height: normal;
 }
-.login_form>div>div{
+.login_form>div>div.button_box{
     position: relative;
     vertical-align: middle;
     display: flex;

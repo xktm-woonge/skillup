@@ -32,3 +32,6 @@ document.getElementById('send_login_user_info').addEventListener('submit', funct
     e.preventDefault();
     userLogin();
 })
+window.addEventListener('DOMContentLoaded', function(e){
+    document.getElementById('able_login').style.display = 'none'
+})

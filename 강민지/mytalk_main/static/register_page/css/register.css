@@ -14,7 +14,6 @@
     position: relative;
     vertical-align: middle;
     align-items: center;
-    display: flex;
     margin: 0;
     padding: 0;
 }
@@ -52,7 +51,7 @@
     margin: 12px;
     margin-left: 24px;
     padding-left: 20px;
-    width: 452px;
+    width: calc(100% - 48px);
     height: 64px;
     flex-shrink: 0;
     box-sizing: border-box;
@@ -98,18 +97,14 @@ input[type='number']::-webkit-inner-spin-button {
     font-size: 12px;
     font-style: normal;
     font-weight: 500;
-    line-height: 12px; /* 100% */
+    line-height: 12px;
+    top: 24px;
+    right: 36px;
+    position: absolute;
 }
 .email_box, .cert_num_box, .send_user_info_box{
     position: relative;
     width: 100%;
-}
-.email_btn, .cert_num_btn{
-    width: 76px;
-    height: 40px;
-    top: 24px;
-    right: 36px;
-    position: absolute;
 }
 .fail-box{
     border: 2px solid #B72935;

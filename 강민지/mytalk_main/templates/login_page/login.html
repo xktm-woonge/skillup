@@ -4,22 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'login_page/css/login.css' %}">
     <link rel="stylesheet" href="{% static 'com/css/com.css' %}">
+    <link rel="stylesheet" href="{% static 'login_page/css/login.css' %}">
     <title>LOGIN</title>
 </head>
 <body>
     <div class="page_view">
-        <div class="GNB">
-            <div class="setting_img_box">
-                {% comment %} <img src="{% static 'com/icon/free-icon-font-settings-3917035.svg'%}" alt="" class="setting_img"> {% endcomment %}
-                <object class="setting_img" data="{% static 'com/icon/free-icon-font-settings-3917035.svg' %}" type="image/svg+xml"></object>
-            </div>
-        </div> 
+        {% include 'com/GNB.html' %} 
         <div class="main_view">
             <div class="login_box">
                 <div class="login_logo">
-                    <p>chat program</p>
+                    <img src="{% static 'com/img/chat_logo.png' %}">
                 </div>
                 <div class="login_form">
                     <p>로그인</p>
@@ -34,15 +29,16 @@
                             </div>
                         </div>  
                     </form>
-                </div>
-                <div class="footer_box">
-                    <div class="find_id_pw">
-                        ID/PW 찾기
+                    <div class="footer_box">
+                        <div class="find_id_pw">
+                            ID/PW 찾기
+                        </div>
+                        <div class="inquiry_manager">
+                            관리자 문의
+                        </div>
                     </div>
-                    <div class="inquiry_manager">
-                        관리자 문의
-                    </div>
                 </div>
+
             </div>
 
         </div>

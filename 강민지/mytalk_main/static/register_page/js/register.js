@@ -223,3 +223,6 @@ document.getElementById('send_user_info').addEventListener('submit', function(e)
     e.preventDefault();
     addUserInfo();
 });
+window.addEventListener('DOMContentLoaded', function(e){
+    document.getElementById('able_login').style.display = 'none'
+})
