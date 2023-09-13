@@ -3,9 +3,18 @@
 const dbManager = require('../model/dbManager');
 const notificationsController = require('./notifications_controller');
 const socketManager = require('../utils/socketManager');
-const io = socketManager.getIO();
+
+let io;
+
+function ensureIOInitialized() {
+    if (!io) {
+        io = socketManager.getIO();
+    }
+}
 
 exports.initializeWebsocketListeners = function() {
+    ensureIOInitialized();
+
     io.on('connection', (socket) => {
         const user_id = socket.handshake.query.user_id;
         console.log('A user connected with user_id:', user_id);
@@ -30,5 +39,8 @@ exports.initializeWebsocketListeners = function() {
 };
 
 exports.sendRealtimeMessage = function(user_id, data) {
+    ensureIOInitialized();
     io.to(user_id).emit(data.event, data.payload);
 };
+
+// 다른 함수들도 여기에 추가할 수 있습니다...

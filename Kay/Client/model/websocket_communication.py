@@ -17,18 +17,20 @@ class RealtimeCommunication(QThread):
         super().__init__()
         self.url = url
         self.on_message_received = on_message_received
-        self.websocket = QWebSocket()
-        self.websocket.textMessageReceived.connect(self.on_message_received)
-        self.websocket.disconnected.connect(self.on_disconnected)
-        self.websocket.error.connect(self.on_error)
+        self.websocket = None  # 초기화를 나중에 합니다.
         self.lock = threading.Lock()
         self.reconnect_timer = QTimer()
         self.reconnect_timer.timeout.connect(self.attempt_reconnect)
         self.reconnect_timer.setInterval(5000)  # Set reconnect interval to 5 seconds
 
     def run(self):
+        self.websocket = QWebSocket()
+        self.websocket.textMessageReceived.connect(self.on_message_received)
+        self.websocket.disconnected.connect(self.on_disconnected)
+        self.websocket.error.connect(self.on_error)
+        
         self.attempt_connect()
-        self.exec_()
+        self.exec_()  # 이벤트 루프 시작
 
     def attempt_connect(self):
         try:

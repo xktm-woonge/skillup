@@ -95,9 +95,9 @@ class ChattingController(QObject):
 
         # 온라인 상태 설정
         if self.userInfo['status'] == 'online':
-            self.chatting_window.status_label.setStyleSheet("QLabel { background-color: green; border-radius: 5px; }")
+            self.chatting_window.sidebar.status_label.setStyleSheet("QLabel { background-color: green; border-radius: 5px; }")
         else:
-            self.chatting_window.status_label.setStyleSheet("QLabel { background-color: gray; border-radius: 5px; }")
+            self.chatting_window.sidebar.status_label.setStyleSheet("QLabel { background-color: gray; border-radius: 5px; }")
 
     def load_profile_picture(self):
         url = QUrl(self.userInfo['profile_picture'])
@@ -113,11 +113,7 @@ class ChattingController(QObject):
         if pixmap.loadFromData(img_data):
             profile_pic_resized = pixmap.scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation)
             icon_size = QSize(40, 40)
-            self.chatting_window.profile_setting_button.setIconSize(icon_size)
-            self.chatting_window.profile_setting_button.setIcon(QIcon(profile_pic_resized))
+            self.chatting_window.sidebar.profile_setting_button.setIconSize(icon_size)
+            self.chatting_window.sidebar.profile_setting_button.setIcon(QIcon(profile_pic_resized))
         else:
             clmn.HLOG.warning("Failed to load image!")
-
-
-# class ChattingController(QObject):
-#     pass
