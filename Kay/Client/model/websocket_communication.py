@@ -1,6 +1,6 @@
 # ./model/realtime_communication.py
 from PyQt5.QtWebSockets import QWebSocket
-from PyQt5.QtCore import QUrl, QThread, QTimer, qRegisterMetaType
+from PyQt5.QtCore import QUrl, QThread, QTimer
 import threading
 
 try:
@@ -15,7 +15,6 @@ except ImportError:
 class RealtimeCommunication(QThread):
     def __init__(self, url, on_message_received):
         super().__init__()
-        qRegisterMetaType("QAbstractSocket::SocketState")
         self.url = url
         self.on_message_received = on_message_received
         self.websocket = None  # 초기화를 나중에 합니다.
