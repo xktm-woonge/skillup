@@ -1,6 +1,7 @@
-# ./model/realtime_communication.py
+# ./model/websocket_communication.py
+
 from PyQt5.QtWebSockets import QWebSocket
-from PyQt5.QtCore import QUrl, QThread, QTimer
+from PyQt5.QtCore import QUrl, QObject, QTimer
 import threading
 
 try:
@@ -12,25 +13,23 @@ except ImportError:
     from utils import *
     
 
-class RealtimeCommunication(QThread):
+class RealtimeCommunication(QObject):  # QObject 상속
     def __init__(self, url, on_message_received):
         super().__init__()
         self.url = url
         self.on_message_received = on_message_received
-        self.websocket = None  # 초기화를 나중에 합니다.
-        self.lock = threading.Lock()
+        self.websocket = QWebSocket()
         self.reconnect_timer = QTimer()
         self.reconnect_timer.timeout.connect(self.attempt_reconnect)
         self.reconnect_timer.setInterval(5000)  # Set reconnect interval to 5 seconds
 
-    def run(self):
+    def start(self):
         self.websocket = QWebSocket()
         self.websocket.textMessageReceived.connect(self.on_message_received)
         self.websocket.disconnected.connect(self.on_disconnected)
         self.websocket.error.connect(self.on_error)
         
         self.attempt_connect()
-        self.exec_()  # 이벤트 루프 시작
 
     def attempt_connect(self):
         try:
@@ -57,8 +56,8 @@ class RealtimeCommunication(QThread):
             self.attempt_connect()
 
     def send_message(self, message):
-        try:
-            with self.lock:
-                self.websocket.sendTextMessage(message)
-        except Exception as e:
-            clmn.HLOG.error(f"Error sending message: {e}")
+        # try:
+        #     with self.lock:
+        self.websocket.sendTextMessage(message)
+        # except Exception as e:
+        #     clmn.HLOG.error(f"Error sending message: {e}")

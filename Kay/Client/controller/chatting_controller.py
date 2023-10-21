@@ -28,7 +28,7 @@ class ChattingController(QObject):
         self.notifications = data['notifications']
         self.token = token
         self.rest_api = api_thread
-        self.websocket_api = WebSocketConnector(WEBSOCKET_URL)
+        self.websocket_api = WebSocketConnector(WEBSOCKET_URL)  # 메인 쓰레드에서 인스턴스화
 
         self.chatting_window = ChattingWindow()
         self.set_user_info()

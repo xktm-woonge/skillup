@@ -1,7 +1,7 @@
-# controller/realtime_connector.py
+# controller/websocket_connector.py
 
 import json
-from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtCore import QObject, pyqtSignal, QThread
 
 try:
     from utils import *
@@ -12,6 +12,7 @@ except ImportError:
     sys.path.append(str(Path(__file__).parents[1]))
     from utils import *
     from model.websocket_communication import RealtimeCommunication
+
 
 class WebSocketConnector(QObject):
     new_notification = pyqtSignal(dict)

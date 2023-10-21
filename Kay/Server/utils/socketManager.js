@@ -1,16 +1,16 @@
 // ./utils/socketManager.js
 
-const socketIo = require('socket.io');
-let io = null;
+const WebSocket = require('ws');
+let wss = null;
 
 exports.initialize = (server) => {
-    io = socketIo(server);
-    return io;
+    wss = new WebSocket.Server({ server });
+    return wss;
 };
 
-exports.getIO = () => {
-    if (!io) {
-        throw new Error("Socket.io not initialized!");
+exports.getWSS = () => {
+    if (!wss) {
+        throw new Error("WebSocket Server not initialized!");
     }
-    return io;
+    return wss;
 };
