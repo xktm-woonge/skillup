@@ -25,7 +25,7 @@ class WebSocketConnector(QObject):
     def on_message_received(self, message):
         data = json.loads(message)
         clmn.HLOG.debug(f"Received data type: {data['type']}, message: {data['data']}")
-        if data['type'] == 'notification':
+        if data['type'] == 'FRIEND_REQUEST':
             self.new_notification.emit(data)
 
     def send_message(self, message):

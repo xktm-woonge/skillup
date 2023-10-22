@@ -33,6 +33,7 @@ class ChattingController(QObject):
 
         self.chatting_window = ChattingWindow()
         self.set_user_info()
+        self.display_notifications()
         self.chatting_window.show()
 
         self.connect_slot()
@@ -75,10 +76,10 @@ class ChattingController(QObject):
     @pyqtSlot(dict)
     def add_notifications(self, data):
         # 데이터에서 필요한 정보 추출
-        image_path = data["image_path"]
-        title = data["title"]
-        content = data["content"]
-        date = data["date"]
+        image_path = notification["image_path"]
+        title = "친구 추가 요청"
+        content = notification['sender_id']
+        date = notification["created_at"]
 
         # NotificationWidget 생성 및 추가
         notification = NotificationWidget(image_path, title, content, date)
@@ -118,3 +119,15 @@ class ChattingController(QObject):
             self.chatting_window.sidebar.profile_setting_button.setIcon(QIcon(profile_pic_resized))
         else:
             clmn.HLOG.warning("Failed to load image!")
+            
+    def display_notifications(self):
+        self.chatting_window.notifications_list_widget.clear_notifications()
+        for notification in self.notifications:
+            image_path = './view/static/img/sidebar_notification_icon'
+            # image_path = notification['image_path']
+            title = "친구 추가 요청"
+            content = notification['sender_id']
+            date = notification["created_at"]
+            
+            notification_widget = NotificationWidget(image_path, title, content, date)
+            self.chatting_window.notifications_list_widget.notifications_layout.addWidget(notification_widget)

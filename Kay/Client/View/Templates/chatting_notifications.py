@@ -64,8 +64,8 @@ class NotificationWidget(QWidget):
         title_label.setFont(font.NOTOSAN_FONT_BOLD)
         
         # 내용이 15자를 초과할 경우 줄바꿈 처리
-        if len(content) > 15:
-            content = content[:15] + "\n" + content[15:]
+        if len(content) > 25:
+            content = content[:25] + "\n" + content[25:]
         
         content_label = ElidedLabel(content, base_widget)  # QLabel 대신 ElidedLabel 사용
         content_label.setWordWrap(True)
@@ -186,6 +186,8 @@ class NotificationsListWidget(QWidget):
         self.notifications_layout = QVBoxLayout()
         self.notifications_layout.setSpacing(0)  
         
+        self.notifications_layout.setAlignment(Qt.AlignTop)
+        
         # noMessage_label = QLabel("수신된 알림이 없습니다.")
         # self.notifications_layout.addWidget(noMessage_label)
         # self.notifications_layout.setAlignment(noMessage_label, Qt.AlignCenter)
@@ -198,6 +200,12 @@ class NotificationsListWidget(QWidget):
 
         self.setLayout(layout)
         self._setStyle()
+        
+    def clear_notifications(self):
+        for i in reversed(range(self.notifications_layout.count())): 
+            widget = self.notifications_layout.itemAt(i).widget()
+            if widget is not None:
+                widget.deleteLater()
             
     def on_toggle_changed(self, value):
         pass
@@ -220,7 +228,7 @@ if __name__ == "__main__":
     font.Init()
     window = NotificationsListWidget()
     # Example Notifications
-    for i in range(10):
+    for i in range(1):
         notification = NotificationWidget(r'D:\g_Project\2023_skillup_chatting\Kay\Client\view\static\img\sidebar_friends_icon.png', '친구 추가 요청', 
                                           'adf@naver.com', '2023-08-13 20:00:00')
         window.notifications_layout.addWidget(notification)

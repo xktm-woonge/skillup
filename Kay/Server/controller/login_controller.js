@@ -84,6 +84,15 @@ exports.get_userInfo = function(req, res) {
           const profileImageUrl = `http://${serverAddr}:${httpPort}/profile_picture/${userInfo.profile_picture}`;
           userInfo['profile_picture'] = profileImageUrl
 
+          // notifications 배열을 순회하면서 각 알림의 이미지 경로를 수정합니다.
+          if (notifications && notifications.length > 0) {
+            notifications.forEach(notification => {
+              if (notification.img) {
+                notification.image_path = `http://${serverAddr}:${httpPort}/friends_request/${notification.img}`;
+              }
+            });
+          }
+
           res.json(responseFormatter.formatResponse('SUCCESS', '정보를 성공적으로 가져왔습니다.', {
             userInfo, // 사용자의 프로필 정보 (status, profile_picture 등)
             friendsInfo,

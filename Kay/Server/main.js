@@ -13,6 +13,7 @@ const httpPort = config.httpPort;
 
 // 정적 파일 제공
 app.use('/profile_picture', express.static(__dirname + '/images'));
+app.use('/friends_request', express.static(__dirname + '/images'));
 
 // JSON 미들웨어
 app.use(express.json());
