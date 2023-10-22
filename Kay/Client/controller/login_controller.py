@@ -94,7 +94,7 @@ class LoginController(QObject):
         if result.get('status') == 'SUCCESS':
             # Create an instance of the chatting window and display it
             self.chatting_controller = ChattingController(
-                result.get('data'), token, self.api_thread)
+                self.login_window.emailField.text(), result.get('data'), token, self.api_thread)
             self.main_widget.close()
         else:
             warningBox(self.login_window, result.get('message'))

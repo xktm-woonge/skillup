@@ -2,6 +2,7 @@
 
 const notificationsController = require('./notifications_controller');
 const socketManager = require('../utils/socketManager');
+const url = require('url');
 
 let wss;
 
@@ -15,8 +16,14 @@ exports.initializeWebsocketListeners = function() {
     ensureWSSInitialized();
 
     wss.on('connection', (ws, req) => {
-        const user_id = req.url.split('=')[1];
-        console.log('A user connected with user_id:', user_id);
+        const queryObject = url.parse(req.url, true).query;
+        const user_id = queryObject.user_id;
+        
+        if (user_id) {
+            console.log('A user connected with user_id:', user_id);
+        } else {
+            console.log('A user connected, but user_id is missing.');
+        }
 
         ws.on('message', (message) => {
             let data = JSON.parse(message);

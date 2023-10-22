@@ -20,15 +20,16 @@ except ImportError:
 # from view.templates import NotificationsListWidget, FriendListWidget, ChatListWidget, ProfileSettingWidget
 
 class ChattingController(QObject):
-    def __init__(self, data, token, api_thread):
+    def __init__(self, user_id, data, token, api_thread):
         super().__init__()
+        self.user_id = user_id
         self.userInfo = data['userInfo']
         self.friendsInfo = data['friendsInfo']
         self.conversations = data['conversations']
         self.notifications = data['notifications']
         self.token = token
         self.rest_api = api_thread
-        self.websocket_api = WebSocketConnector(WEBSOCKET_URL)  # 메인 쓰레드에서 인스턴스화
+        self.websocket_api = WebSocketConnector(f"{WEBSOCKET_URL}/?user_id={self.user_id}")  # 메인 쓰레드에서 인스턴스화
 
         self.chatting_window = ChattingWindow()
         self.set_user_info()
