@@ -76,10 +76,10 @@ class ChattingController(QObject):
     @pyqtSlot(dict)
     def add_notifications(self, data):
         # 데이터에서 필요한 정보 추출
-        image_path = notification["image_path"]
+        image_path = './view/static/img/sidebar_notification_icon'
         title = "친구 추가 요청"
-        content = notification['sender_id']
-        date = notification["created_at"]
+        content = data['sender_id']
+        date = data["created_at"]
 
         # NotificationWidget 생성 및 추가
         notification = NotificationWidget(image_path, title, content, date)
