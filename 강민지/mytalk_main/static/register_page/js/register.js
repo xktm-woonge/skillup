@@ -50,7 +50,6 @@ function disableFormInputs(formId) {
 function confirmEmailCertification(){
     // 입력된 인증 번호 가져오기
     var emailCertNum = new FormData(document.getElementById('register_cert_num'));
-    console.log(emailCertNum.get('cert_num'));
 
     if (emailCertNum.get('cert_num')){
         // 인증 번호 REST API
@@ -84,7 +83,6 @@ function confirmEmailCertification(){
 
 function confirmCurrentEmail(){
     var emailData = new FormData(document.getElementById('register_email'));
-    console.log(emailData.get('email'));
     
     if (emailData.get('email')){
         fetch('/register/confirmEmail_api/',{
@@ -132,7 +130,7 @@ function addUserInfo(){
                 alert('회원 가입이 완료되었습니다.')
                 window.location.href = '/'
             } else if((data.message === 'Error')&& (data.error === 'cert_error')){
-                alert('인증이 완료되지 않았습니다.')
+                alert('인증이 완료되지 않았습니다. 인증을 진행해주세요.')
             }
         })
     } else{
@@ -157,55 +155,62 @@ function emailCheck(){
 function pwCheck() {
     const regExpPW = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-_]).{8,16}$/;
     let userpw = document.getElementById("regi_pw_input");
-    let lenLabel = document.getElementById("len_label");
-    let regLabel = document.getElementById("reg_label");
+    let lenLabel = document.getElementById("pw_len");
+    let regLabel = document.getElementById("pw_reg");
+    let regClassList = [userpw, lenLabel, regLabel];
 
     if (userpw.value === ''){
-        userpw.classList.remove('fail-box','pass-box');
-        lenLabel.classList.remove('fail-txt','pass-txt');
-        regLabel.classList.remove('fail-txt','pass-txt');
+        regClassList.forEach(regClass => {
+            regClass.classList.remove('checker_fail','checker_pass');
+            regClass.classList.add('checker_none');
+        });
         return false
     }
     else if (!regExpPW.test(userpw.value)){
-        userpw.classList.add('fail-box');
-        userpw.classList.remove('pass-box');
-        regLabel.classList.add('fail-txt');
-        regLabel.classList.remove('pass-txt');
+        userpw.classList.add('checker_fail');
+        userpw.classList.remove('checker_pass', 'checker_none');
+        regLabel.classList.add('checker_fail');
+        regLabel.classList.remove('checker_pass','checker_none');
         if (userpw.value.length > 7 && userpw.value.length <17){
-            lenLabel.classList.add('pass-txt');
-            lenLabel.classList.remove('fail-txt');
+            lenLabel.classList.add('checker_pass');
+            lenLabel.classList.remove('checker_fail', 'checker_none');
         } else{
-            lenLabel.classList.add('fail-txt');
-            lenLabel.classList.remove('pass-txt');
+            lenLabel.classList.add('checker_fail');
+            lenLabel.classList.remove('checker_pass', 'checker_none');
         }
         return false
     }
     else if (regExpPW.test(userpw.value)){
-        userpw.classList.add('pass-box');
-        lenLabel.classList.add('pass-txt');
-        regLabel.classList.add('pass-txt');
-        userpw.classList.remove('fail-box');
-        lenLabel.classList.remove('fail-txt');
-        regLabel.classList.remove('fail-txt');
+        regClassList.forEach(regClass =>{
+            regClass.classList.add('checker_pass');
+            regClass.classList.remove('checker_fail', 'checker_none');
+        })
         return true
     }
 }
 function pwIsSame(){
     let userpw = document.getElementById("regi_pw_input");
     let userpwcheck = document.getElementById("regi_pw_conf_input");
+    let sameLabel = document.getElementById("pw_same");
 
     if (userpwcheck.value === ''){
-        userpwcheck.classList.remove('fail-box','pass-box');
+        userpwcheck.classList.remove('checker_fail','checker_pass');
+        sameLabel.classList.remove('checker_fail', 'checker_pass');
+        sameLabel.classList.add('checker_none');
         return false
     }
     else if (userpw.value === userpwcheck.value){
-        userpwcheck.classList.add('pass-box');
-        userpwcheck.classList.remove('fail-box');
+        [userpwcheck, sameLabel].forEach(regClass =>{
+            regClass.classList.add('checker_pass');
+            regClass.classList.remove('checker_fail', 'checker_none');
+        })
         return true
     }
     else{
-        userpwcheck.classList.add('fail-box');
-        userpwcheck.classList.remove('pass-box');
+        [userpwcheck, sameLabel].forEach(regClass =>{
+            regClass.classList.add('checker_fail');
+            regClass.classList.remove('checker_pass', 'checker_none');
+        })
         return false
     }
 }

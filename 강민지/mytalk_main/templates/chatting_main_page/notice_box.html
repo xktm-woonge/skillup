@@ -1,0 +1,14 @@
+{% load static %}
+<div class="notices_box">
+    <div class="notices_img_box {{ noti_type }}">
+        <img src="{% static 'com/icon/-notifations-none_90255.svg' %}" alt="">
+    </div>
+    <div class="notices_description">
+        <div class="notices_title">{{ sender_id }}님의 알림입니다.</div>
+        <div class="notices_contents">{{ content }}</div>
+        <div class="notices_time">{{ created_at }}</div>
+    </div>
+    <button class="delete_notice_btn"></button>
+</div>
+
+{% comment %} <div class="notices_img_box system_notice danger_notice/normal_notice"> /  {% endcomment %}

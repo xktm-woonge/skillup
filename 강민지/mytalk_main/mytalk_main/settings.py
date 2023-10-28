@@ -32,8 +32,10 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'login_page',
     'register_page',
+    'chatting_main_page',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -72,14 +74,23 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'mytalk_main.wsgi.application'
 
+CHANNEL_LAYERS =  {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'mychatting',
+        'USER': 'root',
+        'PASSWORD': 'cheniel1226',
+        'HOST': '127.0.0.1',  # MySQL 서버 호스트 주소
+        'PORT': '3306',  # MySQL 서버 포트 번호
     }
 }
 
@@ -106,13 +117,13 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ko-kr'
 
 TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
-USE_TZ = False
+USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
@@ -135,6 +146,11 @@ EMAIL_USE_TLS = True  # TLS 사용 여부
 EMAIL_HOST_USER = 'endteamchat@gmail.com'  # 이메일 계정
 EMAIL_HOST_PASSWORD = 'fxerdbpuijwurack'  # 이메일 계정 비밀번호
 DEFAULT_FROM_EMAIL = 'endteamchat@gmail.com'  # 기본 발신자 이메일 주소
+
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 # 사용자 모델
 AUTH_USER_MODEL = 'login_page.Users'

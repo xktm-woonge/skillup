@@ -1,10 +1,14 @@
+{% load static %}
 <div class="side_bar_header">
     <span class="side_bar_header_name">설정</span>
 </div>
 <div class="side_bar_body">
-    <br>
-    <br>
-    <br>
-    <br>
-    setting_body
+    <div class="system_setting">
+        <div class="system_setting_box" id="change_theme_box">
+            <img src="{% static 'com/icon/tools_icon_151040.svg'%}" alt="" class="user_info_setting_img" id="change_password_img">
+        </div>
+        <div class="system_setting_text">
+            <span>테마 설정</span>
+        </div>    
+    </div>
 </div>

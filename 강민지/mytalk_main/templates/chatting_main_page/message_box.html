@@ -1,0 +1,7 @@
+{% autoescape off %}
+{{ chat_date }}
+{% endautoescape %}
+<div class="message_box {{ direction }}">
+    <div class="message_text">{{ message }}</div>
+    <p class="message_date">{{ time }}</p>
+</div>

@@ -30,7 +30,10 @@
             </div>
         </div>
         <div id="main_chat">
-            main_view
+            {% include "chatting_main_page/empty.html" %}
+            <div id="chatting_room_detail">
+                {% include "chatting_main_page/chatting.html" %}
+            </div>
         </div>
     </div>
     <script src="{% static 'chatting_main_page/js/chatting_main.js' %}"></script>

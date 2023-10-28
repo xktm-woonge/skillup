@@ -3,6 +3,8 @@ from django.urls import reverse
 from django.core.mail import send_mail
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import make_password
+from chatting_main_page.models import Friends
 import random
 import string
 
@@ -37,7 +39,7 @@ def send_email_certification(request, email):
         인증 번호를 입력하세요.
         인증 번호는 {random_number} 입니다.
     '''
-    from_email = 'endgameteam@gamil.com'
+    from_email = 'endgameteam@gmail.com'
     recipient_email_list = [email]
     # send_mail(subject, message, from_email, recipient_email_list)
     request.session['email'] = email
@@ -73,11 +75,12 @@ def add_user(request):
         if request.session['ceri_result'] == 'Success':
             random_user_name = make_random_user_name()
             while True:
-                if user_model.objects.filter(username=random_user_name).exists():
+                if user_model.objects.filter(name=random_user_name).exists():
                     random_user_name = make_random_user_name()
                 else:
                     break
-            user = get_user_model().objects.create_user(email=request.session['email'], password=request.session['password'],username=random_user_name)
+            user_model.objects.create_user(email=request.session['email'], password=request.session['password'],name=random_user_name)
+            add_friends_chatbot(user_model.objects.get(email=request.session['email']).id)
             return JsonResponse({'message':'Success'})
         else:
             return JsonResponse({'message':'Error', 'error':'cert_error'})
@@ -91,3 +94,7 @@ def make_random_ceri_code():
 def make_random_user_name():
     characters = string.ascii_letters + string.digits + string.punctuation
     return ''.join(random.choice(characters) for i in range(15))
+
+def add_friends_chatbot(user_id):
+    chatbot_ted_id = user_model.objects.get(name='TED').id
+    Friends.objects.create(friend_id=chatbot_ted_id, user_id=user_id)
