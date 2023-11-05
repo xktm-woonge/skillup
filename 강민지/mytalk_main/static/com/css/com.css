@@ -1,5 +1,5 @@
 @import "../css/reset.css";
-  :root{
+:root{
     --background: #FAFAFA;
     --gray: #8E8E8E;
     --gray-50: #F0F0F0;
@@ -14,6 +14,15 @@
     --Danger-700: #B72935;
     --bs-02: 0px 2px 4px 0px rgba(0, 0, 0, 0.10);
     --text: 16px;
+    --gnbSize: 72px;
+    --padding: 24px;
+    --inputPadding: 20px;
+    --f-H1: 32px;
+    --f-H2: 24px;
+    --f-title: 20px;
+    --f-text: 16px;
+    --f-caption: 14px;
+
 }
 @font-face {
     font-family: 'foo';
@@ -23,7 +32,8 @@
 @font-face {
     font-family: 'foo';
     src: url('../font/NotoSans-Regular.ttf');
-  }
+}
+
 * {
     font-family: 'foo';
     font-size: var(--text);
@@ -52,7 +62,7 @@
     background: var(--gray-50);
 }
 .page_view .gnb { /* 임의추가 - gnb 어떻게 선언되어있는지 몰라서 임의로 추가함*/
-    width: 72px;
+    width: var(--gnbSize);
     display: block;
     background-color: var(--background);
     filter: drop-shadow(0px 8px 16px rgba(0, 0, 0, 0.10));
@@ -61,24 +71,32 @@
     display: none;
 }
 .page_view .gnb .icon_box{
-    height: 72px;
+    width: var(--gnbSize);
+    height: var(--gnbSize);
 }
 .page_view .gnb .icon_box .gnb_btn{
-    height: 72px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: var(--gnbSize);
+    height: var(--gnbSize);
+    cursor: pointer;
     padding: 0;
     border: 0;
     background-color: transparent;
 }
-.page_view .gnb .icon_box .gnb_btn:hover{
+.page_view .gnb .icon_box .gnb_btn:hover,
+.page_view .gnb .icon_box .gnb_btn.active {
     background-color: #4F2AB8;
 }
-.page_view .gnb .icon_box .gnb_btn:not(.user_btn):hover .gnb_img{
+.page_view .gnb .icon_box .gnb_btn:not(.user_btn):hover .gnb_img,
+.page_view .gnb .icon_box .gnb_btn:not(.user_btn).active .gnb_img {
     filter: invert(100%);
 }
 .page_view .gnb .icon_box .gnb_img{
-    width: 32px;
-    height: 32px;
-    margin: 20px;
+    width: calc(var(--gnbSize) / 2.25);
+    height: calc(var(--gnbSize) / 2.25);
+    /*margin: 20px;*/
 }
 .page_view .gnb .icon_box .user_img{
     width: 48px;
@@ -92,7 +110,7 @@
     bottom: 0;
 }
 .page_view .main_view {
-    width: calc(100% - 72px);
+    width: calc(100% - var(--gnbSize));
 }
 .page_view .main_view.centerBox { /* 임의추가 - 센터에 지정할 클래스명 centerBox 임의로 추가함*/
     display: flex;
@@ -116,7 +134,7 @@
 }
 .footer_box {
     display: flex;
-    padding: 0 24px;
+    padding: 0 var(--padding);
     justify-content: space-between;
     margin-bottom: 48px;
 }
@@ -126,8 +144,8 @@
     text-decoration: none;
 }
 .back_img_box {
-    width: 32px;
-    height: 32px;
+    width: calc(var(--gnbSize) / 2);
+    height: calc(var(--gnbSize) / 2);
     overflow: hidden;
     position: absolute;
 }
@@ -136,7 +154,7 @@
     height: 100%;
 }
 input {
-    padding: 20px;
+    padding: var(--inputPadding);
     font-size: var(--text);
     border-radius: 16px;
     border: 0;
@@ -155,7 +173,7 @@ input[type=submit]:focus, input[type=button]:focus, a:focus{
 
 /* login */
 .login_box .login_form {
-    padding: 24px;
+    padding: var(--padding);
 }
 .login_box .header_box { /* 엑박때에도 영역 보존하려면 설정해두는게 좋음 */
     display: block;
@@ -189,7 +207,7 @@ input[type=submit]:focus, input[type=button]:focus, a:focus{
 .header_box {
     display: flex;
     align-items: center;
-    padding: 24px;
+    padding: var(--padding);
 }
 .register_form .form_tittle {
     width: 100%;
@@ -202,7 +220,7 @@ input[type=submit]:focus, input[type=button]:focus, a:focus{
     gap: 24px;
 }
 .register_form .register_box {
-    padding: 24px;
+    padding: var(--padding);
 }
 .register_box form:not(#send_user_info) {
     display: flex;

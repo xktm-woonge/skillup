@@ -6,7 +6,7 @@
     width: 25vw;
     height: 100vh;
     min-width: 200px;
-    left: 72px;
+    left: var(--gnbSize);
     background-color: var(--background);
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.10);
 }
@@ -14,7 +14,7 @@
 .side_bar_header{
     position: absolute;
     width: 100%;
-    height: 72px;
+    height: var(--gnbSize);
     background-color: var(--Semi-Darker);
 }
 .side_bar_header_name{
@@ -32,13 +32,16 @@
     background-color: var(--background);
     position: relative;
     width: 100%;
-    height: calc(100% - 72px);
-    top: 72px;
+    height: calc(100% - var(--gnbSize));
+    top: var(--gnbSize);
     overflow-x: hidden;
-    overflow-y: hidden scroll;
+    overflow-y: auto;
 }
 .have_footer{
     height: calc(100% - 144px);
+}
+.side_bar_detail {
+    height: 100%;
 }
 .side_bar_list{
     width: 100%;
@@ -51,7 +54,7 @@
     background-color: var(--gray-50);
     position: absolute;
     width: 100%;
-    height: 72px;
+    height: var(--gnbSize);
     bottom: 0;
 }
 
@@ -78,20 +81,27 @@
 }
 /* 알림 */
 .notices_box{
-    display: flex;
-    column-gap: 16px;
-    width: calc(100% - 20px);
+    --margin: 10px;
+    /*display: flex;
+    column-gap: 16px;*/
     min-height: 120px;
-    margin: 10px 10px 0px 10px;
+    margin: 10px;
     padding: 20px 16px 20px 20px;
     border-radius: 8px;
     background-color: var(--white);
     box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.05);
-    box-sizing: border-box;
+    /*box-sizing: border-box;*/
+
+    display: grid;
+    grid-template: 1fr / calc(var(--gnbSize) - (var(--gnbSize) / 3)) 1fr calc(var(--gnbSize) / 3);
+    gap: 16px;
 }
-.notices_box .notices_img_box{
-    width: 48px;
-    height: 48px;
+.notices_box .notices_img_box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: calc(var(--gnbSize) - (var(--gnbSize) / 3));
+    height: calc(var(--gnbSize) - (var(--gnbSize) / 3));
     border-radius: 16px;
 }
 .notices_box .notices_img_box.system_notice img
@@ -108,7 +118,7 @@
     background-color: var(--Danger-500);
 }
 .notices_box .notices_description{
-    width: calc(100% - 72px);
+    width: calc(100% - var(--gnbSize));
 }
 .notices_box .notices_description .notices_title {
     height: 14px;
@@ -293,6 +303,7 @@ span.friends_status_name{
     font-size: 24px;
     font-weight: 700;
     margin-right: 8px;
+    max-width: 80%;
 }
 #user_status_message_box {
     height: 100%;
