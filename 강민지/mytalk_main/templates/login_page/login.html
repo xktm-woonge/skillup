@@ -1,40 +1,44 @@
-<!DOCTYPE html>
 {% load static %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'com/css/com.css' %}">
-    <title>LOGIN</title>
+  {% include 'com/Head.html' %}
+  <title>LOGIN</title>
 </head>
-<body>
-    <div class="page_view">
-        {% include 'com/GNB.html' %}
-        <div class="main_view centerBox">
-            <div class="login_box">
-                <div class="header_box"></div>
-                <div class="login_form">
-                    <h2 class="form_tittle">로그인</h2>
-                    <form method="post" id="send_login_user_info">
-                        {% csrf_token %}
-                        <input type="text" name='email' placeholder="Email">
-                        <input type="password" name='password' placeholder="Password">
-                        <div class="button_box ">
-                            <input type="submit" value="로그인" name="login" class="login_btn">
-                            <input type="button" value="회원가입" name="register" class="goto_register_btn" onclick="location.href='{% url 'register_page:register' %}'">
-                        </div>
-                    </form>
-                </div>
-                <div class="footer_box">
-                    <a href="#">ID/PW 찾기 </a>
-                    <a href="#">관리자 문의 </a>
-                </div>
 
-            </div>
+<body class="page_view">
+  
+  <!--{ include 'com/GNB.html' %}-->
 
-        </div>
+  <div class="main_view login">
+
+    <div class="login--box">
+
+      <div class="login--header">
+        <h2 class="form--title">로그인</h2>
+      </div>
+
+      <form method="post" id="send_login_user_info" class="login--form">
+        {% csrf_token %}
+        <input type="text" name='email' placeholder="Email">
+        <label for="vision" class="vision">
+          <input type="password" name='password' placeholder="Password">
+          <input type="checkbox" id="vision" hidden>
+          <img src="{% static 'icon/Visibility-off.svg'%}" alt="" class="vision__icon active">
+          <img src="{% static 'icon/Visibility.svg'%}" alt="" class="vision__icon deactive">
+        </label>
+        <!--<div class="button_box">-->
+        <input type="submit" value="로그인" name="login" class="btn btn--login">
+        <input type="button" value="회원가입" name="register" class="btn btn--register" onclick="location.href='{% url 'register_page:register' %}'">
+      </form>
+
+      <div class="form--footer">
+        <a href="#">ID/PW 찾기 </a>
+        <a href="#">관리자 문의 </a>
+      </div>
+
     </div>
-    
-    <script src="{% static 'login_page/js/login.js' %}"></script>
+
+  </div>
+
+  <script src="{% static 'js/login.js' %}"></script>
 </body>
+
 </html>

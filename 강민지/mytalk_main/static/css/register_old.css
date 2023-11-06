@@ -1,0 +1,120 @@
+.register_form{
+    width: 500px;
+    height: 816px;
+    filter: drop-shadow(0px 8px 16px rgba(0, 0, 0, 0.10));
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.10);
+    flex-shrink: 0;
+    text-align: center;
+    align-items: center;
+    box-sizing: border-box;
+    background: var(--background, #FAFAFA);
+    border-radius: 16px;
+}
+.register_form>div{
+    position: relative;
+    vertical-align: middle;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+.back_img_box{
+    position: relative;
+}
+.back_img{
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    left: 34px;
+    top: -15px;
+    vertical-align: middle;
+}
+.register_text{
+    margin: 0 auto;
+}
+.register_text>p{
+    display: flex;
+    color: var(--primary-500, #8D53FF);
+    text-align: center;
+    text-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.10);
+    font-family: Noto Sans KR;
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    margin: 40px 0px 40px 0px;
+}
+.email_input, .cert_num_input, .password_input, .password_confirm_input{
+    margin: 12px;
+    margin-left: 24px;
+    padding-left: 20px;
+    width: calc(100% - 48px);
+    height: 64px;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    border: 0px;
+    border-radius: 16px;
+    background: var(--white, #FFF);
+    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.10);
+}
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+	  -webkit-appearance: none;
+	  margin: 0;
+}
+.register_submit_btn{
+    margin: 12px;
+    margin-left: 24px;
+    width: 452px;
+    height: 64px;
+    flex-shrink: 0;
+    border-radius: 16px;
+    border: 0px;
+    background: var(--primary-500, #8D53FF);
+    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.10);
+    color: var(--white, #FFF);
+    text-align: center;
+    font-family: Noto Sans KR;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+.email_btn, .cert_num_btn{
+    width: 76px;
+    height: 40px;
+    flex-shrink: 0;
+    border: 0px;
+    color: var(--black, #2E283B);
+    text-align: center;
+    border-radius: 16px;
+    background: var(--gray-50, #F0F0F0);
+    /* Caption */
+    font-family: Noto Sans KR;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 12px;
+    top: 24px;
+    right: 36px;
+    position: absolute;
+}
+.email_box, .cert_num_box, .send_user_info_box{
+    position: relative;
+    width: 100%;
+}
+.fail-box{
+    border: 2px solid #B72935;
+}
+.pass-box{
+    border: 2px solid var(--success-700, #75AC08);
+}
+.fail-txt{
+    color: #B72935;
+}
+.pass-txt, .pw_reg_pass{
+    color: var(--success-700, #75AC08);
+}
+input{
+    outline: 0;
+}

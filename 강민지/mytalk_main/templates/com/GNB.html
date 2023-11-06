@@ -1,30 +1,36 @@
 {% load static %}
-<div class="gnb">
-    <div id="able_login">
-        <div id="notices_icon" class="icon_box">
-            <button class="gnb_btn notices_btn active">
-                <img src="{% static 'com/icon/-notifations-none_90255.svg'%}" alt="" class="gnb_img notices_img">
-            </button>
-        </div>
-        <div id="friends_icon" class="icon_box">
-            <button class="gnb_btn frineds_btn">
-                <img src="{% static 'com/icon/account_multiple_outline_icon_140049.svg'%}" alt="" class="gnb_img friends_img">
-            </button>
-        </div>
-        <div id="chat_icon" class="icon_box">
-            <button class="gnb_btn chat_btn">
-                <img src="{% static 'com/icon/message_text_outline_icon_139369.svg'%}" alt="" class="gnb_img chat_img">
-            </button>
-        </div>
-        <div id="user_icon" class="icon_box">
-            <button class="gnb_btn user_btn">
-                <img src="{% static 'com/img/profile_basic1.png'%}" alt="" id="profile_img_side_bar" class="gnb_img user_img">
-            </button>
-        </div>
+<div id="gnb" class="">
+        
+    <button id="notices" class="btn btn--gnb btn--Notification">
+        <img src="{% static 'icon/Notification.svg'%}" alt="GNB Notification icon">
+    </button>
+    <button id="friends" class="btn btn--gnb btn--People_outline active">
+        <img src="{% static 'icon/People_outline.svg'%}" alt="GNB People_outline icon">
+    </button>
+    <button id="chat" class="btn btn--gnb btn--Sms">
+        <img src="{% static 'icon/Sms.svg'%}" alt="GNB Sms icon">
+    </button>
+    <button id="user" class="btn btn--gnb btn--Dots">
+        <img src="{% static 'icon/Dots.svg'%}" alt="GNB Dots icon">
+    </button>
+</div>
+
+<div id="side_bar" class="side_bar">
+
+    <div id='side_bar_notices' class="side_bar--tab">
+        {% include 'chatting_main_page/side_bar_notices.html' %}
     </div>
-    <div id="setting_icon" class="icon_box">
-        <button class="gnb_btn setting_btn">
-            <img src="{% static 'com/icon/cog_outline_icon_139752.svg'%}" alt="" class="gnb_img setting_img">
-        </button>
+    <div id='side_bar_friends' class="side_bar--tab active">
+        {% include 'chatting_main_page/side_bar_friends.html' %}
     </div>
+    <div id='side_bar_chat' class="side_bar--tab">
+        {% include 'chatting_main_page/side_bar_chat_list.html' %}
+    </div>
+    <div id='side_bar_user' class="side_bar--tab">
+        {% include 'chatting_main_page/side_bar_user_info.html' %}
+    </div>
+    <div id='side_bar_setting' class="side_bar--tab">
+        {% include 'chatting_main_page/side_bar_setting.html' %}
+    </div>
+    
 </div>

@@ -1,0 +1,106 @@
+@import "_mixin.scss";
+
+/***************************************************
+  login view 
+****************************************************/
+
+.login {
+  grid-column: span 2;
+  &--header {
+		&::before {
+			content: '';
+			display: block;
+			min-height: 250px;
+			overflow: hidden;
+			background: var(--Semi-Darker) url('../img/chat_title-text.png') center;		
+		}
+		.form--title { padding:40px var(--padding)}
+	}
+  &--form {
+    @include flexBox(center);
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+    padding: 0 var(--padding) var(--padding);
+  }
+
+  .btn {
+		&--login {background: var(--primary-500); color: var(--white);}
+		&--register {background:var(--gray-50)}
+	}
+}
+
+
+/***************************************************
+  register view 
+****************************************************/
+.register {
+  grid-column: span 2;
+	&--header {
+    @include flexBox();
+    padding: 40px var(--padding);
+    position: relative;
+	}
+  &--form {
+    padding: 0 var(--padding) var(--padding);
+    form {
+      @include flexBox();
+      flex-direction: column;
+      gap: var(--padding);
+      position: relative;
+      width: 100%;
+    }
+    input.btn--small {
+      width: auto;
+      position: absolute;
+      top: 8px;right: 8px;
+    }
+    #register_cert_num {
+      opacity: 0;
+      margin-top: -64px;
+      margin-bottom: var(--padding);
+      transition: .5s;
+      z-index: -1;
+      &.active {
+        opacity: 1;
+        margin-top: var(--padding);
+        z-index: unset;
+      }
+    }
+    .pw_checker {
+      width: 100%;
+      list-style: none;
+      padding-left: var(--inputPadding);
+      .checker{
+        &::before{
+          content: "";
+          display: inline-block;
+          width: var(--inputPadding); height: var(--inputPadding);
+          margin-right: 8px;
+          vertical-align: middle;
+          background: url('../icon/Check.svg') center / cover;
+        }
+        &_none { 
+          color:var(--gray-80);
+          &::before{filter:invert(90%) sepia(0%) saturate(393%) hue-rotate(137deg) brightness(100%) contrast(70%)}
+        }
+        &_fail{ 
+          color:var(--Danger-700);
+          &::before {
+            background-image: url('../icon/Clear.svg');
+            filter: invert(21%) sepia(82%) saturate(2997%) hue-rotate(342deg) brightness(76%) contrast(86%);
+          }
+        }
+        &_pass{ 
+          color:var(--Success-700);
+          &::before { filter:invert(67%) sepia(36%) saturate(5883%) hue-rotate(44deg) brightness(96%) contrast(94%)}
+        }
+      }
+    }
+  }
+  .btn {
+    &--register {background: var(--primary-500); color: var(--white);}
+  }
+
+}
+

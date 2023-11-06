@@ -1,0 +1,114 @@
+/* for font */
+/***************************************************
+  login view 
+****************************************************/
+.login {
+  grid-column: span 2;
+}
+.login--header::before {
+  content: "";
+  display: block;
+  min-height: 250px;
+  overflow: hidden;
+  background: var(--Semi-Darker) url("../img/chat_title-text.png") center;
+}
+.login--header .form--title {
+  padding: 40px var(--padding);
+}
+.login--form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  padding: 0 var(--padding) var(--padding);
+}
+.login .btn--login {
+  background: var(--primary-500);
+  color: var(--white);
+}
+.login .btn--register {
+  background: var(--gray-50);
+}
+
+/***************************************************
+  register view 
+****************************************************/
+.register {
+  grid-column: span 2;
+}
+.register--header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 40px var(--padding);
+  position: relative;
+}
+.register--form {
+  padding: 0 var(--padding) var(--padding);
+}
+.register--form form {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+  gap: var(--padding);
+  position: relative;
+  width: 100%;
+}
+.register--form input.btn--small {
+  width: auto;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+.register--form #register_cert_num {
+  opacity: 0;
+  margin-top: -64px;
+  margin-bottom: var(--padding);
+  transition: 0.5s;
+  z-index: -1;
+}
+.register--form #register_cert_num.active {
+  opacity: 1;
+  margin-top: var(--padding);
+  z-index: unset;
+}
+.register--form .pw_checker {
+  width: 100%;
+  list-style: none;
+  padding-left: var(--inputPadding);
+}
+.register--form .pw_checker .checker::before {
+  content: "";
+  display: inline-block;
+  width: var(--inputPadding);
+  height: var(--inputPadding);
+  margin-right: 8px;
+  vertical-align: middle;
+  background: url("../icon/Check.svg") center/cover;
+}
+.register--form .pw_checker .checker_none {
+  color: var(--gray-80);
+}
+.register--form .pw_checker .checker_none::before {
+  filter: invert(90%) sepia(0%) saturate(393%) hue-rotate(137deg) brightness(100%) contrast(70%);
+}
+.register--form .pw_checker .checker_fail {
+  color: var(--Danger-700);
+}
+.register--form .pw_checker .checker_fail::before {
+  background-image: url("../icon/Clear.svg");
+  filter: invert(21%) sepia(82%) saturate(2997%) hue-rotate(342deg) brightness(76%) contrast(86%);
+}
+.register--form .pw_checker .checker_pass {
+  color: var(--Success-700);
+}
+.register--form .pw_checker .checker_pass::before {
+  filter: invert(67%) sepia(36%) saturate(5883%) hue-rotate(44deg) brightness(96%) contrast(94%);
+}
+.register .btn--register {
+  background: var(--primary-500);
+  color: var(--white);
+}/*# sourceMappingURL=style.min.css.map */

@@ -1,0 +1,36 @@
+
+@mixin flexBox($justify: flex-start, $align: center) {
+  display: flex;
+  justify-content: $justify;
+  align-items: $align;
+}
+
+
+
+
+%boxShadow {
+  filter: drop-shadow(0px 2px 10px rgba(0, 0, 0, 0.05));
+}
+
+/* for font */
+%header { 
+  font-size: 32px;
+  font-weight: 700;
+}
+%title { 
+  font-size:18px;
+  font-weight: 700;
+}
+%body1 { 
+  font-size: 16px;
+  font-weight: 400;
+}
+%body2 { 
+  font-size: 14px;
+  font-weight: 700;
+}
+%caption {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 12px; /* 100% */
+}

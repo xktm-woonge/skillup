@@ -1,41 +1,21 @@
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'com/css/com.css' %}">
-    <link rel="stylesheet" href="{% static 'chatting_main_page/css/side_bar.css' %}">
-    <link rel="stylesheet" href="{% static 'chatting_main_page/css/chatting_main.css' %}">
-    <title>CHATTING</title>
+  {% include 'com/Head.html' %}
+  <link rel="stylesheet" href="{% static 'css/side_bar.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/chatting_main.css' %}">
+  <title>CHATTING</title>
 </head>
-<body>
-    <div class="page_view">
-        {% include 'com/GNB.html' %}
-        <div id="side_bar">
-            <div id='side_bar_notices' class="side_bar_detail">
-                {% include 'chatting_main_page/side_bar_notices.html' %}
-            </div>
-            <div id='side_bar_friends' class="side_bar_detail">
-                {% include 'chatting_main_page/side_bar_friends.html' %}
-            </div>
-            <div id='side_bar_chat' class="side_bar_detail">
-                {% include 'chatting_main_page/side_bar_chat_list.html' %}
-            </div>
-            <div id='side_bar_user' class="side_bar_detail">
-                {% include 'chatting_main_page/side_bar_user_info.html' %}
-            </div>
-            <div id='side_bar_setting' class="side_bar_detail">
-                {% include 'chatting_main_page/side_bar_setting.html' %}
-            </div>
-        </div>
-        <div id="main_chat">
-            {% include "chatting_main_page/empty.html" %}
-            <div id="chatting_room_detail">
-                {% include "chatting_main_page/chatting.html" %}
-            </div>
-        </div>
+
+<body class="page_view">
+
+  {% include 'com/GNB.html' %}
+
+  <div id="main_chat" class="main_view">
+    {% include "chatting_main_page/empty.html" %}
+    <div id="chatting_room_detail">
+      {% include "chatting_main_page/chatting.html" %}
     </div>
-    <script src="{% static 'chatting_main_page/js/chatting_main.js' %}"></script>
+  </div>
+  <script src="{% static 'js/chatting_main.js' %}"></script>
 </body>
+
 </html>
