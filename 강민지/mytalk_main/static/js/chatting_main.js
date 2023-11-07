@@ -1,12 +1,18 @@
-let socket = new WebSocket("ws://127.0.0.1:8000/main")	// ws:// 이후의 주소는 routing.py 의 경로
+let socket = new WebSocket("ws://localhost:8000/ws/main/"); // ws:// 이후의 주소는 routing.py 의 경로
 let side_bar_class = Array.from(document.getElementsByClassName('side_bar--tab'))
-const GNB_bnt = Array.from(document.querySelectorAll('#gnb button'))
+
+socket.onopen = function(){
+    const message = {
+        'message':'open'
+    };
+    socket.send(JSON.stringify(message));
+}
 
 function set_profile_pic() {
-    const userImgs = document.querySelectorAll("div.friend--profile");
+    const userImgs = document.querySelectorAll(".friends--profile");
     userImgs.forEach(function(userImg) {
         const profilePictureUrl = userImg.getAttribute("data-image");
-        userImg.style.backgroundImage = `url(../static/img/${profilePictureUrl})`;
+        userImg.style.background = `url('../static/img/${profilePictureUrl}') center / cover`;
     });
 }
 
@@ -35,7 +41,9 @@ function conv_chatbot(question, roomnum) {
         }
     })
     .then(function(data){
-        alert('asda');
+        document.getElementsByClassName('chat_contents')[0].innerHTML += data.data;
+        scroll_to_bottom_in_chatting();
+        document.getElementById(`room_num_${roomnum}`).querySelector('.room_final_message').textContent = data.last_message;
     })
 }
 
@@ -86,11 +94,6 @@ function load_curr_user_data(){
     })
 }
 
-function hiddenSideBar(){
-    side_bar_class.forEach(function(hsb){
-        hsb.style.display = 'none';
-    });
-};
 
 function scroll_to_bottom_in_chatting(){
     var scroll_body = document.querySelector('.chat_contents');
@@ -126,8 +129,6 @@ function load_chatting_message_data(room_num) {
     });
 }
 
-
-
 function userLogout(){
     
     var csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
@@ -153,29 +154,8 @@ function userLogout(){
     })
 }
 
-window.addEventListener('DOMContentLoaded', function(){
-    //hiddenSideBar();
-    //document.getElementById('side_bar_notices').style.display = 'block';
-    //document.getElementById('chatting_room_detail').style.display = 'block';
-    //document.getElementById("empty_contents").style.display = "none";
-
-});
 
 
-/***********************************************************
- * 여기 확인해보기
- * 
- * 
-************************************************************/
-
-GNB_bnt.forEach((clickbnt)=>{
-    clickbnt.addEventListener('click',function(){
-        let btnName = this.id;
-        hiddenSideBar();
-        document.getElementById('side_bar_'+btnName).style.display = 'block';
-        console.log(this.querySelector(".btn--gnb"));
-    });
-});
 
 // GNB_bnt.addEventListener('click', function(){
     

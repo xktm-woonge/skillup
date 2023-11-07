@@ -1,21 +1,43 @@
+{% load static %}
 <div class="side_bar--header">
   <span class="side_bar--header__title">친구목록</span>
-  <select name="" id=""></select>
+  <button class="side_bar--header--add"><img src="{% static 'icon/Add.svg'%}" alt="Add button icon"></button>
 </div>
 
 <div class="side_bar--body friends">
-  <ul id="online_friends" class="friends--group on">
-    <li class="friends--group__title"> 온라인 </li>
-  </ul>
 
-  <ul id="offline_friends" class="friends--group off">
-    <li class="friends--group__title"> 오프라인 </li>
-  </ul>
+  <div id="online_friends" class="friends--group on">
 
-</div>
+    <a class="friends--box">
+      <div class="friends--profile active" data-image="profile_ted.png"></div>
+      <div class="friends--detail">
+        <div class="friends__name">이찬희 (온라인) </div>
+        <div class="friends__status">기획2팀 팀장 (원격) </div>
+      </div>
+    </a>
 
-<div class="side_bar_footer">
-  <button class="footer_btn plus_btn"></button>
-  <button class="footer_btn delete_btn"></button>
-  <button class="footer_btn setting_btn"></button>
+    <a class="friends--box">
+      <div class="friends--profile" data-image="profile_basic.png"></div>
+      <div class="friends--detail">
+        <div class="friends__name">유창현 (자리비움) </div>
+        <div class="friends__status">기획2팀 팀장 (사무실) </div>
+      </div>
+    </a>
+
+  </div>
+
+  <div id="offline_friends" class="friends--group off">
+
+    <p class="friends--group__title"> 오프라인 </p>
+
+    <a class="friends--box">
+      <div class="friends--profile" data-image="profile_ted.png"></div>
+      <div class="friends--detail">
+        <div class="friends__name">방민수</div>
+        <div class="friends__status">기획2팀 팀장 (원격) </div>
+      </div>
+    </a>
+
+  </div>
+
 </div>

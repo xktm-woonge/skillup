@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'channels',
     'login_page',
     'register_page',
@@ -73,6 +74,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'mytalk_main.wsgi.application'
+ASGI_APPLICATION = 'mytalk_main.asgi.application'
 
 CHANNEL_LAYERS =  {
     "default": {

@@ -5,11 +5,28 @@
   align-items: $align;
 }
 
-
-
+@mixin ellipseBox($line: 1) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: $line;
+  -webkit-box-orient: vertical;
+}
 
 %boxShadow {
   filter: drop-shadow(0px 2px 10px rgba(0, 0, 0, 0.05));
+}
+
+@mixin activeDot($position: 4px, $borderColor: var(--background)){
+  &::before {
+    content: '';
+    position: absolute;
+    top: - $position; left: - $position;
+    border: $position solid $borderColor;
+    border-radius: 50%;
+    width: calc(var(--imgSize) / 4);
+    height: calc(var(--imgSize) / 4);
+  }
 }
 
 /* for font */
@@ -27,7 +44,6 @@
 }
 %body2 { 
   font-size: 14px;
-  font-weight: 700;
 }
 %caption {
   font-size: 12px;

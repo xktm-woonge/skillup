@@ -1,23 +1,19 @@
 import os
-
 from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.security.websocket import AllowedHostsOriginValidator
 from django.core.asgi import get_asgi_application
+from chatting_main_page.routing import websocket_urlpatterns
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mytalk_main.settings")	# mysite 는 django 프로젝트 이름
-# Initialize Django ASGI application early to ensure the AppRegistry
-# is populated before importing code that may import ORM models.
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mytalk_main.settings")
 
-import chatting_main_page.routing
+django_asgi_app = get_asgi_application()
 
-application = ProtocolTypeRouter({
-  "http": get_asgi_application(),
-  "websocket": AllowedHostsOriginValidator(
-        AuthMiddlewareStack(
-            URLRouter(
-                chatting_main_page.routing.websocket_urlpatterns	# chat 은 routing.py 가 들어있는 앱 이름
-            )
-        )
-    ),
-})
+application = ProtocolTypeRouter(
+    {
+        "http": django_asgi_app,
+        "websocket": AllowedHostsOriginValidator(
+            AuthMiddlewareStack(URLRouter(websocket_urlpatterns))
+        ),
+    }
+)

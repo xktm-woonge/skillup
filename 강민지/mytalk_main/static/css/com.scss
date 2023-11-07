@@ -5,8 +5,8 @@
 :root{
   --background: #FAFAFA;
   --gray: #8E8E8E;
-  --gray-50: #EBEBEB;
   --gray-80: #C7C7C7;
+  --gray-50: #EBEBEB;
   --white: #FFF;
   --black: #2E283B;
   --primary-500: #8D53FF;
@@ -21,8 +21,8 @@
   --inputPadding: 20px;
   --buttonPadding: 14px 16px;
   --br-radius: 16px;
+  --gap: 16px;
 }
-
 
 /***************************************************
   common view 
@@ -40,14 +40,14 @@
 
 body {
   display: grid;
-  grid-template: 1fr / 1fr;
+  grid-template: 1fr / var(--gnbSize) 500px 1fr;
   background-color: var(--gray-50);
 }
 
 .main_view {
   @include flexBox(center);
   width: 100%;
-  padding-left: calc(var(--gnbSize) + 500px);
+  //padding-left: calc(var(--gnbSize) + 500px);
   .login--box, .register--box {
     overflow: hidden;
     width: 500px;

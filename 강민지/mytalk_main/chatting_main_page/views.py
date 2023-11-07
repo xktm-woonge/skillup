@@ -8,11 +8,11 @@ from django.template.loader import get_template
 from django.utils.safestring import mark_safe
 from datetime import datetime
 from .models import *
-
+from .chatbot import Chatbot
 
 
 user_model = get_user_model()
-
+chatbot = Chatbot()
 
 def create_notice_box(notice):
     notice_template = get_template('chatting_main_page/notice_box.html')
@@ -181,6 +181,7 @@ def load_chattion_main_page(request):
         else:
             return redirect('../')
 
+
 def sended_message_data(request):
     send_user_id = user_model.objects.get(id=request.user.id).id
     send_message = request.POST['send_text']
@@ -200,7 +201,17 @@ def sended_message_data(request):
     return JsonResponse({'message':'Success', 'data': message_box_content, 'last_message':send_message, 'is_chatbot_conv':is_chatbot_conv})
 
 def chatbot_conv(request):
-    return JsonResponse({'message':'Success'})
+    print(request.POST)
+    answer = chatbot.receive_answer(request.POST['send_text'])
+    sended_time = datetime.now()
+    last_message_time = Messages.objects.filter(conversation_id=request.POST['room_number']).last().timestamp
+    data = {
+        'sender_id' : 3,
+        'message_text' : answer,
+        'timestamp' : sended_time,
+    }
+    _, message_box_content = create_message_box(request.user.id, data, last_message_time, )
+    return JsonResponse({'message':'Success', 'data':message_box_content, 'last_message':answer})
 
 def user_logout(request):
     if request.method == 'POST':

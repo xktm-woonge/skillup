@@ -1,18 +1,19 @@
 {% load static %}
 <div id="gnb" class="">
         
-    <button id="notices" class="btn btn--gnb btn--Notification">
+    <button id="notices" class="btn btn--Notification">
         <img src="{% static 'icon/Notification.svg'%}" alt="GNB Notification icon">
     </button>
-    <button id="friends" class="btn btn--gnb btn--People_outline active">
-        <img src="{% static 'icon/People_outline.svg'%}" alt="GNB People_outline icon">
+    <button id="friends" class="btn btn--Friends active">
+        <img src="{% static 'icon/People_outline.svg'%}" alt="GNB Friends icon">
     </button>
-    <button id="chat" class="btn btn--gnb btn--Sms">
+    <button id="chat" class="btn btn--Chat">
         <img src="{% static 'icon/Sms.svg'%}" alt="GNB Sms icon">
     </button>
-    <button id="user" class="btn btn--gnb btn--Dots">
+    <button id="user" class="btn btn--User">
         <img src="{% static 'icon/Dots.svg'%}" alt="GNB Dots icon">
     </button>
+
 </div>
 
 <div id="side_bar" class="side_bar">
@@ -34,3 +35,5 @@
     </div>
     
 </div>
+
+<script src="{% static '/js/gnb.js'%}" defer></script>

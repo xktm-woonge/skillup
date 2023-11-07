@@ -17,14 +17,13 @@
 
 .btn--small {
   font-size: 14px;
-  font-weight: 700;
 }
 
 :root {
   --background: #FAFAFA;
   --gray: #8E8E8E;
-  --gray-50: #EBEBEB;
   --gray-80: #C7C7C7;
+  --gray-50: #EBEBEB;
   --white: #FFF;
   --black: #2E283B;
   --primary-500: #8D53FF;
@@ -39,6 +38,7 @@
   --inputPadding: 20px;
   --buttonPadding: 14px 16px;
   --br-radius: 16px;
+  --gap: 16px;
 }
 
 /***************************************************
@@ -66,7 +66,7 @@
 
 body {
   display: grid;
-  grid-template: 1fr/1fr;
+  grid-template: 1fr/var(--gnbSize) 500px 1fr;
   background-color: var(--gray-50);
 }
 
@@ -75,7 +75,6 @@ body {
   justify-content: center;
   align-items: center;
   width: 100%;
-  padding-left: calc(var(--gnbSize) + 500px);
 }
 .main_view .login--box, .main_view .register--box {
   overflow: hidden;
