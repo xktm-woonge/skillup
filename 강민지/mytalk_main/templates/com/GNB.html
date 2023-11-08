@@ -4,10 +4,10 @@
     <button id="notices" class="btn btn--Notification">
         <img src="{% static 'icon/Notification.svg'%}" alt="GNB Notification icon">
     </button>
-    <button id="friends" class="btn btn--Friends active">
+    <button id="friends" class="btn btn--Friends">
         <img src="{% static 'icon/People_outline.svg'%}" alt="GNB Friends icon">
     </button>
-    <button id="chat" class="btn btn--Chat">
+    <button id="chat" class="btn btn--Chat active">
         <img src="{% static 'icon/Sms.svg'%}" alt="GNB Sms icon">
     </button>
     <button id="user" class="btn btn--User">
@@ -21,17 +21,14 @@
     <div id='side_bar_notices' class="side_bar--tab">
         {% include 'chatting_main_page/side_bar_notices.html' %}
     </div>
-    <div id='side_bar_friends' class="side_bar--tab active">
+    <div id='side_bar_friends' class="side_bar--tab">
         {% include 'chatting_main_page/side_bar_friends.html' %}
     </div>
-    <div id='side_bar_chat' class="side_bar--tab">
+    <div id='side_bar_chat' class="side_bar--tab active">
         {% include 'chatting_main_page/side_bar_chat_list.html' %}
     </div>
     <div id='side_bar_user' class="side_bar--tab">
         {% include 'chatting_main_page/side_bar_user_info.html' %}
-    </div>
-    <div id='side_bar_setting' class="side_bar--tab">
-        {% include 'chatting_main_page/side_bar_setting.html' %}
     </div>
     
 </div>

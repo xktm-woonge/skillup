@@ -1,11 +1,23 @@
-<div id="user_profile_img"></div>
-<div id="user_nickname_box">
-    <span id="user_nickname_text">{{ name }}</span>
-    <a href="#">수정</a>
-</div>
-<div id="friends__status_box">
-    <span id="friends__status_text">{{ status_message }}</span>
-</div>
-<div id="user_email_addr_box">
-    <span id="user_email_addr_text">{{ email }}</span>
+{% load static %}
+<div class="user--img"></div>
+
+<div class="user--detail">
+
+    <div class="user--cover">
+        <div class="flexBox">
+            <p class="user--cover__name">{{ name }}</p>
+            <button class="user--cover__edit"><img src="{% static 'icon/Edit.svg'%}" alt="Edit icon">수정</button>
+        </div>
+        <p class="user--cover__email" >{{ email }}</p>
+    </div>
+
+    <div id="friends__status_box">
+        <span id="friends__status_text">{{ status_message }}</span>
+    </div>
+
+    <select class="user--activeSet">
+        <option value="active">대화 가능</option>
+        <option value="away">다른 용무중</option>
+    </select>
+
 </div>

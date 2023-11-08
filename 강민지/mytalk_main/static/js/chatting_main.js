@@ -1,5 +1,7 @@
 let socket = new WebSocket("ws://localhost:8000/ws/main/"); // ws:// 이후의 주소는 routing.py 의 경로
 let side_bar_class = Array.from(document.getElementsByClassName('side_bar--tab'))
+const csrfToken = getCSRFCookie();
+
 
 socket.onopen = function(){
     const message = {
@@ -7,7 +9,46 @@ socket.onopen = function(){
     };
     socket.send(JSON.stringify(message));
 }
+function getCSRFCookie() {
+    const name = 'csrftoken=';
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const ca = decodedCookie.split(';');
+    for (let i = 0; i <ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
 
+
+
+function add_user_status_event() {
+    document.querySelector('.user--activeSet').addEventListener('change', function(e){
+        e.preventDefault()
+        let changed_status = {'changed_status' : e.target.value,}
+        fetch('/main/user_active_set_api/', {
+            method : 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,  // CSRF 토큰을 헤더에 추가
+            },
+            body : JSON.stringify(changed_status),
+        })
+        .then(function(response) {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('Error: ' + response.status);
+            }
+        })
+        .then(data => console.log(data));
+      })
+}
 function set_profile_pic() {
     const userImgs = document.querySelectorAll(".friends--profile");
     userImgs.forEach(function(userImg) {
@@ -89,8 +130,10 @@ function load_curr_user_data(){
         document.getElementById('online_friends').innerHTML += page_data.friend_list.online;
         document.getElementById('offline_friends').innerHTML += page_data.friend_list.offline;
         document.getElementById('chatting_list').innerHTML += page_data.chatting_room_list;
-        document.getElementById("user_profile_detail").innerHTML = page_data.curr_user_data;
+        document.querySelector(".side_bar--body.notice").innerHTML = page_data.notice_data;
+        document.querySelector(".setting--user").innerHTML = page_data.curr_user_data;
         set_profile_pic();
+        add_user_status_event();
     })
 }
 
@@ -102,8 +145,7 @@ function scroll_to_bottom_in_chatting(){
 }
 
 function load_chatting_message_data(room_num) {
-    
-    var csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
     fetch('/main/get_message_api/', {
         method: 'POST',
         headers: {
@@ -130,8 +172,7 @@ function load_chatting_message_data(room_num) {
 }
 
 function userLogout(){
-    
-    var csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
     fetch('/main/logout_api/', {
         method: 'POST',
         headers: {

@@ -1,51 +1,63 @@
 {% load static %}
 <div class="side_bar--header">
-    <span class="side_bar--header__title">내정보</span>
+  <span class="side_bar--header__title">설정</span>
 </div>
-<div class="side_bar--body">
-    <div id="user_profile_detail">
-    </div>
-    <div id="user_profile_edit">
-        <div id="user_profile_img_edit"></div>
-        <div id="user_nickname_edit">
+<div class="side_bar--body setting">
+
+  <div class="setting--user">
+    <!--        
+        <div id="user_profile_edit">
             <div id="user_profile_img_edit"></div>
-            <input type="text" name="nickname" id="">
-            <input type="button" value="변경">
-        </div>
-        <div>
-            <input type="text" name="message_text" id="">
-        </div>
+            <div id="user_nickname_edit">
+                <div id="user_profile_img_edit"></div>
+                <input type="text" name="nickname" id="">
+                <input type="button" value="변경">
+            </div>
+            <div>
+                <input type="text" name="message_text" id="">
+            </div>
+        </div>-->
+
+  </div>
+
+  <div class="setting--options">
+
+    <div class="option email_notice">
+      <div class="option--icon" id="change_email_notice">
+        <img class="option--icon__img" src="{% static 'icon/Email.svg'%}" alt="이메일 알림 수신 변경 아이콘">
+      </div>
+      <div class="option--text">이메일 알림 수신 변경 </div>
     </div>
-    <div class="user_info_setting">
-        <div class="user_info_setting_box" id="change_email_notice">
-            <img src="{% static 'icon/-mail-outline_89945.svg'%}" alt="" class="user_info_setting_img" id="change_email_notice_img">
-        </div>
-        <div class="user_info_setting_text">
-            <span>이메일 알림 수신 변경</span>
-        </div>
+
+    <div class="option theme">
+      <div class="option--icon" id="change_theme_box">
+        <img class="option--icon__img" src="{% static 'icon/Edit-Theme.svg'%}" alt="테마 설정 아이콘">
+      </div>
+      <div class="option--text">테마 설정 </div>
     </div>
-    <div class="user_info_setting">
-        <div class="user_info_setting_box" id="change_password_box">
-            <img src="{% static 'icon/-lock-outline_90452.svg'%}" alt="" class="user_info_setting_img" id="change_password_img">
-        </div>
-        <div class="user_info_setting_text">
-            <span>비밀번호 변경</span>
-        </div>    
+
+    <div class="option password">
+      <div class="option--icon" id="change_password_box">
+        <img class="option--icon__img" src="{% static 'icon/Lock.svg'%}" alt="비밀번호 변경 아이콘">
+      </div>
+      <div class="option--text"> 비밀번호 변경 </div>
     </div>
-    <div class="user_info_setting" id="user_logout">
-        <div class="user_info_setting_box" id="logout_box">
-            <img src="{% static 'icon/-power-settings-new_89889.svg'%}" alt="" class="user_info_setting_img" id="logout_img">
-        </div>
-        <div class="user_info_setting_text">
-            <span>로그아웃</span>
-        </div>
+
+    <div class="option logout user_info_setting" id="user_logout">
+      <div class="option--icon" id="logout_box">
+        <img class="option--icon__img" src="{% static 'icon/Power.svg'%}" alt="로그아웃 아이콘">
+      </div>
+      <div class="option--text"> 로그아웃 </div>
     </div>
-    <div class="user_info_setting">
-        <div class="user_info_setting_box" id="cancel_membership_box">
-        </div>
-        <div class="user_info_setting_text">
-            <span>회원탈퇴</span>
-        </div>
-        
+
+    <div class="option withdraw">
+      <div class="option--icon" id="cancel_membership_box">
+        <img src="{% static 'icon/Empty.svg'%}" alt="회원탈퇴 아이콘">
+      </div>
+      <div class="option--text"> 회원탈퇴 </div>
     </div>
+
+  </div>
+
+
 </div>

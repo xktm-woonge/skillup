@@ -15,6 +15,7 @@
 
 #empty_contents {
     display: flex;
+    display: none;
     flex-direction: column;
     flex: 1;
     justify-content: center;

@@ -26,9 +26,10 @@ class Users(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     name = models.CharField(max_length=100)
     profile_picture = models.CharField(max_length=255, default='profile_basic.png')
-    status = models.CharField(max_length=10, choices=[('online', 'Online'), ('offline', 'Offline')], default='offline')
+    status = models.CharField(max_length=10, choices=[('active', 'Active'), ('away', 'Away')], default='active')
     status_message = models.CharField(max_length=255,null=True)
-     
+    
+    is_online = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     

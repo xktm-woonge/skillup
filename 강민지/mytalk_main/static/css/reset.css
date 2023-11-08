@@ -56,3 +56,4 @@ a img, label img, button img,
 button {
 	cursor: pointer;
 }
+select:focus {outline:none;}

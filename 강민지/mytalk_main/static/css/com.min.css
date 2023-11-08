@@ -33,6 +33,7 @@
   --Danger-500: #FF6155;
   --Danger-700: #B72935;
   --gnbSize: 72px;
+  --sideSize: 500px;
   --imgSize: 48px;
   --padding: 24px;
   --inputPadding: 20px;
@@ -66,7 +67,7 @@
 
 body {
   display: grid;
-  grid-template: 1fr/var(--gnbSize) 500px 1fr;
+  grid-template: 1fr/var(--gnbSize) var(--sideSize) 1fr;
   background-color: var(--gray-50);
 }
 
@@ -78,7 +79,7 @@ body {
 }
 .main_view .login--box, .main_view .register--box {
   overflow: hidden;
-  width: 500px;
+  width: var(--sideSize);
   height: auto;
   padding: 0;
   margin: 0 auto;
@@ -159,6 +160,10 @@ input[disabled] + input[type=submit] {
   display: flex;
   justify-content: flex-start;
   align-items: center;
+  width: calc(var(--imgSize) * 0.75);
+}
+.btn--back img {
+  width: 100%;
 }
 .btn--small {
   filter: unset;

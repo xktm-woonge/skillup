@@ -16,6 +16,7 @@
   --Danger-500: #FF6155;
   --Danger-700: #B72935;
   --gnbSize: 72px;
+  --sideSize: 500px;
   --imgSize: 48px;
   --padding: 24px;
   --inputPadding: 20px;
@@ -23,6 +24,7 @@
   --br-radius: 16px;
   --gap: 16px;
 }
+
 
 /***************************************************
   gnb view 
@@ -78,10 +80,11 @@
 ****************************************************/
 
 .side_bar {
-  width: 500px;
+  width: var(--sideSize);
   height: 100%;
   background: var(--background);
   z-index: 98;
+  @extend %boxShadow;
   &--tab {
     display: none;
     height: 100%;
@@ -98,7 +101,7 @@
     &__title{@extend %body1;}
     button {
       height: 100%;
-      img {filter: invert(1); height: 100%;}
+      img {filter: invert(100%) sepia(53%) saturate(0%) hue-rotate(319deg) brightness(105%) contrast(102%); height: 100%;}
     }
     //&--delete_all {
     //  &::after {
@@ -118,333 +121,103 @@
     height: 100%;
     height: calc(100% - var(--gnbSize));
     overflow-y: auto;
-    padding-bottom: calc(var(--gnbSize) + 10px);
-    &.notice { padding: 10px 10px calc(var(--gnbSize) + 10px);}
+    padding: var(--gap) var(--gap) calc(var(--gnbSize) + 10px);
+    &.setting {padding: 0;}
   }
   &--footer {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     background-color: var(--gray-50);
+    width: 100%;
     position: absolute;
-    width: 100%;
-    height: var(--gnbSize);
     bottom: 0;
-    .footer_btn {
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: 32px;
-      &.plus_btn { background-image:url('../../icon/-add_90222.svg')}
-      &.delete_btn { background-image:url('../../icon/-delete-forever_90072.svg')}
-      &.add_chat_btn { background-image:url('../../icon/-group-add_89915.svg')}
-      &.setting_btn { background-image:url('../../icon/cog_outline_icon_139752.svg')}
+    .btn {
+      @include flexBox(center);
     }
   }
 }
 
 
 /***************************************************
-  notice view 
+  side_bar chatting_room view 
 ****************************************************/
-.notice {
+
+.chatting_room {
+  padding: 0;
+  &--cover {width: 100%;}
   &--group {
-    display: grid;
-    grid-template-columns: var(--imgSize) 1fr 24px;
-    align-items: start;
-    gap: var(--gap);
-    padding: var(--inputPadding);
-    background: var(--white);
-    border-radius: var(--br-radius);
-    @extend %boxShadow;
-  }
-  &--type {
-    width: var(--imgSize);
-    height: var(--imgSize);
-    border-radius: var(--br-radius);
-    $shadow: 6px;
-    img {aspect-ratio: 1 / 1;}
-    &.system { background-color:var(--Semi-Darker); img {filter: invert(100%); padding: 12px;}}
-    &.danger { background-color:var(--Danger-700); img {filter: invert(100%);; padding: 12px;}}
-    &.normal img {
-      width: 100%; height: 100%; 
-      border-radius: calc(var(--br-radius));
-    }
-    &.group img {
-      width: calc(100% - $shadow); height: calc(100% - $shadow); 
-      box-shadow: $shadow $shadow 0 var(--Success-500);
-      border-radius: calc(var(--br-radius) * 0.83);
-    }
-  }
-  &--box {
-    @include flexBox(flex-start, flex-start);
-    flex-direction: column;
-    gap: calc(var(--gap) / 2);
-    @extend %body2;
-    font-weight: 700;
-    &__title{font-weight:bold}
-    &__content {}
-    &__time { @extend %caption;color:var(--gray-80)}
-  }
-  &--delete_btn {
-    padding: 0;
-    &::after {
-      content: url('../icon/Clear.svg');
-      filter: invert(87%) sepia(1%) saturate(65%) hue-rotate(148deg) brightness(117%) contrast(56%);
-      display: block;
-      width: 24px;
-      height: 24px;
-    }
-  }
-}
-
-
-/***************************************************
-  friends view 
-****************************************************/
-.friends {
-  $position: 4px;
-  &--group {
-    @include flexBox(flex-start, flex-start);
-    flex-direction: column;
-    width: 100%;
-    &.on .friends {
-      &--box {cursor: pointer; &:hover{ background-color: var(--gray-50);}}
-      &--profile {
-        &::before { background-color:var(--Danger-700); border: $position solid var(--gray-50);}
-        &.active::before {background-color:var(--Success-700); }
-      }
-    }
-    &.off .friends--box {opacity: .5;}
-    &__title {
-      width: 100%;
-      padding: var(--gap) calc(var(--padding) * 1.5) 0;
-      box-sizing: border-box;
-      border-top: 1px dashed var(--gray-50);
-      vertical-align: middle;
-      color: var(--gray-80);
-      @extend %caption;
-    }
-  }
-  &--box {
-    display: grid;
-    grid-template-columns: var(--imgSize) 1fr;
-    gap: var(--gap);
-    width: 100%;
-    padding: var(--gap) calc(var(--padding) * 1.5);
-  }
-  &--profile {
-    height: var(--imgSize);
-    background: var(--gray) url('../img/profile_basic.png');
-    position: relative;
-    border-radius: var(--br-radius);
-    @include activeDot($position, transparent);
-  }
-  &--detail {
-    width: 100%;
-    overflow: hidden;
-  }
-  &__name {
-    @include flexBox();
-    width: 100%;
-    @extend %title; 
-    margin-bottom: 8px;
-  }
-  &__status {
-    display: block;
-    @extend %body2;
-    @include ellipseBox();
-    color: var(--gray);
-  }
-  //&--btns {
-  //  display: block;
-  //  width: 100%;
-  //  height: 100%;
-  //  background-color: yellow;
-  //}
-}
-
-
-/***************************************************
-  chat view 
-****************************************************/
-
-
-/* 채팅방 목록 */
-.chatting_room{
-    position: static;
-    box-sizing: border-box;
-    width: 100%;
-    max-height: 104px;
-    padding: 8px 28px;
-}
-.chatting_room{
-    margin: 0;
-    padding: 0;
-}
-.chatting_room_list .room_detail .room_final_message {
-    width: 100%;
-}
-.chatting_room_list{
     display: flex;
     column-gap: 22px;
     width: 100%;
     max-height: 104px;
     box-sizing: border-box;
     padding: 20px 12px 20px 28px;
-}
-.chatting_room_list:hover{
-    background-color: var(--gray-50);
-}
-.chatting_room_list .room_img{
-    display: block;
-    min-width: 64px;
-    height: 64px;
-    border-radius: 24px;
-    background-size: cover;
-    background-position: center;
-}
-.chatting_room_list .room_detail {
-    display: block;
-    width: calc(100% - 80px);
-}
-.chatting_room_list .room_img .user_status_color{
-    width: 20px;
-    height: 20px;
-}
-.room_final_message {
-    width: calc(100% - 126px);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* 사용자 정보 */
-#user_profile_detail, #user_profile_edit {
-    min-height: 230px;
-    box-sizing: border-box;
-    padding: 28px 24px 24px 28px;
-    align-items: center;
-    display: grid;
-    grid-template-columns: 120px minmax(120px, 1fr);
-    gap: 8px 28px;
-}
-#user_profile_edit{
-    display: none;
-}
-@media (max-width: 1280px) {
-    #user_profile_detail {
-        grid-template-columns: 1fr;
-        grid-auto-flow: row;
+    :hover{
+      background-color: var(--gray-50);
     }
-}
+    .room_detail .room_final_message {
+      width: 100%;
+    }
+    .room_img{
+      display: block;
+      min-width: 64px;
+      height: 64px;
+      border-radius: 24px;
+      background-size: cover;
+      background-position: center;
+    }
+    .room_detail {
+      display: block;
+      width: calc(100% - 80px);
+    }
+    .room_img .user_status_color{
+      width: 20px;
+      height: 20px;
+    }
+    .room_final_message {
+      width: calc(100% - 126px);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
 
-#user_profile_img, #user_profile_img_edit{
-    width: 120px;
-    height: 120px;
-    grid-row: auto / span 2;
-    border-radius: 40px;
-    justify-self: center;
-    background-image: url('../img/profile_basic.png');
-    background-size: cover;
-    background-position: center;
-}
-#user_nickname_box{
-    height: 100%;
-    display: flex;
-    align-items: end;
-}
-#user_nickname_box #user_nickname_text{
-    color: var(--black);
-    font-size: 24px;
-    font-weight: 700;
-    margin-right: 8px;
-    max-width: 80%;
-}
-#friends__status_box {
-    height: 100%;
-    overflow: hidden;    
-    text-overflow: ellipsis;
-}
-#friends__status_box #friends__status_text{
-    color: var(--black);
-    font-size: 14px;
-    font-weight: 400;
-}
-#user_email_addr_box{
-    height: 100%;    
-    grid-column: auto;
-    display: inherit;
-    align-items: center;
-}
-#user_email_addr_box #user_email_addr_text {
-    color: var(--gray);
-    font-size: 14px;
-    font-weight: 400;
-} 
-.user_info_setting, .system_setting{
-    height: 104px;
-    display: flex;
-    background-color: var(--white);
-}
-.user_info_setting:hover, .system_setting:hover {
-    background-color: var(--gray-50);
-}
-.user_info_setting_box, .system_setting_box {
-    width: 64px;
-    height: 64px;
-    display: flex;
-    border-radius: 24px;
-    margin: 20px 28px;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--white);
-}
-.user_info_setting_text, .system_setting_text {
-    width: calc(100% - 120px);
-    display: flex;
-    align-items: center;
-    color: var(--black);
-    font-size: 18px;
-    font-weight: 700;
-    word-break: keep-all;
-}
-#change_email_notice, #change_password_box,
-#logout_box, #change_theme_box {
-    background-color: var(--Success-500);
-}
-.user_info_setting_img{
-    width: 32px;
-    height: 32px;
-        &.status_offline {
-          background-color: var(--gray-80);
-          &::before{
-            content: "";
-            display:block;
-            width: 40%;
-            height: 40%;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            border-radius: 24px;
-            background-color: var(--background);
-          }
-        }
-}
-.edit_button {
-  
-}
-#logout_box {
-    background-color: var(--Danger-500);
-}
+}  
+
+
+
+
+
+
+
+
+//#user_profile_edit {
+//    min-height: 230px;
+//    box-sizing: border-box;
+//    padding: 28px 24px 24px 28px;
+//    align-items: center;
+//    display: grid;
+//    grid-template-columns: 120px minmax(120px, 1fr);
+//    gap: 8px 28px;
+//    display: none;
+//}
+// #user_profile_img_edit{
+//    width: 120px;
+//    height: 120px;
+//    grid-row: auto / span 2;
+//    border-radius: 40px;
+//    justify-self: center;
+//    background-image: url('../img/profile_basic.png');
+//    background-size: cover;
+//    background-position: center;
+//}
+//#friends__status_box {
+//    height: 100%;
+//    overflow: hidden;    
+//    text-overflow: ellipsis;
+//}
+//#friends__status_box #friends__status_text{
+//    color: var(--black);
+//    font-size: 14px;
+//    font-weight: 400;
+//}

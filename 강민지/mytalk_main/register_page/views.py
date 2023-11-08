@@ -6,7 +6,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from chatting_main_page.models import Friends
 import random
-import string
 
 user_model = get_user_model()
 
@@ -92,8 +91,8 @@ def make_random_ceri_code():
     return random.randint(min_value, max_value)
 
 def make_random_user_name():
-    characters = string.ascii_letters + string.digits + string.punctuation
-    return ''.join(random.choice(characters) for i in range(15))
+    random_name = f'USER_{random.randint(0000, 9999)}'
+    return random_name
 
 def add_friends_chatbot(user_id):
     chatbot_ted_id = user_model.objects.get(name='TED').id

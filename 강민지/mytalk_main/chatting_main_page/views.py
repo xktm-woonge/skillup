@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.contrib.auth import authenticate, get_user_model, logout
 from django.template.loader import get_template
+from django.templatetags.static import static
 from django.utils.safestring import mark_safe
 from datetime import datetime
 from .models import *
@@ -14,27 +15,55 @@ from .chatbot import Chatbot
 user_model = get_user_model()
 chatbot = Chatbot()
 
+def notice_pretreatment(data):
+    timestamp = data['created_at'].strftime('%Y-%m-%d %H:%M:%S')
+    try:
+        sender_name = user_model.objects.get(id=data['sender_id'])
+    except user_model.DoesNotExist:
+        sender_name = 'system'
+    if data['type'] == 'friends':
+        button_type = get_template('chatting_main_page/select_div.html').render({})
+    else:
+        button_type = '<button class="notice--btn delete"></button>'
+        
+    if data['type'] in ['system', 'danger']:
+        img_src = static('icon/Notification.svg')
+    else:
+        get_sender_profile_pic = user_model.objects.get(id=data['sender_id']).profile_picture
+        img_src = static(f'img/{get_sender_profile_pic}')
+    return timestamp, sender_name, button_type, img_src
+        
+
 def create_notice_box(notice):
     notice_template = get_template('chatting_main_page/notice_box.html')
     
-    timestamp_string = notice.created_at.strftime('%Y-%m-%d %H:%M:%S')
+    timestamp_string, sender_name, button_type, img_src = notice_pretreatment(notice)
+    
     context = {
-        'noti_type' : notice.type if notice.type and notice.type == "FRIEND_REQUEST" else f"{notice.type}_notice" ,
-        'content' : notice.content,
-        'sender_name' : user_model.objects.get(id=notice.sender_id),
+        'noti_type' : notice['type'],
+        'img_src' : img_src,
+        'content' : notice['content'],
+        'title' : sender_name,
         'created_at' : timestamp_string,
+        'button_type': button_type,
     }
     return notice_template.render(context)
 
 def create_friend_list(friend_info):
     friend_template = get_template('chatting_main_page/friend_list.html')
     
+    if friend_info.status == 'offline':
+        show_user_status = False
+    else:
+        show_user_status = friend_info.is_online
+    
     context = {
         "name" : friend_info.name,
+        "status" : friend_info.status,
         "status_message" : friend_info.status_message if friend_info.status_message and friend_info.status_message != "None" else "",
         "profile_picture" : friend_info.profile_picture,
     }
-    return friend_info.status, friend_template.render(context)
+    return show_user_status, friend_template.render(context)
 
 def create_message_box(user_id, data, prev_date):
     message_template = get_template('chatting_main_page/message_box.html')
@@ -69,8 +98,7 @@ def create_chatting_room(user_data, room):
 def get_notice_list(request):
     notice_contents = ""
     notices = Notifications.objects.filter(user_id=request.user.id)
-    
-    if not notices :
+    if notices :
         for notice in notices.values():
             notice_contents += create_notice_box(notice)
     return notice_contents
@@ -84,10 +112,10 @@ def get_friend_list(request):
         for friend in friends.values():
             friend_info = user_model.objects.get(id=friend['friend_id'])
             friend_status, friend_content = create_friend_list(friend_info)
-            if friend_status == "offline" :
-                offline_contents += friend_content
-            else :
+            if friend_status :
                 online_contents += friend_content
+            else :
+                offline_contents += friend_content
     return {'online' : online_contents, 'offline': offline_contents}
     
 def get_chatting_room_list(request):
@@ -151,10 +179,17 @@ def get_message_data(request):
                         last_reply_time = f'{delta.seconds//3600}시간'
                     else :
                         last_reply_time = f'{delta.days}일'
-                    
+                                   
+            conv_status = '오프라인'
+            if conv_user.is_online :
+                if conv_user.status == 'active':
+                    conv_status = '온라인'
+                elif conv_user.status == 'away' :
+                    conv_status = '자리 비움'
+                      
             conv_user_content = {
                 'conv_user' : conv_user.name,
-                'conv_status' : '온라인' if conv_user.status == "online" else '오프라인',
+                'conv_status' : conv_status,
                 'conv_pic' : conv_user.profile_picture,
                 'last_reply_time' : last_reply_time,
                 'csrf_token' : request.META.get('CSRF_COOKIE'),
@@ -201,7 +236,6 @@ def sended_message_data(request):
     return JsonResponse({'message':'Success', 'data': message_box_content, 'last_message':send_message, 'is_chatbot_conv':is_chatbot_conv})
 
 def chatbot_conv(request):
-    print(request.POST)
     answer = chatbot.receive_answer(request.POST['send_text'])
     sended_time = datetime.now()
     last_message_time = Messages.objects.filter(conversation_id=request.POST['room_number']).last().timestamp
@@ -213,11 +247,15 @@ def chatbot_conv(request):
     _, message_box_content = create_message_box(request.user.id, data, last_message_time, )
     return JsonResponse({'message':'Success', 'data':message_box_content, 'last_message':answer})
 
+def user_active_set(request):
+    print(request.POST)
+    return JsonResponse({'message':'Success'})
+
 def user_logout(request):
     if request.method == 'POST':
         # print(request.POST)
         current_user = user_model.objects.get(email=request.user.email)
-        current_user.status = 'offline'
+        current_user.is_online = False
         current_user.save()
         logout(request)
         return JsonResponse({'message':'Success'})

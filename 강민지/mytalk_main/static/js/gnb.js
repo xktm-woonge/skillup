@@ -4,6 +4,7 @@ window.addEventListener("DOMContentLoaded", function () {
   const GNB = document.querySelectorAll("#gnb .btn");
   const GNB_SIDES = document.querySelectorAll("#side_bar .side_bar--tab");
 
+  /*** side_bar on/off ***/
   GNB.forEach((e) =>
     e.addEventListener("click", function () {
       const CLICKED_CLASS = this.classList;

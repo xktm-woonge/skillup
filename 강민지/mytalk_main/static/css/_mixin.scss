@@ -6,7 +6,7 @@
 }
 
 @mixin ellipseBox($line: 1) {
-  white-space: nowrap;
+  display: -webkit-box;
   overflow: hidden;
   text-overflow: ellipsis;
   -webkit-line-clamp: $line;
@@ -24,8 +24,8 @@
     top: - $position; left: - $position;
     border: $position solid $borderColor;
     border-radius: 50%;
-    width: calc(var(--imgSize) / 4);
-    height: calc(var(--imgSize) / 4);
+    width: calc(var(--imgSize) / 5);
+    height: calc(var(--imgSize) / 5);
   }
 }
 
@@ -48,5 +48,5 @@
 %caption {
   font-size: 12px;
   font-weight: 400;
-  line-height: 12px; /* 100% */
+  line-height: 14px; /* 100% */
 }

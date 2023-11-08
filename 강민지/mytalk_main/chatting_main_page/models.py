@@ -28,8 +28,11 @@ class Messages(models.Model):
 
 class Notifications(models.Model):
     TYPE_CHOICES = [
-        ('SYSTEM', 'System'),
-        ('FRIEND_REQUEST', 'Friend Request'),
+        ('SYSTEM', 'system'),
+        ('DANGER', 'danger'),
+        ('FRIENDS', 'friends'),
+        ('TEAM', 'team'),
+        ('NORMAL', 'normal'),
     ]
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='notifications_received')

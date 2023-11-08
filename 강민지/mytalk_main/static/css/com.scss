@@ -16,6 +16,7 @@
   --Danger-500: #FF6155;
   --Danger-700: #B72935;
   --gnbSize: 72px;
+  --sideSize: 500px;
   --imgSize: 48px;
   --padding: 24px;
   --inputPadding: 20px;
@@ -23,6 +24,7 @@
   --br-radius: 16px;
   --gap: 16px;
 }
+
 
 /***************************************************
   common view 
@@ -40,17 +42,17 @@
 
 body {
   display: grid;
-  grid-template: 1fr / var(--gnbSize) 500px 1fr;
+  grid-template: 1fr / var(--gnbSize) var(--sideSize) 1fr;
   background-color: var(--gray-50);
 }
 
 .main_view {
   @include flexBox(center);
   width: 100%;
-  //padding-left: calc(var(--gnbSize) + 500px);
+  //padding-left: calc(var(--gnbSize) + var(--sideSize));
   .login--box, .register--box {
     overflow: hidden;
-    width: 500px;
+    width: var(--sideSize);
     height: auto;
     padding: 0;
     margin: 0 auto;
@@ -120,6 +122,8 @@ input {
   &--back {
     position: absolute;
     @include flexBox(flex-start);
+    width: calc(var(--imgSize) * .75);
+    img {width: 100%;}
   }
   &--small {
     @extend %body2;

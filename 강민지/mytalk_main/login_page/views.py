@@ -19,7 +19,7 @@ def try_login(request):
         if user is not None:
             login(request, user)
             current_user = user_model.objects.get(email=request.user.email)
-            current_user.status = 'online'
+            current_user.is_online = True
             current_user.save()
             return JsonResponse({'message':'Success'})
         else:
