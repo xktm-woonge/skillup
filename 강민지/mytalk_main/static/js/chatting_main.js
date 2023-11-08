@@ -50,9 +50,10 @@ function add_user_status_event() {
       })
 }
 function set_profile_pic() {
-    const userImgs = document.querySelectorAll(".friends--profile");
+    const userImgs = document.querySelectorAll(".profile");
+    console.log(userImgs);
     userImgs.forEach(function(userImg) {
-        const profilePictureUrl = userImg.getAttribute("data-image");
+        let profilePictureUrl = userImg.dataset.image || 'profile_basic.png';
         userImg.style.background = `url('../static/img/${profilePictureUrl}') center / cover`;
     });
 }
@@ -84,7 +85,7 @@ function conv_chatbot(question, roomnum) {
     .then(function(data){
         document.getElementsByClassName('chat_contents')[0].innerHTML += data.data;
         scroll_to_bottom_in_chatting();
-        document.getElementById(`room_num_${roomnum}`).querySelector('.room_final_message').textContent = data.last_message;
+        document.getElementById(`room_num_${roomnum}`).querySelector('.room__status').textContent = data.last_message;
     })
 }
 
@@ -108,7 +109,7 @@ function send_message() {
         .then(function(data){
             document.getElementsByClassName('chat_contents')[0].innerHTML += data.data;
             scroll_to_bottom_in_chatting();
-            document.getElementById(`room_num_${room_num}`).querySelector('.room_final_message').textContent = data.last_message;
+            document.getElementById(`room_num_${room_num}`).querySelector('.room__status').textContent = data.last_message;
             if(!data.is_chatbot_conv){conv_chatbot(send_message_data, room_num)};
         })
     }
@@ -129,7 +130,7 @@ function load_curr_user_data(){
     .then(function(page_data){
         document.getElementById('online_friends').innerHTML += page_data.friend_list.online;
         document.getElementById('offline_friends').innerHTML += page_data.friend_list.offline;
-        document.getElementById('chatting_list').innerHTML += page_data.chatting_room_list;
+        document.querySelector(".side_bar--body.room").innerHTML +=page_data.chatting_room_list;
         document.querySelector(".side_bar--body.notice").innerHTML = page_data.notice_data;
         document.querySelector(".setting--user").innerHTML = page_data.curr_user_data;
         set_profile_pic();

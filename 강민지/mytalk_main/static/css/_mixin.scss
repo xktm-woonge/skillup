@@ -13,20 +13,33 @@
   -webkit-box-orient: vertical;
 }
 
-%boxShadow {
-  filter: drop-shadow(0px 2px 10px rgba(0, 0, 0, 0.05));
-}
-
-@mixin activeDot($position: 4px, $borderColor: var(--background)){
+@mixin activeDot() {
+  $position: 4px;
   &::before {
     content: '';
     position: absolute;
     top: - $position; left: - $position;
-    border: $position solid $borderColor;
+    border: $position solid var(--background);
     border-radius: 50%;
     width: calc(var(--imgSize) / 5);
     height: calc(var(--imgSize) / 5);
   }
+}
+
+%profile {
+  width: var(--imgSize);
+  height: var(--imgSize);
+  position: relative;
+  border-radius: var(--br-radius);
+}
+
+%boxShadow {
+  filter: drop-shadow(0px 2px 10px rgba(0, 0, 0, 0.05));
+}
+%sideInnerSpan {
+  @extend %caption;
+  color: var(--gray);
+  margin-left: 4px;
 }
 
 /* for font */

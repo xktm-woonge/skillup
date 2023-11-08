@@ -1,12 +1,12 @@
-//#main_chat{
-//    display: flex;
-//    flex-direction: column;
-//    position: absolute;
-//    width: calc(75vw - var(--gnbSize));
-//    height: 100vh;
-//    right: 0;
-//    background-color: #F0F0F0;
-//}
+/* #main_chat{
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    width: calc(75vw - var(--gnbSize));
+    height: 100vh;
+    right: 0;
+    background-color: #F0F0F0;
+} */
 @media (max-width: 800px) {
     #main_chat{
         width: calc(100vw - 272px);

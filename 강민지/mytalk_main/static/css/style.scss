@@ -193,7 +193,6 @@
   side_bar friends view 
 ****************************************************/
 .friends {
-  $position: 4px;
   &--group {
     @include flexBox(flex-start, flex-start);
     flex-direction: column;
@@ -208,16 +207,17 @@
       color: var(--gray-80);
       @extend %caption;
     }
-    &.on .friends {
-      &--box { cursor: pointer; 
-        &:hover{ background-color:var(--white);@extend %boxShadow}
-      }
-      &--profile {
-        &::before { background-color:var(--Danger-700);  border: $position solid var(--white);}
-        &.active::before {background-color:var(--Success-700); }
+    &.on .friends { 
+      &--box{ cursor: pointer; 
+        &:hover{ background-color:var(--white); @extend %boxShadow;
+          .friends--profile { &::before{border-color:var(--white);} }
+        }
       }
     }
-    &.off .friends--box {opacity: .5;}
+    &.off {
+      .friends--box {opacity: .5;}
+      .friends--profile::before {display: none;}
+    }
   }
   &--box {
     display: grid;
@@ -227,12 +227,8 @@
     padding: var(--gap) var(--padding);
     border-radius: var(--br-radius);
   }
-  &--profile {
-    height: var(--imgSize);
-    background: var(--gray) url('../img/profile_basic.png');
-    position: relative;
-    border-radius: var(--br-radius);
-    @include activeDot($position, transparent);
+  &--profile { 
+    @include activeDot();
   }
   &--detail {
     width: 100%;
@@ -242,11 +238,7 @@
     @extend %body1;
     font-weight: bold;
     margin-bottom: 4px;
-    span {
-      @extend %caption;
-      color: var(--gray);
-      margin-left: 4px;
-    }
+    span { @extend %sideInnerSpan; }
   }
   &__status {
     @extend %body2;
