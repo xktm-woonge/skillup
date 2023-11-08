@@ -15,7 +15,7 @@ def load_register(request):
     '''
     if request.method == 'GET':
         request.session['ceri_result'] = 'Fail'
-        return render(request, 'register_page/register.html')
+        return render(request, 'contents/register.html')
     
 def get_email(request):
     '''

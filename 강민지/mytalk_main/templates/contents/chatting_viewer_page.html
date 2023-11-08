@@ -1,5 +1,5 @@
 {% load static %}
-  {% include 'com/Head.html' %}
+  {% include 'common/Head.html' %}
   <link rel="stylesheet" href="{% static 'css/gnb.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/chatting_main.css' %}">
   <title>CHATTING</title>
@@ -7,12 +7,12 @@
 
 <body class="page_view">
 
-  {% include 'com/GNB.html' %}
+  {% include 'common/GNB.html' %}
 
   <div id="main_chat" class="main_view">
-    {% include "chatting_main_page/empty.html" %}
+    {% include "include/empty.html" %}
     <div id="chatting_room_detail">
-      {% include "chatting_main_page/chatting.html" %}
+      {% include "include/chatting.html" %}
     </div>
   </div>
   <script src="{% static 'js/chatting_main.js' %}"></script>

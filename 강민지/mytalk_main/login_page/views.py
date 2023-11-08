@@ -9,7 +9,7 @@ def login_page_view(request):
         if request.user.is_authenticated:
             return redirect('/main')
         else:   
-            return render(request, 'login_page/login.html')
+            return render(request, 'contents/login.html')
         
 def try_login(request):
     if request.method == 'POST':

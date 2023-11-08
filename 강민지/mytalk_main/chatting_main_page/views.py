@@ -22,7 +22,7 @@ def notice_pretreatment(data):
     except user_model.DoesNotExist:
         sender_name = 'system'
     if data['type'] == 'friends':
-        button_type = get_template('chatting_main_page/select_div.html').render({})
+        button_type = get_template('include/select_div.html').render({})
     else:
         button_type = '<button class="notice--btn delete"></button>'
         
@@ -35,7 +35,7 @@ def notice_pretreatment(data):
         
 
 def create_notice_box(notice):
-    notice_template = get_template('chatting_main_page/notice_box.html')
+    notice_template = get_template('include/notice_box.html')
     
     timestamp_string, sender_name, button_type, img_src = notice_pretreatment(notice)
     
@@ -50,8 +50,8 @@ def create_notice_box(notice):
     return notice_template.render(context)
 
 def create_friend_list(friend_info):
-    friend_template = get_template('chatting_main_page/friend_list.html')
-    
+    friend_template = get_template('include/friend_list.html')
+
     if friend_info.status == 'offline':
         show_user_status = False
     else:
@@ -66,7 +66,7 @@ def create_friend_list(friend_info):
     return show_user_status, friend_template.render(context)
 
 def create_message_box(user_id, data, prev_date):
-    message_template = get_template('chatting_main_page/message_box.html')
+    message_template = get_template('include/message_box.html')
     
     direction = 'send' if data['sender_id'] == user_id else 'given'     
     context = {
@@ -83,7 +83,7 @@ def create_message_box(user_id, data, prev_date):
     return prev_date, message_template.render(context)
 
 def create_chatting_room(user_data, room):
-    chatting_room_template = get_template('chatting_main_page/chat_list.html')
+    chatting_room_template = get_template('include/chat_list.html')
     final_message = Messages.objects.filter(conversation_id=room['conversation_id']).last()
     
     context = {
@@ -136,7 +136,7 @@ def get_chatting_room_list(request):
 
 def get_curr_user_data(request):
     current_user_content = ""
-    user_info_template = get_template('chatting_main_page/user_detail.html')
+    user_info_template = get_template('include/user_detail.html')
     current_user = user_model.objects.get(id=request.user.id)
     user_data = {
         'id' : current_user.id,
@@ -155,7 +155,7 @@ def get_message_data(request):
     conv_user_content = ""
     prev_message_date = datetime(2000, 1, 1) # 시간을 비교하기 위해 임의의 값으로 설정
     conversations_num = json.loads(request.body.decode('utf-8'))['room_num']
-    chat_page_template = get_template('chatting_main_page/chatting.html')
+    chat_page_template = get_template('include/chatting.html')
     get_messages = Messages.objects.filter(conversation_id=conversations_num)
     
     if get_messages:
@@ -212,7 +212,7 @@ def load_chattion_main_page(request):
     if request.method =="GET":
         if request.user.is_authenticated:
             context = {'csrf_token':request.META.get('CSRF_COOKIE')}
-            return render(request, 'chatting_main_page/chatting_viewer_page.html', context)
+            return render(request, 'contents/chatting_viewer_page.html', context)
         else:
             return redirect('../')
 
@@ -236,6 +236,7 @@ def sended_message_data(request):
     return JsonResponse({'message':'Success', 'data': message_box_content, 'last_message':send_message, 'is_chatbot_conv':is_chatbot_conv})
 
 def chatbot_conv(request):
+    print(request.POST)
     answer = chatbot.receive_answer(request.POST['send_text'])
     sended_time = datetime.now()
     last_message_time = Messages.objects.filter(conversation_id=request.POST['room_number']).last().timestamp
