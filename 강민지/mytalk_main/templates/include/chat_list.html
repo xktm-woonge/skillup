@@ -1,8 +1,8 @@
-<li class="room--box" id="room_num_{{ room_num }}"  onclick="load_chatting_message_data({{ room_num }})">
+<li class="room--box" id="room_num_{{ room_num }}" onclick="load_chatting_message_data({{ room_num }})">
     <div class="room--profile profile {{ user_status }}" data-image="{{ conv_picture }}"></div>
     <div class="room--detail">
         <input type="hidden">
-        <div class="room__name">{{ conv_user_name }}<span>{{ conv_team }}기획2팀 · 팀장 (원격)</span> </div>
+        <div class="room__name">{{ conv_user_name }} <span>{{ team }}</span> </div>
         <div class="room__status">{{ conv_final_message }}</div>
     </div>
 </li>

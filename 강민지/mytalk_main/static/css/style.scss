@@ -207,16 +207,10 @@
       color: var(--gray-80);
       @extend %caption;
     }
-    &.on .friends { 
-      &--box{ cursor: pointer; 
-        &:hover{ background-color:var(--white); @extend %boxShadow;
-          .friends--profile { &::before{border-color:var(--white);} }
-        }
-      }
-    }
-    &.off {
-      .friends--box {opacity: .5;}
-      .friends--profile::before {display: none;}
+    &.on .friends--box{ cursor: pointer; @extend %activeDotsHoverBorder; }
+    &.off .friends {
+      &--box {opacity: .5;}
+      &--profile::before {display: none;}
     }
   }
   &--box {
@@ -238,11 +232,11 @@
     @extend %body1;
     font-weight: bold;
     margin-bottom: 4px;
-    span { @extend %sideInnerSpan; }
+    span { @extend %sideInnerTeam; }
   }
   &__status {
     @extend %body2;
-    @include ellipseBox(2);
+    @include ellipseBox(1);
   }
   //&--btns {
   //  display: block;
@@ -250,6 +244,39 @@
   //  height: 100%;
   //  background-color: yellow;
   //}
+}
+
+
+/***************************************************
+  side_bar chatting_room view 
+****************************************************/
+.room {
+  padding: 0 !important;
+  &--box {
+    display: grid;
+    grid-template-columns: var(--imgSize) 1fr;
+    gap: var(--gap);
+    width: 100%;
+    padding: var(--padding);
+    cursor: pointer;
+    @extend %activeDotsHoverBorder;
+  }
+  &--profile {
+    @include activeDot();
+  }
+  &--detail {
+  }
+
+  &__name {
+    @extend %body1;
+    font-weight: bold;
+    margin-bottom: 4px;
+    span { @extend %sideInnerTeam; }
+  }
+  &__status {
+    @include ellipseBox();
+    @extend %body2;
+  }
 }
 
 
@@ -264,39 +291,37 @@
     align-items: center;
     gap: var(--padding);
     padding: 40px;
-    .user {
-      &--img {
-        width: calc(var(--imgSize) * 3);
-        height: calc(var(--imgSize) * 3);
-        border-radius: 50%;
-        background: url('../img/profile_basic.png') center / cover;
+  }
+  .user {
+    &--img {
+      width: calc(var(--imgSize) * 3);
+      height: calc(var(--imgSize) * 3);
+      border-radius: 50%;
+      background: url('../img/profile_basic.png') center / cover;
+    }
+    &--detail {
+      @include flexBox(space-between, flex-start);
+      flex-direction: column;
+      height: 100%;
+    }
+    &--cover { 
+      @include flexBox(flex-start, flex-start);
+      flex-direction: column;
+      gap: calc(var(--gap) / 4);
+      width: 100%;
+      .flexBox {@include flexBox(space-between); gap: calc(var(--gap) / 2); width: 100%;}
+      &__edit { @include flexBox();@extend %caption;
+        img {width: var(--gap); height: var(--gap);}
       }
-      &--detail {
-        @include flexBox(space-between, flex-start);
-        flex-direction: column;
-        height: 100%;
-      }
-      &--cover { 
-        @include flexBox(flex-start, flex-start);
-        flex-direction: column;
-        gap: calc(var(--gap) / 2);
-        .flexBox {@include flexBox(); gap: calc(var(--gap) / 2);}
-        &__name{@extend %title;color:var(--black)}
-        &__edit { @include flexBox();@extend %caption;
-          img {width: var(--gap); height: var(--gap);}
-        }
-        &__email { @extend %body2;color:var(--gray)}
-      }
-      &--activeSet {
-        @extend %caption;
-        width: 50%;
-        color: var(--primary-500);
-        border: 1px solid var(--primary-500);
-        padding: calc(var(--gap) /2) var(--padding) calc(var(--gap) /2) var(--gap);
-        border-radius: calc(var(--br-radius) / 2);
-        -o-appearance: none; -webkit-appearance: none; -moz-appearance: none; appearance: none;
-        background: transparent url('../icon/Arrow-Selector_down.svg') no-repeat right var(--gap) center;
-      }
+    }
+    &__name{@extend %title;color:var(--black)}
+    &__email, &__team { @extend %body2;color:var(--gray)}
+    &--status_message {
+      padding: 0;
+      border:0; border-radius: 0; 
+      width: 100%;
+      resize: none;
+      background: transparent;
     }
   }
   &--options {

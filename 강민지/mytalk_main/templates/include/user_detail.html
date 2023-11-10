@@ -5,19 +5,13 @@
 
     <div class="user--cover">
         <div class="flexBox">
-            <p class="user--cover__name">{{ name }}</p>
+            <p class="user__name">{{ name }}</p>
             <button class="user--cover__edit"><img src="{% static 'icon/Edit.svg'%}" alt="Edit icon">수정</button>
         </div>
-        <p class="user--cover__email" >{{ email }}</p>
+        <p class="user__team">{{ team }}</p>
+        <p class="user__email" >{{ email }}</p>
     </div>
 
-    <div id="friends__status_box">
-        <span id="friends__status_text">{{ status_message }}</span>
-    </div>
-
-    <select class="user--activeSet">
-        <option value="active">온라인</option>
-        <option value="away">자리 비움</option>
-    </select>
+    <textarea class="user--status_message" type="text" maxlength="38" rows="2" disabled>{{ status_message }}</textarea>
 
 </div>

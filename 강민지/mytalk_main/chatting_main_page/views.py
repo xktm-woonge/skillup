@@ -155,7 +155,7 @@ def get_message_data(request):
     conv_user_content = ""
     prev_message_date = datetime(2000, 1, 1) # 시간을 비교하기 위해 임의의 값으로 설정
     conversations_num = json.loads(request.body.decode('utf-8'))['room_num']
-    chat_page_template = get_template('include/chatting.html')
+    chat_page_template = get_template('contents/chatting.html')
     get_messages = Messages.objects.filter(conversation_id=conversations_num)
     
     if get_messages:
@@ -236,7 +236,6 @@ def sended_message_data(request):
     return JsonResponse({'message':'Success', 'data': message_box_content, 'last_message':send_message, 'is_chatbot_conv':is_chatbot_conv})
 
 def chatbot_conv(request):
-    print(request.POST)
     answer = chatbot.receive_answer(request.POST['send_text'])
     sended_time = datetime.now()
     last_message_time = Messages.objects.filter(conversation_id=request.POST['room_number']).last().timestamp
@@ -249,7 +248,8 @@ def chatbot_conv(request):
     return JsonResponse({'message':'Success', 'data':message_box_content, 'last_message':answer})
 
 def user_active_set(request):
-    print(request.POST)
+    print(json.loads(request.body).get('changed_status'))
+    print(request.user.id)
     return JsonResponse({'message':'Success'})
 
 def user_logout(request):

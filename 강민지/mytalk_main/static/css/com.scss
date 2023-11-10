@@ -140,89 +140,15 @@ input {
   &.away::before {background-color:var(--Danger-300); }
 }
 
+.activeSet {
+  @extend %caption;
+  width: 24%;
+  border: 1px solid var(--white);
+  padding: calc(var(--gap) /2) var(--inputPadding) calc(var(--gap) /2) var(--gap);
+  border-radius: calc(var(--br-radius) / 2);
+  -o-appearance: none; -webkit-appearance: none; -moz-appearance: none; appearance: none;
+  background: transparent url('../icon/Arrow-Selector_down.svg') no-repeat right var(--gap) center;
+}
 
-
-
-
-
-/***************************************************
-  side_bar chatting_room view 
-****************************************************/
-
-.room {
-  padding: 0 !important;
-  &--box {
-    display: grid;
-    grid-template-columns: var(--imgSize) 1fr;
-    gap: var(--gap);
-    width: 100%;
-    max-height: 104px;
-    box-sizing: border-box;
-    padding: var(--padding);
-    &:hover{ 
-      background-color:var(--white); @extend %boxShadow;
-      .chat--profile { &::before{border-color:var(--white);} }
-    }
-  }
-  &--profile {
-    @include activeDot();
-    .user_status_color{
-      width: 20px;
-      height: 20px;
-    }
-  }
-  &--detail {
-      display: block;
-      width: calc(100% - 80px);
-    }
-
-  &__name {
-    @extend %body1;
-    font-weight: bold;
-    margin-bottom: 4px;
-    span { @extend %sideInnerSpan; }
-  }
-  &__status {
-    @include ellipseBox();
-  }
-}  
-
-
-
-
-
-
-
-
-//#user_profile_edit {
-//    min-height: 230px;
-//    box-sizing: border-box;
-//    padding: 28px 24px 24px 28px;
-//    align-items: center;
-//    display: grid;
-//    grid-template-columns: 120px minmax(120px, 1fr);
-//    gap: 8px 28px;
-//    display: none;
-//}
-// #user_profile_img_edit{
-//    width: 120px;
-//    height: 120px;
-//    grid-row: auto / span 2;
-//    border-radius: 40px;
-//    justify-self: center;
-//    background-image: url('../img/profile_basic.png');
-//    background-size: cover;
-//    background-position: center;
-//}
-//#friends__status_box {
-//    height: 100%;
-//    overflow: hidden;    
-//    text-overflow: ellipsis;
-//}
-//#friends__status_box #friends__status_text{
-//    color: var(--black);
-//    font-size: 14px;
-//    font-weight: 400;
-//}
 
 

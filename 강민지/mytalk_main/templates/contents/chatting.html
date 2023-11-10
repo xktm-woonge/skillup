@@ -1,0 +1,23 @@
+<div class="chat_user_info chat">
+    <div class="friends--profile profile" data-image="{{ conv_pic }}"></div>
+    <div class="chat_detail">
+        <p class="chat__name">{{ conv_user }}</p>
+        <p class="chat__status {{ conv_status }}">{{ conv_status }}</p>
+        <p class="chat__recents">{{ last_reply_time }}전 응답</p>
+    </div>
+</div>
+<div class="chat_contents">
+    {% autoescape off %}
+    {{ message_boxs }}
+    {% endautoescape %}
+</div>
+<form method="post" id="send_message">
+    {% autoescape off %}
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    <input type="hidden" name="room_number" value="{{ room_number }}">
+    {% endautoescape %}
+    <div class="message_input">
+        <textarea name="send_text" id="message_input_text" cols="30" rows="10" placeholder="메세지를 입력하세요."></textarea>
+        <button id="message_send_button"></button>
+    </div>
+</form>
