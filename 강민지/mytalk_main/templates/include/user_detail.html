@@ -5,7 +5,7 @@
 
     <div class="user--cover">
         <div class="flexBox">
-            <p class="user__name">{{ name }}</p>
+            <input type='text' class="user__name" value="{{ name }}" disabled></input>
             <button class="user--cover__edit"><img src="{% static 'icon/Edit.svg'%}" alt="Edit icon">수정</button>
         </div>
         <p class="user__team">{{ team }}</p>

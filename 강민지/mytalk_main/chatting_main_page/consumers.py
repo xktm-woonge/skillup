@@ -14,3 +14,19 @@ class ChatConsumer(WebsocketConsumer):
         message = text_data_json["message"]
 
         self.send(text_data=json.dumps({"message": message}))
+        
+        
+    def add_notice_boxs(self):
+        pass
+    
+    def add_friends_list(self):
+        pass
+    
+    def add_chat_list(self):
+        pass
+    
+    def view_chatting_room(self):
+        pass
+    
+    def add_message_box(self):
+        pass

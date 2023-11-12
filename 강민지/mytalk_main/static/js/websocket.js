@@ -1,8 +1,6 @@
 let socket = new WebSocket("ws://localhost:8000/ws/main/"); // ws:// 이후의 주소는 routing.py 의 경로
 
-
 // 웹소켓 통신으로 변경할 함수
-
 
 // user의 상태가 변경되었을 때 적용 함수
 function add_user_status_event() {
@@ -64,7 +62,7 @@ function send_message() {
             }
         })
         .then(function(data){
-            document.getElementsByClassName('chat_contents')[0].innerHTML += data.data;
+            document.getElementsByClassName('chat_contents')[0].innerHTML += sended_message(data.data);
             scroll_to_bottom_in_chatting();
             document.getElementById(`room_num_${room_num}`).querySelector('.room__status').textContent = data.last_message;
             if(!data.is_chatbot_conv){conv_chatbot(send_message_data, room_num)};
@@ -86,8 +84,38 @@ function conv_chatbot(question, roomnum) {
         }
     })
     .then(function(data){
-        document.getElementsByClassName('chat_contents')[0].innerHTML += data.data;
+        document.getElementsByClassName('chat_contents')[0].innerHTML += sended_message(data.data);
         scroll_to_bottom_in_chatting();
         document.getElementById(`room_num_${roomnum}`).querySelector('.room__status').textContent = data.last_message;
     })
 }
+
+
+// user logout
+function userLogout(){
+    fetch('/main/logout_api/', {
+        method: 'POST',
+        headers: {
+            'Content-Type' : 'application/json',
+            'X-CSRFToken' : csrfToken
+        },
+        body: JSON.stringify({'status':'logout'}),
+    }).then(function(response){
+        if(response.ok){
+            return response.json();
+        } else{
+            throw new Error('Error:: '+response.status);
+        }
+    })
+    .then(function(data){
+        if(data.message === 'Success'){
+            alert('로그아웃 되었습니다.');
+            window.location.href = '../';
+        }
+    })
+}
+
+document.getElementById('user_logout').addEventListener('click', function(e){
+    e.preventDefault();
+    userLogout();
+});

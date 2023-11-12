@@ -17,27 +17,20 @@ chatbot = Chatbot()
 
 def notice_pretreatment(data):
     timestamp = data['created_at'].strftime('%Y-%m-%d %H:%M:%S')
+    
     try:
-        sender_name = user_model.objects.get(id=data['sender_id'])
+        sender_name = user_model.objects.get(id=data['sender_id']).name
     except user_model.DoesNotExist:
         sender_name = 'system'
-    if data['type'] == 'friends':
-        button_type = get_template('include/select_div.html').render({})
-    else:
-        button_type = '<button class="notice--btn delete"></button>'
-        
     if data['type'] in ['system', 'danger']:
         img_src = static('icon/Notification.svg')
     else:
         get_sender_profile_pic = user_model.objects.get(id=data['sender_id']).profile_picture
         img_src = static(f'img/{get_sender_profile_pic}')
-    return timestamp, sender_name, button_type, img_src
+    return timestamp, sender_name, img_src
         
-
-def create_notice_box(notice):
-    notice_template = get_template('include/notice_box.html')
-    
-    timestamp_string, sender_name, button_type, img_src = notice_pretreatment(notice)
+def set_notice_box_data(notice):
+    timestamp_string, sender_name, img_src = notice_pretreatment(notice)
     
     context = {
         'noti_type' : notice['type'],
@@ -45,13 +38,11 @@ def create_notice_box(notice):
         'content' : notice['content'],
         'title' : sender_name,
         'created_at' : timestamp_string,
-        'button_type': button_type,
+        'button_type': notice['type'],
     }
-    return notice_template.render(context)
+    return context
 
-def create_friend_list(friend_info):
-    friend_template = get_template('include/friend_list.html')
-
+def set_friend_list_data(friend_info):
     if friend_info.status == 'offline':
         show_user_status = False
     else:
@@ -59,14 +50,14 @@ def create_friend_list(friend_info):
     
     context = {
         "name" : friend_info.name,
+        "team" : '',
         "status" : friend_info.status,
         "status_message" : friend_info.status_message if friend_info.status_message and friend_info.status_message != "None" else "",
         "profile_picture" : friend_info.profile_picture,
     }
-    return show_user_status, friend_template.render(context)
+    return show_user_status, context
 
 def create_message_box(user_id, data, prev_date):
-    message_template = get_template('include/message_box.html')
     
     direction = 'send' if data['sender_id'] == user_id else 'given'     
     context = {
@@ -80,58 +71,56 @@ def create_message_box(user_id, data, prev_date):
         prev_date = data['timestamp']
     else :
         context['chat_date'] = ''
-    return prev_date, message_template.render(context)
+    return prev_date, context
 
 def create_chatting_room(user_data, room):
-    chatting_room_template = get_template('include/chat_list.html')
     final_message = Messages.objects.filter(conversation_id=room['conversation_id']).last()
     
     context = {
-        'conv_user_name' : user_data, 
+        'conv_user_name' : user_data.name, 
         'conv_final_message' : final_message.message_text,
         'conv_picture' : user_data.profile_picture,
         'user_status' : f"status_{user_data.status}",
         'room_num' : room['conversation_id'],
     }
-    return chatting_room_template.render(context)
+    return context
 
 def get_notice_list(request):
-    notice_contents = ""
+    notice_contents = {}
     notices = Notifications.objects.filter(user_id=request.user.id)
     if notices :
-        for notice in notices.values():
-            notice_contents += create_notice_box(notice)
+        for notice, i in zip(notices.values(), range(notices.count())):
+            notice_contents[f'{i}'] = set_notice_box_data(notice)
     return notice_contents
-            
 
 def get_friend_list(request):
-    online_contents, offline_contents = "", ""
+    online_contents, offline_contents = {}, {}
     friends = Friends.objects.filter(user_id = request.user.id)
     
     if friends :
-        for friend in friends.values():
+        for friend, i in zip(friends.values(), range(friends.count())):
             friend_info = user_model.objects.get(id=friend['friend_id'])
-            friend_status, friend_content = create_friend_list(friend_info)
+            friend_status, friend_content = set_friend_list_data(friend_info)
             if friend_status :
-                online_contents += friend_content
+                online_contents[f'{i}'] = friend_content
             else :
-                offline_contents += friend_content
+                offline_contents[f'{i}'] = friend_content
     return {'online' : online_contents, 'offline': offline_contents}
     
 def get_chatting_room_list(request):
     chat_lists_num = []
-    chatting_list_contents = ""
+    chatting_list_contents = {}
     chat_lists = ConversationParticipants.objects.filter(user_id=request.user.id)
     
     if chat_lists:
-        for i in chat_lists.values() :
-            chat_lists_num.append(i['conversation_id'])
+        for chatting in chat_lists.values() :
+            chat_lists_num.append(chatting['conversation_id'])
         for chat in chat_lists_num:
             conv_room = ConversationParticipants.objects.filter(conversation_id=chat)
-            for room in conv_room.values():
+            for room, i in zip(conv_room.values(), range(conv_room.count())):
                 user_data = user_model.objects.get(id=room['user_id'])
                 if user_data.id != request.user.id:
-                    chatting_list_contents += create_chatting_room(user_data, room)
+                    chatting_list_contents[f'{i}'] = create_chatting_room(user_data, room)
     return chatting_list_contents
 
 def get_curr_user_data(request):
@@ -157,11 +146,13 @@ def get_message_data(request):
     conversations_num = json.loads(request.body.decode('utf-8'))['room_num']
     chat_page_template = get_template('contents/chatting.html')
     get_messages = Messages.objects.filter(conversation_id=conversations_num)
+    message_template = get_template('include/message_box.html')
+    
     
     if get_messages:
         for message in get_messages.values() :
             prev_message_date, get_temp = create_message_box(request.user.id, message, prev_message_date)
-            message_contents += get_temp
+            message_contents += message_template.render(get_temp)
             
         if Conversations.objects.get(id=conversations_num).type == 'private':
             conv_user = ConversationParticipants.objects.filter(conversation_id=conversations_num).exclude(user_id=request.user.id).first()
@@ -201,11 +192,11 @@ def get_message_data(request):
 
 def push_load_data(request):
     data_dic = {}
-    
+
+    data_dic['notice_data'] = get_notice_list(request)
     data_dic['friend_list'] = get_friend_list(request)
     data_dic['chatting_room_list'] = get_chatting_room_list(request)
     data_dic['curr_user_data'] = get_curr_user_data(request)
-    data_dic['notice_data'] = get_notice_list(request)
     return JsonResponse(data_dic)
 
 def load_chattion_main_page(request):
@@ -244,7 +235,7 @@ def chatbot_conv(request):
         'message_text' : answer,
         'timestamp' : sended_time,
     }
-    _, message_box_content = create_message_box(request.user.id, data, last_message_time, )
+    _, message_box_content = create_message_box(request.user.id, data, last_message_time)
     return JsonResponse({'message':'Success', 'data':message_box_content, 'last_message':answer})
 
 def user_active_set(request):

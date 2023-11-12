@@ -110,3 +110,255 @@
   }
 }
 
+
+/***************************************************
+  side_bar notice view 
+****************************************************/
+.notice {
+  &--group {
+    display: grid;
+    grid-template-columns: var(--imgSize) 1fr minmax(max-content, 24px);
+    align-items: start;
+    gap: var(--gap);
+    width: 100%;
+    padding: var(--inputPadding);
+    background: var(--white);
+    border-radius: var(--br-radius);
+    @extend %boxShadow;
+    &.system .notice--type { background-color:var(--Semi-Darker); img {filter: invert(100%); padding: 12px;}}
+    &.danger .notice--type { background-color:var(--Danger-500); img {filter: invert(100%); padding: 12px;}}
+    &.team {
+      .notice--type img {
+        $shadow: 6px;
+        width: calc(100% - $shadow); height: calc(100% - $shadow); 
+        box-shadow: $shadow $shadow 0 var(--Success-500);
+        border-radius: calc(var(--br-radius) * 0.83);
+      }
+    }
+    &.normal .notice--box__title, 
+    &.team .notice--box__title {
+      p { @include ellipseBox;max-width:76%}
+      &::after {
+        content: "의 새 메세지";
+        display: inline;
+        @extend %body2;
+      }
+    }
+  }
+  &--type {
+    width: var(--imgSize);
+    height: var(--imgSize);
+    border-radius: var(--br-radius);
+    overflow: hidden;
+    img {
+      width: 100%; height: 100%;
+      aspect-ratio: 1 / 1;
+    }
+  }
+  &--box {
+    @include flexBox(flex-start, flex-start);
+    flex-direction: column;
+    gap: calc(var(--gap) / 2);
+    @extend %body2;
+    &__title {
+      @include flexBox();
+      width: 100%;
+      font-weight:bold;
+      p {font-weight:bold;}
+    }
+    &__content { width:100%}
+    &__time { @extend %caption;color:var(--gray-80)}
+  }
+  &--btn{
+    padding: 0;
+    &.delete::after {
+      content: url('../icon/Clear.svg');
+      display: block;
+      width: 24px;
+      height: 24px;
+      filter: invert(87%) sepia(1%) saturate(65%) hue-rotate(148deg) brightness(117%) contrast(56%);
+    }
+    &.actions, .actions {
+      @include flexBox(center);
+      flex-direction: column;
+      gap: calc(var(--gap) / 2);
+      height: 100%;
+      button {
+        @include flexBox();
+        @extend %body2;
+        border-radius: calc(var(--br-radius) / 2);
+      }
+      &__accept {filter:invert(55%) sepia(77%) saturate(887%) hue-rotate(40deg) brightness(91%) contrast(94%)}
+      &__reject {filter: invert(87%) sepia(1%) saturate(65%) hue-rotate(148deg) brightness(117%) contrast(56%)}
+    }
+  }
+}
+
+
+/***************************************************
+  side_bar friends view 
+****************************************************/
+.friends {
+  &--group {
+    @include flexBox(flex-start, flex-start);
+    flex-direction: column;
+    gap: calc(var(--gap) / 2);
+    width: 100%;
+    &__title {
+      width: 100%;
+      padding: var(--gap) var(--padding) 0;
+      box-sizing: border-box;
+      border-top: 1px dashed var(--gray-50);
+      vertical-align: middle;
+      color: var(--gray-80);
+      @extend %caption;
+    }
+    &.on .friends--box{ cursor: pointer; @extend %activeDotsHoverBorder; }
+    &.off .friends {
+      &--box {opacity: .5;}
+      &--profile::before {display: none;}
+    }
+  }
+  &--box {
+    display: grid;
+    grid-template-columns: var(--imgSize) 1fr;
+    gap: var(--gap);
+    width: 100%;
+    padding: var(--gap) var(--padding);
+    border-radius: var(--br-radius);
+  }
+  &--profile { 
+    @include activeDot();
+  }
+  &--detail {
+    width: 100%;
+    overflow: hidden;
+  }
+  &__name {
+    @extend %body1;
+    font-weight: bold;
+    margin-bottom: 4px;
+    span { @extend %sideInnerTeam; }
+  }
+  &__status {
+    @extend %body2;
+    @include ellipseBox(1);
+  }
+  //&--btns {
+  //  display: block;
+  //  width: 100%;
+  //  height: 100%;
+  //  background-color: yellow;
+  //}
+}
+
+
+/***************************************************
+  side_bar chatting_room view 
+****************************************************/
+.room {
+  padding: 0 !important;
+  &--box {
+    display: grid;
+    grid-template-columns: var(--imgSize) 1fr;
+    gap: var(--gap);
+    width: 100%;
+    padding: var(--padding);
+    cursor: pointer;
+    @extend %activeDotsHoverBorder;
+  }
+  &--profile {
+    @include activeDot();
+  }
+  &__name {
+    @extend %body1;
+    font-weight: bold;
+    margin-bottom: 4px;
+    span { @extend %sideInnerTeam; }
+  }
+  &__status {
+    @include ellipseBox();
+    @extend %body2;
+  }
+}
+
+
+/***************************************************
+  side_bar setting view 
+****************************************************/
+.setting {
+  > * {width: 100%;}
+  &--user {
+    display: grid;
+    grid-template-columns: calc(var(--imgSize) * 3) 1fr;
+    align-items: center;
+    gap: var(--padding);
+    padding: 40px;
+  }
+  .user {
+    &--img {
+      width: calc(var(--imgSize) * 3);
+      height: calc(var(--imgSize) * 3);
+      border-radius: 50%;
+      background: url('../img/profile_basic.png') center / cover;
+    }
+    &--detail {
+      @include flexBox(space-between, flex-start);
+      flex-direction: column;
+      height: 100%;
+    }
+    &--cover { 
+      @include flexBox(flex-start, flex-start);
+      flex-direction: column;
+      gap: calc(var(--gap) / 4);
+      width: 100%;
+      .flexBox {@include flexBox(space-between); gap: calc(var(--gap) / 2); width: 100%;}
+      &__edit { @include flexBox();@extend %caption;
+        img {width: var(--gap); height: var(--gap);}
+      }
+    }
+    &__name{@extend %title;color:var(--black)}
+    &__email, &__team { @extend %body2;color:var(--gray)}
+    &--status_message {
+      padding: 0;
+      border:0; border-radius: 0; 
+      width: 100%;
+      resize: none;
+      background: transparent;
+    }
+  }
+  &--options {
+    .option {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      align-items: center;
+      gap: var(--padding);
+      padding: var(--inputPadding) calc(var(--inputPadding) * 2);
+      background-color: var(--white);
+      cursor: pointer;
+      position: relative;
+      &.logout { .option--icon {background: var(--Danger-500);}}
+      &:hover { background: var(--background) }
+      &--icon {
+        @include flexBox(center);
+        border-radius: var(--br-radius);
+        padding: var(--gap);
+        background-color: var(--Success-500);
+      }
+      &--text {
+        @extend %body1;
+        font-weight: normal;
+      }
+      &.withdraw {
+        background: unset; 
+        cursor: help; 
+        &:hover{background: unset;}
+        .option--icon {display: none;}
+        .option--text {
+          @extend %body2;
+          color: var(--gray);
+        }
+      }
+    }
+  }
+}
