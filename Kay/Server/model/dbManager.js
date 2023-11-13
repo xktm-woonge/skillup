@@ -102,3 +102,21 @@ exports.insertFriendRequestNotification = function(senderId, receiverId, callbac
   `;
   pool.query(sql, [receiverId, senderId, senderId], callback);
 };
+
+exports.deleteNotification = function(user_id, sender_id, callback) {
+  const sql = `DELETE FROM Notifications WHERE user_id = ? AND sender_id = ?`;
+  pool.query(sql, [user_id, sender_id], callback);
+};
+
+exports.addFriend = function(user_id, friend_id, callback) {
+  const sql = `INSERT INTO Friends (user_id, friend_id) VALUES (?, ?)`;
+  pool.query(sql, [user_id, friend_id], (error, results) => {
+    if (error) {
+      // 오류 처리
+      return callback(error);
+    }
+
+    // 성공적으로 추가된 경우
+    callback(null, results);
+  });
+};

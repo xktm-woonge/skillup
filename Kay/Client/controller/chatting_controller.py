@@ -39,11 +39,12 @@ class ChattingController(QObject):
         self.connect_slot()
 
     def connect_slot(self):
+        pass
         # self.chatting_window.notification_button.clicked.connect(self.show_notifications)
         # self.chatting_window.friend_list_button.clicked.connect(self.show_friend_list)
         # self.chatting_window.chat_window_button.clicked.connect(self.show_chats)
         # self.chatting_window.profile_setting_button.clicked.connect(self.show_profile_settings)
-        self.websocket_api.new_notification.connect(self.add_notifications)
+        # self.websocket_api.new_notification.connect(self.add_notifications)
 
     # @pyqtSlot()
     # def show_notifications(self):
@@ -73,17 +74,17 @@ class ChattingController(QObject):
     #     self.chatting_window.middle_area.addWidget(profile_setting_widget)
     #     # Similarly, add a widget to the right area if needed
     
-    @pyqtSlot(dict)
-    def add_notifications(self, data):
-        # 데이터에서 필요한 정보 추출
-        image_path = './view/static/img/sidebar_notification_icon'
-        title = "친구 추가 요청"
-        content = data['sender_id']
-        date = data["created_at"]
+    # @pyqtSlot(dict)
+    # def add_notifications(self, data):
+    #     # 데이터에서 필요한 정보 추출
+    #     image_path = './view/static/img/sidebar_notification_icon'
+    #     title = "친구 추가 요청"
+    #     content = data['sender_id']
+    #     date = data["created_at"]
 
-        # NotificationWidget 생성 및 추가
-        notification = NotificationWidget(image_path, title, content, date)
-        self.chatting_window.notifications_list_widget.notifications_layout.addWidget(notification)
+    #     # NotificationWidget 생성 및 추가
+    #     notification = NotificationWidget(image_path, title, content, date)
+    #     self.chatting_window.notifications_list_widget.notifications_layout.addWidget(notification)
     
     def _clear_middle_areas(self):
         # Clear widgets in middle_area and right_area
@@ -122,6 +123,8 @@ class ChattingController(QObject):
             
     def display_notifications(self):
         self.chatting_window.notifications_list_widget.clear_notifications()
+        self.notification_widgets = {}
+
         for notification in self.notifications:
             image_path = './view/static/img/sidebar_notification_icon'
             # image_path = notification['image_path']
@@ -131,3 +134,25 @@ class ChattingController(QObject):
             
             notification_widget = NotificationWidget(image_path, title, content, date)
             self.chatting_window.notifications_list_widget.notifications_layout.addWidget(notification_widget)
+
+            self.notification_widgets[content] = notification_widget
+
+            notification_widget.response_signal.connect(
+                lambda sender_id, response: self.handle_friend_response(sender_id, response, notification_widget))
+    
+    def handle_friend_response(self, sender_id, response, widget):
+        # 서버에 메시지 전송
+        message = {
+            "event": "sendFriendResponse",
+            "user_id": self.user_id,
+            "sender_id": sender_id,
+            "response": response
+        }
+        self.websocket_api.send_message(message)
+
+        # 위젯 삭제
+        if response in ["accepted", "rejected", "deleted"]:
+            widget.setParent(None)
+            widget.deleteLater()
+            if sender_id in self.notification_widgets:
+                del self.notification_widgets[sender_id]

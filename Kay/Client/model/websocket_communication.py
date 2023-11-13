@@ -1,8 +1,8 @@
 # ./model/websocket_communication.py
 
+import json
 from PyQt5.QtWebSockets import QWebSocket
 from PyQt5.QtCore import QUrl, QObject, QTimer
-import threading
 
 try:
     from utils import *
@@ -56,8 +56,9 @@ class RealtimeCommunication(QObject):  # QObject 상속
             self.attempt_connect()
 
     def send_message(self, message):
-        # try:
-        #     with self.lock:
-        self.websocket.sendTextMessage(message)
-        # except Exception as e:
-        #     clmn.HLOG.error(f"Error sending message: {e}")
+        try:
+            # 딕셔너리를 JSON 문자열로 변환
+            json_message = json.dumps(message)
+            self.websocket.sendTextMessage(json_message)
+        except Exception as e:
+            clmn.HLOG.error(f"Error sending message: {e}")

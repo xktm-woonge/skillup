@@ -3,7 +3,7 @@
 import sys
 from pathlib import Path
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QScrollArea, QPushButton, QHBoxLayout, QApplication, QSlider
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QPixmap, QPainter, QPainterPath, QColor, QIcon
 from PyQt5.Qt import QSize
 
@@ -39,10 +39,13 @@ class ElidedLabel(QLabel):
 
 
 class NotificationWidget(QWidget):
+    # 사용자 정의 신호 생성
+    response_signal = pyqtSignal(str, str)
+
     def __init__(self, image_path, title, content, date, parent=None):
         super(NotificationWidget, self).__init__(parent)
-        self.delete_icon_size = (15, 15)
 
+        self.delete_icon_size = (15, 15)
         self.setFixedSize(275, 130)
         
         # Create a base widget
@@ -78,6 +81,9 @@ class NotificationWidget(QWidget):
         self.reject_button = QPushButton("거절", base_widget)
         buttons_layout.addWidget(self.accept_button)
         buttons_layout.addWidget(self.reject_button)
+
+        self.accept_button.clicked.connect(lambda: self.response_signal.emit(content, "accepted"))
+        self.reject_button.clicked.connect(lambda: self.response_signal.emit(content, "rejected"))
         
         date_label = QLabel(date, base_widget)
         date_label.setObjectName("date_label")
@@ -98,6 +104,7 @@ class NotificationWidget(QWidget):
         self.delete_button.setFixedSize(*self.delete_icon_size)
         self.delete_button.setObjectName("delete_button")
         self.delete_button.setCursor(Qt.PointingHandCursor)
+        self.delete_button.clicked.connect(lambda: self.response_signal.emit(content, "deleted"))
         layout.addWidget(self.delete_button, alignment=Qt.AlignTop)
 
         self._setStyle()
