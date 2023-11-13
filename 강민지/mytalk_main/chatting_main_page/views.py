@@ -9,11 +9,9 @@ from django.templatetags.static import static
 from django.utils.safestring import mark_safe
 from datetime import datetime
 from .models import *
-from .chatbot import Chatbot
-
+from .utils import *
 
 user_model = get_user_model()
-chatbot = Chatbot()
 
 def notice_pretreatment(data):
     timestamp = data['created_at'].strftime('%Y-%m-%d %H:%M:%S')
@@ -135,7 +133,7 @@ def get_curr_user_data(request):
         'status_message' : current_user.status_message if current_user.status_message and current_user.status_message != "None" else "",
     }
     current_user_content = user_info_template.render(user_data)
-    return current_user_content       
+    return current_user_content , current_user.status 
 
 
 def get_message_data(request):
@@ -196,7 +194,8 @@ def push_load_data(request):
     data_dic['notice_data'] = get_notice_list(request)
     data_dic['friend_list'] = get_friend_list(request)
     data_dic['chatting_room_list'] = get_chatting_room_list(request)
-    data_dic['curr_user_data'] = get_curr_user_data(request)
+    data_dic['curr_user_data'], status = get_curr_user_data(request)
+    data_dic['present_status'] = status
     return JsonResponse(data_dic)
 
 def load_chattion_main_page(request):
@@ -206,42 +205,6 @@ def load_chattion_main_page(request):
             return render(request, 'contents/chatting_viewer_page.html', context)
         else:
             return redirect('../')
-
-
-def sended_message_data(request):
-    send_user_id = user_model.objects.get(id=request.user.id).id
-    send_message = request.POST['send_text']
-    room_number = request.POST['room_number']
-    is_chatbot_conv = Conversations.objects.get(id=room_number).is_chatbot
-    sended_time = datetime.now()
-    last_message_time = Messages.objects.filter(conversation_id=room_number).last().timestamp
-    
-    # Messages.objects.create(message_text=send_message, conversation_id=room_number, sender_id=send_user_id, timestamp=sended_time)
-    
-    current_data = {
-        'sender_id' : send_user_id,
-        'message_text' : send_message,
-        'timestamp' : sended_time,
-    }
-    _, message_box_content = create_message_box(send_user_id, current_data, last_message_time)
-    return JsonResponse({'message':'Success', 'data': message_box_content, 'last_message':send_message, 'is_chatbot_conv':is_chatbot_conv})
-
-def chatbot_conv(request):
-    answer = chatbot.receive_answer(request.POST['send_text'])
-    sended_time = datetime.now()
-    last_message_time = Messages.objects.filter(conversation_id=request.POST['room_number']).last().timestamp
-    data = {
-        'sender_id' : 3,
-        'message_text' : answer,
-        'timestamp' : sended_time,
-    }
-    _, message_box_content = create_message_box(request.user.id, data, last_message_time)
-    return JsonResponse({'message':'Success', 'data':message_box_content, 'last_message':answer})
-
-def user_active_set(request):
-    print(json.loads(request.body).get('changed_status'))
-    print(request.user.id)
-    return JsonResponse({'message':'Success'})
 
 def user_logout(request):
     if request.method == 'POST':

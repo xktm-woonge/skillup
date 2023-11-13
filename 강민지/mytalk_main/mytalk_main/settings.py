@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-a#5jaag&jty-ri*-f#c#faod2!w^j763p5s088p99=#b9%e%ry
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
@@ -73,7 +73,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'mytalk_main.wsgi.application'
+# WSGI_APPLICATION = 'mytalk_main.wsgi.application'
 ASGI_APPLICATION = 'mytalk_main.asgi.application'
 
 CHANNEL_LAYERS =  {

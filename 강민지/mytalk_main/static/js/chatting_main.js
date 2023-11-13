@@ -102,15 +102,14 @@ function load_curr_user_data(){
         }
     })
     .then(function(page_data){
-        console.log(page_data.notice_data);
-        console.log(page_data.chatting_room_list);
         document.getElementById('online_friends').innerHTML += createFriendsList(page_data.friend_list.online);
         document.getElementById('offline_friends').innerHTML += createFriendsList(page_data.friend_list.offline);
         document.querySelector(".side_bar--body.room").innerHTML += createChatList(page_data.chatting_room_list);
         document.querySelector(".side_bar--body.notice").innerHTML = createNoticesBox(page_data.notice_data);
         document.querySelector(".setting--user").innerHTML = page_data.curr_user_data;
+        document.querySelector('.activeSet').value = page_data.present_status;
         set_profile_pic();
-        add_user_edit_event();
+        add_user_status_event();
     })
 }
 
@@ -151,5 +150,33 @@ function load_chatting_message_data(room_num) {
     });
 }
 
+// user logout
+function userLogout(){
+    fetch('/main/logout_api/', {
+        method: 'POST',
+        headers: {
+            'Content-Type' : 'application/json',
+            'X-CSRFToken' : csrfToken
+        },
+        body: JSON.stringify({'status':'logout'}),
+    }).then(function(response){
+        if(response.ok){
+            return response.json();
+        } else{
+            throw new Error('Error:: '+response.status);
+        }
+    })
+    .then(function(data){
+        if(data.message === 'Success'){
+            alert('로그아웃 되었습니다.');
+            window.location.href = '../';
+        }
+    })
+}
+
+document.getElementById('user_logout').addEventListener('click', function(e){
+    e.preventDefault();
+    userLogout();
+});
 
 window.onload = load_curr_user_data();
