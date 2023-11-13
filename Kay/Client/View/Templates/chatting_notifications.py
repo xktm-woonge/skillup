@@ -164,13 +164,13 @@ class NotificationsListWidget(QWidget):
         header_label.setFont(header_font)
         header_label.setObjectName('header_label')
 
-        # ON/OFF Slider
-        self.toggle_slider = QSlider(Qt.Horizontal, self)
-        self.toggle_slider.setFixedWidth(25)
-        self.toggle_slider.setRange(0, 1)
-        self.toggle_slider.setObjectName("toggle_slider")
+        # # ON/OFF Slider
+        # self.toggle_slider = QSlider(Qt.Horizontal, self)
+        # self.toggle_slider.setFixedWidth(25)
+        # self.toggle_slider.setRange(0, 1)
+        # self.toggle_slider.setObjectName("toggle_slider")
         
-        self.toggle_slider.valueChanged.connect(self.on_toggle_changed)
+        # self.toggle_slider.valueChanged.connect(self.on_toggle_changed)
 
         more_icon_path = f'{Path(__file__).parents[1]}/static/icon/-more-horiz_90225.svg'
         more_icon_white = change_svg_color(more_icon_path, "#FFFFFF")  # 흰색으로 변경
@@ -182,7 +182,7 @@ class NotificationsListWidget(QWidget):
         self.more_button.setObjectName('more_button')
 
         header_layout.addWidget(header_label)
-        header_layout.addWidget(self.toggle_slider)
+        # header_layout.addWidget(self.toggle_slider)
         header_layout.addStretch(1)  # 중앙 공백 추가
         header_layout.addWidget(self.more_button)
         header.setLayout(header_layout)
@@ -213,13 +213,6 @@ class NotificationsListWidget(QWidget):
             widget = self.notifications_layout.itemAt(i).widget()
             if widget is not None:
                 widget.deleteLater()
-            
-    def on_toggle_changed(self, value):
-        pass
-        # if value == 0:
-        #     self.toggle_label.setText("OFF")
-        # else:
-        #     self.toggle_label.setText("ON")
         
     def _setStyle(self):
         with open(f'{Path(__file__).parents[1]}/static/chatting_notifications.qss', 'r', encoding='utf-8') as file:
@@ -227,7 +220,7 @@ class NotificationsListWidget(QWidget):
             self.setStyleSheet(qss)
 
         self.more_button.setCursor(Qt.PointingHandCursor)
-        self.toggle_slider.setCursor(Qt.PointingHandCursor)
+        # self.toggle_slider.setCursor(Qt.PointingHandCursor)
 
 
 if __name__ == "__main__": 
