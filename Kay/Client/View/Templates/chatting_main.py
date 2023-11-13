@@ -1,24 +1,22 @@
 # ./view/templates/chatting_main.py
 
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, \
-                            QApplication, QDesktopWidget, QStackedWidget
-from PyQt5.QtCore import QFile, pyqtSlot
-from PyQt5.QtGui import QIcon
-from PyQt5.Qt import QSize, QSizePolicy
+from PyQt5.QtWidgets import QWidget, QLabel, QApplication, QDesktopWidget, QStackedWidget, QVBoxLayout, QHBoxLayout
+from PyQt5.QtCore import QFile, pyqtSlot, Qt, QSize
+from PyQt5.QtSvg import QSvgWidget
 from pathlib import Path
 import sys
 
 try:
     from utils import *
     from view.templates.chatting_sidebar import Sidebar
-    from view.templates.chatting_notifications import NotificationsListWidget, NotificationWidget
+    from view.templates.chatting_notifications import NotificationsListWidget
 except ImportError:
     import sys
     from pathlib import Path
     sys.path.append(str(Path(__file__).parents[2]))
     from utils import *
     from view.templates.chatting_sidebar import Sidebar
-    from view.templates.chatting_notifications import NotificationsListWidget, NotificationWidget
+    from view.templates.chatting_notifications import NotificationsListWidget
 
 
 class ChattingWindow(QWidget):
@@ -54,8 +52,24 @@ class ChattingWindow(QWidget):
         self.right_area_widget.setGeometry(
             self.sidebar_width + self.middle_width, 0, self.right_width, self.height)
         
-        # 예시로 QLabel을 추가합니다. 실제로 필요한 위젯을 추가하세요.
-        self.right_area_widget.addWidget(QLabel('Right Area', self))
+        # 중앙에 표시될 위젯을 위한 레이아웃
+        central_layout = QVBoxLayout()
+        central_layout.setAlignment(Qt.AlignCenter)  # 레이아웃의 내용을 가운데 정렬
+
+        # SVG 이미지 추가
+        svg_widget = QSvgWidget(f'{Path(__file__).parents[1]}/static/icon/Pets.svg')  # 실제 경로로 변경
+        svg_widget.setFixedSize(30, 30)  # SVG 이미지 크기 조정
+        central_layout.addWidget(svg_widget, alignment=Qt.AlignCenter)  # 중앙 레이아웃에 위젯 추가
+
+        # QLabel에 "No more message" 텍스트 추가
+        no_message_label = QLabel('No more message', self)
+        no_message_label.setAlignment(Qt.AlignCenter)  # 가운데 정렬
+        central_layout.addWidget(no_message_label)  # 중앙 레이아웃에 위젯 추가
+
+        # Right Area에 레이아웃 설정
+        central_widget = QWidget()
+        central_widget.setLayout(central_layout)
+        self.right_area_widget.addWidget(central_widget)
         
         self.sidebar.notification_button.click()
 
