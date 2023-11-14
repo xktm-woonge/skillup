@@ -116,7 +116,7 @@ function load_curr_user_data(){
 
 // chatting room 에서 메시지를 가장 아래부터 볼 수 있게 스크롤하는 함수
 function scroll_to_bottom_in_chatting(){
-    var scroll_body = document.querySelector('.chat_contents');
+    var scroll_body = document.querySelector('.chat--body');
     
     scroll_body.scrollTop = scroll_body.scrollHeight;
 }
@@ -143,40 +143,18 @@ function load_chatting_message_data(room_num) {
     .then(function(data) {
         document.getElementById('chatting_room_detail').innerHTML = data.data;
         set_profile_pic();
-        document.getElementById('chatting_room_detail').style.display = 'block';
+        // document.getElementById('chatting_room_detail').style.z-index = ;
         scroll_to_bottom_in_chatting();
         add_event();
         document.getElementById('empty_contents').style.display = 'none';
     });
 }
 
-// user logout
-function userLogout(){
-    fetch('/main/logout_api/', {
-        method: 'POST',
-        headers: {
-            'Content-Type' : 'application/json',
-            'X-CSRFToken' : csrfToken
-        },
-        body: JSON.stringify({'status':'logout'}),
-    }).then(function(response){
-        if(response.ok){
-            return response.json();
-        } else{
-            throw new Error('Error:: '+response.status);
-        }
-    })
-    .then(function(data){
-        if(data.message === 'Success'){
-            alert('로그아웃 되었습니다.');
-            window.location.href = '../';
-        }
-    })
-}
-
-document.getElementById('user_logout').addEventListener('click', function(e){
-    e.preventDefault();
-    userLogout();
-});
 
 window.onload = load_curr_user_data();
+
+
+// chatting.html 에서 타이핑하면 자동으로 늘어나도록 하는 css js
+function sizeChanger() {
+  this.parentNode.dataset.replicatedValue = this.value;
+}

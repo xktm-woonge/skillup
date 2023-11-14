@@ -55,21 +55,6 @@ def set_friend_list_data(friend_info):
     }
     return show_user_status, context
 
-def create_message_box(user_id, data, prev_date):
-    
-    direction = 'send' if data['sender_id'] == user_id else 'given'     
-    context = {
-                'direction' : direction,
-                'message' : data['message_text'],
-                'time' : data['timestamp'].strftime("%H:%M"),
-            }
-    
-    if data['timestamp'].date() != prev_date.date():
-        context['chat_date'] = f'<div class="chat_date">{data["timestamp"].strftime("%B %d, %Y")}</div>'
-        prev_date = data['timestamp']
-    else :
-        context['chat_date'] = ''
-    return prev_date, context
 
 def create_chatting_room(user_data, room):
     final_message = Messages.objects.filter(conversation_id=room['conversation_id']).last()
@@ -78,7 +63,7 @@ def create_chatting_room(user_data, room):
         'conv_user_name' : user_data.name, 
         'conv_final_message' : final_message.message_text,
         'conv_picture' : user_data.profile_picture,
-        'user_status' : f"status_{user_data.status}",
+        'user_status' : f"{user_data.status}",
         'room_num' : room['conversation_id'],
     }
     return context
@@ -169,12 +154,12 @@ def get_message_data(request):
                     else :
                         last_reply_time = f'{delta.days}일'
                                    
-            conv_status = '오프라인'
+            conv_status = 'offline'
             if conv_user.is_online :
-                if conv_user.status == 'active':
-                    conv_status = '온라인'
+                if conv_user.status == 'online':
+                    conv_status = 'online'
                 elif conv_user.status == 'away' :
-                    conv_status = '자리 비움'
+                    conv_status = 'away'
                       
             conv_user_content = {
                 'conv_user' : conv_user.name,
@@ -201,7 +186,11 @@ def push_load_data(request):
 def load_chattion_main_page(request):
     if request.method =="GET":
         if request.user.is_authenticated:
-            context = {'csrf_token':request.META.get('CSRF_COOKIE')}
+            context = {
+                'csrf_token':request.META.get('CSRF_COOKIE'),
+                'user_id' : request.user.id,
+                }
+            
             return render(request, 'contents/chatting_viewer_page.html', context)
         else:
             return redirect('../')

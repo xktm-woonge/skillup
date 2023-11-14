@@ -29,6 +29,7 @@
   }
   &:hover, &.active {
     width: 200px;
+    border-radius: var(--br-radius);
     .btn {
       img {margin: 0 var(--padding) 0 0;}
       &--Notification::after {content: '알림';}
@@ -102,6 +103,7 @@
     grid-template-columns: repeat(3, 1fr);
     background-color: var(--gray-50);
     width: 100%;
+    height: var(--gnbSize);
     position: absolute;
     bottom: 0;
     .btn {
@@ -361,4 +363,20 @@
       }
     }
   }
+}
+
+
+#empty_contents {
+  display: none;
+  flex-direction: column;
+  text-align: center;
+  color: var(--gray-80);
+  &.active {
+    @include flexBox(center);
+  }
+}
+
+#empty_contents .no_message_icon {
+}
+#empty_contents .no_message_box__text {
 }

@@ -21,8 +21,8 @@
     top: - $position; left: - $position;
     border: $position solid var(--background);
     border-radius: 50%;
-    width: calc(var(--imgSize) / 5);
-    height: calc(var(--imgSize) / 5);
+    width: calc(var(--imgSize) / 4);
+    height: calc(var(--imgSize) / 4);
   }
 }
 

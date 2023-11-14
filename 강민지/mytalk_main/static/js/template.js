@@ -9,7 +9,8 @@ const NOTICE_BOX = `
       <div class="notice--box__time">{{created_at}}</div>
     </div>
     {{button_type}}
-    </div>`
+</div>
+`
 
 const NOTICE_BOX_SELECT = `
 <div class="notice--btn actions">
@@ -25,7 +26,8 @@ const FRIENDS_LIST = `
         <div class="friends__name">{{name}}<span>{{team}}</span></div>
         <div class="friends__status">{{status_message}}</div>          
     </div>
-</li>`
+</li>
+`
 
 const CHAT_LIST = `
 <li class="room--box" id="room_num_{{room_num}}" onclick="load_chatting_message_data({{room_num}})">
@@ -35,12 +37,13 @@ const CHAT_LIST = `
         <div class="room__name">{{conv_user_name}} <span>{{team}}</span> </div>
         <div class="room__status">{{conv_final_message}}</div>
     </div>
-</li>`
+</li>
+`
 
 const MESSAGE_BOX = `
-{{chat_date}}
+{{message_box__date}}
 <div class="message_box {{direction}}">
-    <div class="message_text">{{message}}</div>
-    <p class="message_date">{{time}}</p>
+    <div class="message_box__text">{{message}}</div>
+    <time class="message_date">{{time}}</time>
 </div>
 `
