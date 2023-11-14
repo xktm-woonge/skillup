@@ -53,14 +53,15 @@ const serverAddr = config.serverAddr;
 const httpPort = config.httpPort;
 
 exports.get_userInfo = function(req, res) {
-  // 토큰에서 추출한 사용자 ID를 사용
-  const userId = req.userId;
+  const userEmail = req.userId; // 클라이언트에서 전달된 email
 
-  // 사용자의 프로필 정보 가져오기
-  dbManager.getUserInfoByUserId(userId, (error, userInfo) => {
-    if (error) {
+  // 사용자의 id를 기반으로 정보 가져오기
+  dbManager.getUserByEmail(userEmail, (error, userInfo) => {
+    if (error || !userInfo) {
       return res.json(responseFormatter.formatResponse('FAIL', '사용자 정보를 불러올 수 없습니다.'));
     }
+
+    const userId = userInfo.id; // 사용자의 id
 
     // 친구 정보 가져오기
     dbManager.getFriendsInfoByUserId(userId, (error, friendsInfo) => {
@@ -94,9 +95,9 @@ exports.get_userInfo = function(req, res) {
           }
 
           res.json(responseFormatter.formatResponse('SUCCESS', '정보를 성공적으로 가져왔습니다.', {
-            userInfo, // 사용자의 프로필 정보 (status, profile_picture 등)
-            friendsInfo,
-            conversations,
+            userInfo, // 사용자의 전체 프로필 정보
+            friendsInfo, // 친구의 전체 정보
+            conversations, // 대화 목록 및 대화 내용
             notifications  // 사용자의 알림 정보
           }));
         });

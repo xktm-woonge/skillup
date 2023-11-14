@@ -49,8 +49,9 @@ CREATE TABLE Messages (
 // 알림 테이블(Notifications)
 CREATE TABLE notifications (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id VARCHAR(255) NOT NULL,
-    sender_id VARCHAR(255) NOT NULL,
-    img VARCHAR(255),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    user_id INT,
+    sender_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(user_id) REFERENCES Users(id),
+    FOREIGN KEY(sender_id) REFERENCES Users(id)
 );
