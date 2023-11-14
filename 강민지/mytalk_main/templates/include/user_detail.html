@@ -4,14 +4,18 @@
 <div class="user--detail">
 
     <div class="user--cover">
-        <div class="flexBox">
-            <input type='text' class="user__name" value="{{ name }}" disabled></input>
-            <button class="user--cover__edit"><img src="{% static 'icon/Edit.svg'%}" alt="Edit icon">수정</button>
-        </div>
+        <input type='text' class="user__name" value="{{ name }}" disabled></input>
         <p class="user__team">{{ team }}</p>
         <p class="user__email" >{{ email }}</p>
     </div>
+    
+    <textarea class="user--status_message" type="text" maxlength="38" rows="2" value="{{ status_message }}" disabled>{{ status_message }}</textarea>
+    
 
-    <textarea class="user--status_message" type="text" maxlength="38" rows="2" disabled>{{ status_message }}</textarea>
+    <input type="checkbox" id="editBox" class="user--cover__edit-box">
+
+    <label for="editBox" class="user--cover__edit">
+        <img src="{% static 'icon/Edit.svg'%}" alt="Edit icon">수정</input>
+    </label>
 
 </div>

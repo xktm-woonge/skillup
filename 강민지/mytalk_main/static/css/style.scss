@@ -104,3 +104,118 @@
 
 }
 
+
+/***************************************************
+  chat view 
+****************************************************/
+.chat {
+  display: grid;
+  height: 100vh;
+  grid-template-rows: var(--gnbSize) 1fr var(--gnbSize);
+  background: var(--background);
+  &--user_info {
+    @include flexBox();
+    gap: var(--gap);
+    width: 100%;
+    height: var(--gnbSize);
+    padding: var(--gap) var(--padding);
+    &__name {@extend %body1; font-weight: bold;}
+    &__recent {@extend %body2; color: var(--gray);}
+  }
+  &--body {
+    @include flexBox();
+    flex-direction: column;
+    width: 100%;
+    gap: var(--inputPadding);
+    padding: var(--padding);
+    background-color: var(--white) !important;
+    border-radius: calc(var(--br-radius) * 2) calc(var(--br-radius) * 2) 0 0;
+    overflow: hidden auto;
+    @extend %boxShadow;
+    > * {width: 100%;}
+    .message_box {
+      @include flexBox($align: end);
+      gap : var(--gap);
+      width: 100%;
+      position: relative;
+      &__text {
+        max-width: 70%;
+        background-color: var(--gray-50);
+        padding: var(--padding);
+        border-radius: var(--br-radius);
+      }
+      &__date {
+        @include flexBox(center);
+        gap: var(--gap);
+        color: var(--gray-50);
+        font-size: var(--text);
+        &::before, &::after {
+          content: "";
+          display: inline-block;
+          width: 15%;
+          height: 1px;
+          background: var(--gray-50);
+        }
+      }
+      &__time {
+        @extend %caption;
+        color: var(--gray-80);
+      }
+      &.given {
+        padding-left: var(--padding);
+        @include messageDirection();
+      }
+      &.send {
+        padding-right: var(--padding);
+        flex-direction: row-reverse;
+        @include messageDirection(right, var(--Semi-Darker));
+        .message_box__text {
+          background-color: var(--Semi-Darker);
+          color: var(--white);
+        }
+      }
+    }
+  }
+  &--footer {
+    @include flexBox();
+    padding: 10px var(--inputPadding);
+    gap: calc(var(--gap) / 2);
+    &__box {
+      @include flexBox();
+      gap: calc(var(--gap) / 2);
+      width: 100%;
+      height: 100%;
+      max-height: calc(var(--gnbSize) * 2);
+      background-color: var(--background);
+      position: relative;
+      bottom: 0;
+      .btn {
+        padding: calc(var(--gap) / 2);
+        filter: invert(62%) sepia(0%) saturate(1878%) hue-rotate(157deg) brightness(90%) contrast(93%);
+        cursor: pointer;
+        &:hover {filter: unset;}
+      }
+    }
+    &__text {
+      width: 100%;
+      height: 100%;
+      @extend %body1;
+      border: 0;
+      resize: none;
+      padding: 14px;
+      border-radius: var(--br-radius);
+      &:focus{
+        outline:none;
+        @extend %boxShadow;
+      }
+    }
+    &__send {
+      position: relative;
+      background: var(--primary-500) url('../icon/Send.svg') center no-repeat;
+      outline: 0;
+      padding: calc(var(--gap) / 2) var(--gap);
+      width: 5%;
+      height: 100%;
+    }
+  }
+}

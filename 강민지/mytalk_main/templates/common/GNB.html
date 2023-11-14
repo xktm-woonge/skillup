@@ -7,10 +7,10 @@
     <button id="friends" class="btn btn--Friends">
         <img src="{% static 'icon/People_outline.svg'%}" alt="GNB Friends icon">
     </button>
-    <button id="chat" class="btn btn--Chat active">
+    <button id="chat" class="btn btn--Chat">
         <img src="{% static 'icon/Sms.svg'%}" alt="GNB Sms icon">
     </button>
-    <button id="user" class="btn btn--User">
+    <button id="user" class="btn btn--User active">
         <img src="{% static 'icon/Dots.svg'%}" alt="GNB Dots icon">
     </button>
 
@@ -24,10 +24,10 @@
     <div id='side_bar_friends' class="side_bar--tab">
         {% include 'sidebar/side_bar_friends.html' %}
     </div>
-    <div id='side_bar_chat' class="side_bar--tab active">
+    <div id='side_bar_chat' class="side_bar--tab">
         {% include 'sidebar/side_bar_chat_list.html' %}
     </div>
-    <div id='side_bar_user' class="side_bar--tab">
+    <div id='side_bar_user' class="side_bar--tab active">
         {% include 'sidebar/side_bar_setting.html' %}
     </div>
     

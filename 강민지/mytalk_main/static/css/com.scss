@@ -47,25 +47,6 @@ body {
   background-color: var(--gray-50);
 }
 
-.main_view {
-  width: 100%;
-  //padding-left: calc(var(--gnbSize) + var(--sideSize));
-  &.login, &.register {
-    @include flexBox(center);
-  }
-  .login--box, .register--box {
-    overflow: hidden;
-    width: var(--sideSize);
-    height: auto;
-    padding: 0;
-    margin: 0 auto;
-    background: var(--background);
-    border-radius: var(--br-radius);
-    @extend %boxShadow;
-    input, label { width: 100%; }
-  }
-}
-
 .form {
   &--title {
     @extend %header;
@@ -152,152 +133,38 @@ input {
   background: transparent url('../icon/Arrow-Selector_down.svg') no-repeat right var(--gap) center;
 }
 
-
+.displayNone {
+  display: none !important;
+}
 
 
 /***************************************************
-  chat view 
+  common view 
 ****************************************************/
-//.chat_user_info
-.chat {
-  display: grid;
-  height: 100vh;
-  grid-template-rows: var(--gnbSize) 1fr var(--gnbSize);
-  background: var(--background);
-  &--user_info {
-    @include flexBox();
-    gap: var(--gap);
-    width: 100%;
-    height: var(--gnbSize);
-    padding: var(--gap) var(--padding);
-    &__name {@extend %body1; font-weight: bold;}
-    &__recent {@extend %body2; color: var(--gray);}
+
+#empty_contents {
+  @include flexBox(center);
+  flex-direction: column;
+  height: 100%;
+  color: var(--gray-80);
+}
+
+.main_view {
+  width: 100%;
+  height: 100%;
+  //padding-left: calc(var(--gnbSize) + var(--sideSize));
+  &.login, &.register {
+    @include flexBox(center);
   }
-  &--body {
-    @include flexBox();
-    flex-direction: column;
-    gap: var(--inputPadding);
-    width: 100%;
-    padding: var(--padding);
-    overflow: hidden auto;
-    background-color: var(--white) !important;
-    border-radius: var(--br-radius) var(--br-radius) 0 0;
+  .login--box, .register--box {
+    overflow: hidden;
+    width: var(--sideSize);
+    height: auto;
+    padding: 0;
+    margin: 0 auto;
+    background: var(--background);
+    border-radius: var(--br-radius);
     @extend %boxShadow;
-    > * {width: 100%;}
-    > :first-child { margin-top: auto }
-    .message_box {
-      @include flexBox($align: end);
-      display: flex;
-      align-items: end;
-      gap : var(--gap);
-      width: 100%;
-      &.given {
-        .message_box__text {
-          background-color: var(--gray-50);
-          &::after{
-            border-top: 0px solid transparent;
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
-            border-bottom: 13px solid var(--gray-50);
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: -15px;
-          }
-        }
-      }
-      &.send {
-        flex-direction: row-reverse;
-        .message_box__text {
-          background-color: var(--Semi-Darker);
-          color: var(--white);
-          &::after{
-            border-top: 0px solid transparent;
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
-            border-bottom: 13px solid var(--Semi-Darker);
-            content: "";
-            position: absolute;
-            bottom: 0;
-            right: -15px;
-          }
-        }
-      }
-      &--date {
-        @include flexBox(center);
-        gap: var(--gap);
-        color: var(--gray-50);
-        font-size: var(--text);
-        &::before, &::after {
-          content: "";
-          display: inline-block;
-          width: 15%;
-          height: 1px;
-          background: var(--gray-50);
-        }
-      }
-      &__text {
-        padding: 24px;
-        border-radius: 16px;
-        max-width: 70%;
-        position: relative;
-      }
-    }
-  }
-  &--footer {
-    @include flexBox($align: flex-end);
-    gap: var(--gap);
-    height: 100%;
-    &__box {
-      display: grid;
-      align-items: end;
-      width: 100%;
-      max-height: calc(var(--gnbSize) * 2);
-      padding: 10px var(--inputPadding);
-      background-color: var(--background);
-      position: relative;
-      bottom: 0;
-      &::after {
-        content: attr(data-replicated-value) " ";
-        white-space: pre-wrap;
-        visibility: hidden;
-        border: 1px solid black;
-        padding: 0.5rem;
-        font: inherit;
-        /* Place on top of each other */
-        grid-area: 1 / 1 / 2 / 2;
-      }
-    }
-    &__text {
-      width: 100%;
-      height: 100%;
-      max-height: calc(var(--gnbSize) * 2 - 20px);
-      @extend %body1;
-      border: 0;
-      resize: none;
-      padding: var(--gap);
-      /* Place on top of each other */
-      grid-area: 1 / 1 / 2 / 2;
-      border-radius: var(--br-radius);
-      &:focus{
-        outline:none;
-        @extend %boxShadow;
-      }
-    }
-    &__send {
-      background-color: var(--primary-500);
-      position: relative;
-      &::before{
-        content: url('../icon/-send_90420.svg');
-        display: block;
-        filter: invert(100%);
-        width: 24px;
-        height: 24px;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
-    }
+    input, label { width: 100%; }
   }
 }

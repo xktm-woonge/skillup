@@ -30,7 +30,7 @@ const FRIENDS_LIST = `
 `
 
 const CHAT_LIST = `
-<li class="room--box" id="room_num_{{room_num}}" onclick="load_chatting_message_data({{room_num}})">
+<li class="room--box" id="room_num_{{room_num}}" onclick="loadChattingMessageData({{room_num}})">
     <div class="room--profile profile {{user_status}}" data-image="{{conv_picture}}"></div>
     <div class="room--detail">
         <input type="hidden">
@@ -44,6 +44,6 @@ const MESSAGE_BOX = `
 {{message_box__date}}
 <div class="message_box {{direction}}">
     <div class="message_box__text">{{message}}</div>
-    <time class="message_date">{{time}}</time>
+    <time class="message_box__time" datetime="{{time}}">{{time}}</time>
 </div>
 `

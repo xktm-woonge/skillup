@@ -15,7 +15,7 @@ socket.onmessage = function(e){
         console.log('넘어왔어?'+message.message);
         let roomnum = message.data.add_data['roomnum'];
         document.getElementsByClassName('chat--body')[0].innerHTML += add_message_box(message);
-        scroll_to_bottom_in_chatting();
+        scrollToBottomInChatting();
         document.getElementById(`room_num_${roomnum}`).querySelector('.room__status').textContent = message.data.add_data['last_message'];
     }
     else if (message === 'change_friend_status'){
