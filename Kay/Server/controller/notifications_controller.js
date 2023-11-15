@@ -3,6 +3,12 @@
 const dbManager = require('../model/dbManager');
 const websocketController = require('./websocket_controller');
 const responseFormatter = require('../utils/responseFormatter');
+const config = require('../config/config.js');
+const websocketFormatter = require('../utils/websocketFormatter');
+
+const serverAddr = config.serverAddr;
+const httpPort = config.httpPort;
+
 
 exports.handleFriendRequest = function(data, senderId, socket) {
     const receiverId = data.friendId; // The ID of the user to whom the friend request is being sent
@@ -27,31 +33,56 @@ exports.handleFriendRequest = function(data, senderId, socket) {
     });
 };
 
-exports.handleFriendResponse = function(user_id, senderId, action, socket) {
-    // 알림 삭제
-    dbManager.deleteNotification(user_id, senderId, (error) => {
-        if (error) {
-            console.error("Error deleting notification:", error);
-            // 실패 응답
-            // socket.send(JSON.stringify({ event: 'friendResponseError', message: 'Failed to process friend response.' }));
-            socket.send(JSON.stringify(responseFormatter.formatResponse('FAIL', 'friendResponseError')));
+exports.handleFriendResponse = function(user_email, sender_email, action, socket) {
+    // 먼저 사용자와 발신자의 ID를 조회
+    dbManager.getUserIdByEmail(user_email, (error, userId) => {
+        if (error || userId == null) {
+            console.error("Error finding user ID:", error);
+            socket.send(JSON.stringify(websocketFormatter.formatWebSocket('FAIL', 'notifications', 'userLookupError')));
             return;
         }
-        if (action == 'accepted') {
-            // 친구 추가 로직 (예시)
-            dbManager.addFriend(user_id, senderId, (addFriendError) => {
-                if (addFriendError) {
-                    console.error("Error adding friend:", addFriendError);
-                    // 실패 응답
-                    // socket.send(JSON.stringify({ event: 'addFriendError', message: 'Failed to add friend.' }));
-                    socket.send(JSON.stringify(responseFormatter.formatResponse('FAIL', 'addFriendError')));
+
+        dbManager.getUserIdByEmail(sender_email, (error, senderId) => {
+            if (error || senderId == null) {
+                console.error("Error finding sender ID:", error);
+                socket.send(JSON.stringify(websocketFormatter.formatWebSocket('FAIL', 'notifications', 'senderLookupError')));
+                return;
+            }
+
+            // 알림 삭제
+            dbManager.deleteNotification(userId, senderId, (error) => {
+                if (error) {
+                    console.error("Error deleting notification:", error);
+                    socket.send(JSON.stringify(websocketFormatter.formatWebSocket('FAIL', 'notifications', 'friendResponseError')));
                     return;
                 }
+                if (action == 'accepted') {
+                    // 친구 추가 로직
+                    dbManager.addFriend(userId, senderId, (addFriendError) => {
+                        if (addFriendError) {
+                            console.error("Error adding friend:", addFriendError);
+                            socket.send(JSON.stringify(websocketFormatter.formatWebSocket('FAIL', 'notifications', 'addFriendError')));
+                            return;
+                        }
 
-                // 성공 응답
-                // socket.send(JSON.stringify({ event: 'friendResponseSuccess', message: 'Friend response processed successfully.' }));
-                socket.send(JSON.stringify(responseFormatter.formatResponse('FAIL', 'friendResponseSuccess')));
+                        // 사용자 정보 조회
+                        dbManager.getSenderByEmail(sender_email, (error, senderInfo) => {
+                            if (error || !senderInfo) {
+                                console.error("Error retrieving sender information:", error);
+                                socket.send(JSON.stringify(websocketFormatter.formatWebSocket('FAIL', 'notifications', 'senderInfoError')));
+                                return;
+                            }
+
+                            // 프로필 이미지를 URL로 변경
+                            const profileImageUrl = `http://${serverAddr}:${httpPort}/profile_picture/${senderInfo.profile_picture}`;
+                            senderInfo['profile_picture'] = profileImageUrl
+
+                            // 성공 응답 및 사용자 정보 반환
+                            socket.send(JSON.stringify(websocketFormatter.formatWebSocket('SUCCESS', 'notifications', 'friendResponseSuccess', { senderInfo })));
+                        });
+                    });
+                }
             });
-        }
+        });
     });
 };

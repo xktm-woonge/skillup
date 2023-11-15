@@ -38,6 +38,20 @@ exports.getUserByEmail = function(email, callback) {
   });
 };
 
+exports.getSenderByEmail = function(email, callback) {
+  const sql = `SELECT name, email, profile_picture, status FROM users WHERE email = ?`;
+  pool.query(sql, [email], (error, results, fields) => {
+
+      if (error) {
+          return callback(error, null, null);
+      }
+
+      let user = results[0];
+      
+      return callback(null, user, fields);
+  });
+};
+
 exports.updateUserStatus = function(email, status, callback) {
   const sql = `UPDATE users SET status = ? WHERE email = ?`;
   pool.query(sql, [status, email], callback);
@@ -91,7 +105,13 @@ exports.getUserInfoByUserId = function(email, callback) {
 };
 
 exports.getNotificationsForUser = function(user_id, callback) {
-  const sql = `SELECT * FROM Notifications WHERE user_id = ? ORDER BY created_at DESC`;
+  const sql = `
+    SELECT Notifications.created_at, Users.email as sender_email
+    FROM Notifications 
+    JOIN Users ON Notifications.sender_id = Users.id
+    WHERE Notifications.user_id = ? 
+    ORDER BY Notifications.created_at DESC
+  `;
   pool.query(sql, [user_id], callback);
 };
 
@@ -118,5 +138,19 @@ exports.addFriend = function(user_id, friend_id, callback) {
 
     // 성공적으로 추가된 경우
     callback(null, results);
+  });
+};
+
+exports.getUserIdByEmail = function(email, callback) {
+  const sql = `SELECT id FROM Users WHERE email = ?`;
+  pool.query(sql, [email], (error, results) => {
+    if (error) {
+      return callback(error, null);
+    }
+    if (results.length > 0) {
+      callback(null, results[0].id); // 첫 번째 결과의 id 반환
+    } else {
+      callback(new Error("No user found with the given email"), null);
+    }
   });
 };

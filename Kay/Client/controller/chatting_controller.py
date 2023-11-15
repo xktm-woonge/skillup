@@ -129,7 +129,7 @@ class ChattingController(QObject):
             image_path = './view/static/img/sidebar_notification_icon'
             # image_path = notification['image_path']
             title = "친구 추가 요청"
-            content = notification['sender_id']
+            content = notification['sender_email']
             date = notification["created_at"]
             
             notification_widget = NotificationWidget(image_path, title, content, date)

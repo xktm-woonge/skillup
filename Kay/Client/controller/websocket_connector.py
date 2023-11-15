@@ -1,7 +1,7 @@
 # controller/websocket_connector.py
 
 import json
-from PyQt5.QtCore import QObject, pyqtSignal, QThread
+from PyQt5.QtCore import QObject, pyqtSignal
 
 try:
     from utils import *
@@ -24,8 +24,8 @@ class WebSocketConnector(QObject):
 
     def on_message_received(self, message):
         data = json.loads(message)
-        clmn.HLOG.debug(f"Received data type: {data['type']}, message: {data['data']}")
-        if data['type'] == 'FRIEND_REQUEST':
+        clmn.HLOG.debug(f"Received data type: {data['category']}, message: {data['message']}, data: {data['data']}")
+        if data['category'] == 'FRIEND_REQUEST':
             self.new_notification.emit(data)
 
     def send_message(self, message):

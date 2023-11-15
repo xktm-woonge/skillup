@@ -35,7 +35,7 @@ exports.initializeWebsocketListeners = function() {
                     // sendFriendResponse 이벤트 처리
                     // 여기서 data 객체는 필요한 정보를 담고 있어야 합니다.
                     // 예를 들어, user_id와 sender_id가 필요합니다.
-                    notificationsController.handleFriendResponse(data.user_id, data.sender_id, data.response, (err) => {
+                    notificationsController.handleFriendResponse(data.user_id, data.sender_id, data.response, ws, (err) => {
                         if (err) {
                             console.error('Error deleting notification:', err);
                             // 필요한 경우 클라이언트에게 오류 메시지를 전송할 수 있습니다.
