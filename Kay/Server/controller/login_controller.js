@@ -1,5 +1,6 @@
 // ./controller/login_controller.js
 
+require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const dbManager = require('../model/dbManager');
 const config = require('../config/config.js');
