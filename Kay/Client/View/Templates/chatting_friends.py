@@ -2,7 +2,7 @@
 
 from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QScrollArea, QApplication
 from PyQt5.QtCore import Qt, pyqtSignal, QSize
-from PyQt5.QtGui import QPixmap, QIcon
+from PyQt5.QtGui import QPixmap, QPainter, QBrush, QPen, QColor
 from pathlib import Path
 import sys
 
@@ -20,27 +20,45 @@ class FriendWidget(QWidget):
 
     def __init__(self, name, image_path, status, parent=None):
         super(FriendWidget, self).__init__(parent)
+        self.image_path = image_path
+        self.status = status
         self.setFixedSize(275, 70)
 
         layout = QHBoxLayout(self)
         # 프로필 이미지
         self.img_label = QLabel(self)
-        pixmap = QPixmap(image_path).scaled(50, 50, Qt.KeepAspectRatio)  # 프로필 이미지 스케일링
-        self.img_label.setPixmap(pixmap)
+        self.img_label.setPixmap(self.modify_image())
         layout.addWidget(self.img_label)
 
         # 이름과 상태
         self.name_label = QLabel(name, self)
         self.name_label.setFont(font.NOTOSAN_FONT_BOLD)
         layout.addWidget(self.name_label)
-
-        # # 온라인 상태 표시
-        # if status == 'online':
-        #     self.status_label = QLabel(self)
-        #     self.status_label.setStyleSheet("QLabel { background-color: green; border-radius: 5px; }")
-        #     layout.addWidget(self.status_label)
+        layout.addStretch(1)
 
         self.setLayout(layout)
+
+    def modify_image(self):
+        # Load the image
+        pixmap = QPixmap(self.image_path)
+
+        # Create a QPixmap to draw the image
+        output_pixmap = QPixmap(QSize(50, 50))
+        output_pixmap.fill(Qt.transparent)  # Fill with transparent background
+
+        # Prepare to draw on the pixmap
+        painter = QPainter(output_pixmap)
+
+        # Draw the main image
+        painter.setRenderHint(QPainter.Antialiasing)  # For smooth edges
+        painter.setRenderHint(QPainter.SmoothPixmapTransform)
+        painter.drawPixmap(output_pixmap.rect(), pixmap)
+
+        # Finish drawing
+        painter.end()
+
+        # Use or save the resulting image
+        return output_pixmap
 
     def set_offline_style(self):
         # 이미지 회색조 처리
@@ -142,7 +160,7 @@ if __name__ == '__main__':
     friend_list_widget = FriendListWidget()
 
     # 친구 위젯 추가 테스트
-    friend_list_widget.add_friend("John Doe", r"D:\Skillup\2023_chatting\Kay\Client\view\static\img\sidebar_friends_icon.png", "online")
+    friend_list_widget.add_friend("John Doe", r"D:\00.Work\00.Kraken\COM.AUTO.SCRIPT\Tool Project\PAT\Report\20231115-134259\NT\TC001_RoutePlanning.c\2023-11-15 134313_det.png", "online")
     friend_list_widget.add_friend("Jane Doe", r"D:\Skillup\2023_chatting\Kay\Client\view\static\img\sidebar_friends_icon.png", "offline")
 
     friend_list_widget.show()
