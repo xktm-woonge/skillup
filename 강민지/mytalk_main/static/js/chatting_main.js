@@ -117,7 +117,6 @@ function loadCurrUserData() {
   })
     .then(handleResponse)
     .then(function (page_data) {
-      console.log(page_data);
       setProfilePic();
       if (page_data != "") {
         document.getElementById("online_friends").innerHTML += createFriendsList(page_data.friend_list.online);
@@ -128,6 +127,7 @@ function loadCurrUserData() {
         document.querySelector(".activeSet").value = page_data.present_status;
       }
       add_user_status_event();
+      webSocketInitialization(socketPath, 'load');
     });
 }
 
@@ -161,6 +161,7 @@ function loadChattingMessageData(room_num) {
       scrollToBottomInChatting();
       add_event();
       document.getElementById("empty_contents").classList.add("displayNone");
+      webSocketInitialization(socketPath+`${room_num}/`, 'enter_chat_room');
     });
 }
 
