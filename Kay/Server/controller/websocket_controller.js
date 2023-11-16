@@ -2,6 +2,7 @@
 
 const notificationsController = require('./notifications_controller');
 const socketManager = require('../utils/socketManager');
+const dbManager = require('../model/dbManager');
 const url = require('url');
 
 let wss;
@@ -61,6 +62,18 @@ exports.initializeWebsocketListeners = function() {
                     break;
                 // 추가적인 웹소켓 이벤트 처리는 여기에...
             }
+        });
+
+        ws.on('close', () => {
+            console.log('User disconnected', user_id);
+            // 연결이 끊어지면 사용자 상태를 offline으로 변경
+            dbManager.updateUserStatus(user_id, 'offline', (error, results) => {
+                if (error) {
+                    console.error('Failed to update user status to offline:', error);
+                } else {
+                    console.log(`User status for user_id ${user_id} updated to offline.`);
+                }
+            });
         });
     });
 };

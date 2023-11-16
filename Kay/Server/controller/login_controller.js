@@ -70,6 +70,15 @@ exports.get_userInfo = function(req, res) {
         return res.json(responseFormatter.formatResponse('FAIL', '친구 목록을 불러올 수 없습니다.'));
       }
 
+      // 친구 목록의 프로필 이미지 경로를 수정합니다.
+      if (friendsInfo && friendsInfo.length > 0) {
+        friendsInfo.forEach(friend => {
+          if (friend.profile_picture) {
+            friend.profile_picture = `http://${serverAddr}:${httpPort}/profile_picture/${friend.profile_picture}`;
+          }
+        });
+      }
+
       // 대화 목록 및 대화 내용 가져오기
       dbManager.getConversationsByUserId(userId, (error, conversations) => {
         if (error) {

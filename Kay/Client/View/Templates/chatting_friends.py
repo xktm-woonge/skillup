@@ -130,7 +130,7 @@ class FriendListWidget(QWidget):
         self.setLayout(layout)
         self._setStyle()
         
-    def clear_notifications(self):
+    def clear_friends(self):
         for i in reversed(range(self.friends_layout.count())): 
             widget = self.friends_layout.itemAt(i).widget()
             if widget is not None:
@@ -161,17 +161,14 @@ if __name__ == '__main__':
     friend_list_widget = FriendListWidget()
 
     # 친구 위젯 추가 테스트
-    friend_list_widget.add_friend("John Doe", r"D:\00.Work\00.Kraken\COM.AUTO.SCRIPT\Tool Project\PAT\Report\20231115-134259\NT\TC001_RoutePlanning.c\2023-11-15 134313_det.png", "online")
-    friend_list_widget.add_friend("Jane Doe", r"D:\Skillup\2023_chatting\Kay\Client\view\static\img\sidebar_friends_icon.png", "offline")
-    friend_list_widget.add_friend("Jane Doe", r"D:\Skillup\2023_chatting\Kay\Client\view\static\img\sidebar_friends_icon.png", "offline")
-    friend_list_widget.add_friend("Jane Doe", r"D:\Skillup\2023_chatting\Kay\Client\view\static\img\sidebar_friends_icon.png", "offline")
-    friend_list_widget.add_friend("Jane Doe", r"D:\Skillup\2023_chatting\Kay\Client\view\static\img\sidebar_friends_icon.png", "offline")
-    friend_list_widget.add_friend("Jane Doe", r"D:\Skillup\2023_chatting\Kay\Client\view\static\img\sidebar_friends_icon.png", "offline")
-    friend_list_widget.add_friend("Jane Doe", r"D:\Skillup\2023_chatting\Kay\Client\view\static\img\sidebar_friends_icon.png", "offline")
-    friend_list_widget.add_friend("Jane Doe", r"D:\Skillup\2023_chatting\Kay\Client\view\static\img\sidebar_friends_icon.png", "offline")
-    friend_list_widget.add_friend("Jane Doe", r"D:\Skillup\2023_chatting\Kay\Client\view\static\img\sidebar_friends_icon.png", "offline")
-    friend_list_widget.add_friend("Jane Doe", r"D:\Skillup\2023_chatting\Kay\Client\view\static\img\sidebar_friends_icon.png", "offline")
-    friend_list_widget.add_friend("Jane Doe", r"D:\Skillup\2023_chatting\Kay\Client\view\static\img\sidebar_friends_icon.png", "offline")
+    friend_list_widget.add_friend("John Doe", r"D:\python_project\chatting_program\Kay\Client\view\static\img\background.png", "online")
+    friend_list_widget.add_friend("Jane Doe", r"D:\python_project\chatting_program\Kay\Client\view\static\img\background.png", "offline")
+    friend_list_widget.add_friend("Jane Doe", r"D:\python_project\chatting_program\Kay\Client\view\static\img\background.png", "offline")
+    friend_list_widget.add_friend("Jane Doe", r"D:\python_project\chatting_program\Kay\Client\view\static\img\background.png", "offline")
+    friend_list_widget.add_friend("Jane Doe", r"D:\python_project\chatting_program\Kay\Client\view\static\img\background.png", "offline")
+    friend_list_widget.add_friend("Jane Doe", r"D:\python_project\chatting_program\Kay\Client\view\static\img\background.png", "offline")
+    friend_list_widget.add_friend("Jane Doe", r"D:\python_project\chatting_program\Kay\Client\view\static\img\background.png", "offline")
+    friend_list_widget.add_friend("Jane Doe", r"D:\python_project\chatting_program\Kay\Client\view\static\img\background.png", "offline")
 
     friend_list_widget.show()
     sys.exit(app.exec_())

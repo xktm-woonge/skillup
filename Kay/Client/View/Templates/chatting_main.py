@@ -10,6 +10,7 @@ try:
     from utils import *
     from view.templates.chatting_sidebar import Sidebar
     from view.templates.chatting_notifications import NotificationsListWidget
+    from view.templates.chatting_friends import FriendListWidget
 except ImportError:
     import sys
     from pathlib import Path

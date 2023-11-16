@@ -8,6 +8,7 @@ try:
     from utils import *
     from view.templates import ChattingWindow
     from view.templates.chatting_notifications import NotificationWidget
+    from view.templates.chatting_friends import FriendWidget
     from controller.websocket_connector import WebSocketConnector
 except ImportError:
     import sys
@@ -16,8 +17,8 @@ except ImportError:
     from utils import *
     from view.templates import ChattingWindow
     from view.templates.chatting_notifications import NotificationWidget
+    from view.templates.chatting_friends import FriendWidget
     from controller.websocket_connector import WebSocketConnector
-# from view.templates import NotificationsListWidget, FriendListWidget, ChatListWidget, ProfileSettingWidget
 
 class ChattingController(QObject):
     def __init__(self, user_id, data, token, api_thread):
@@ -34,12 +35,13 @@ class ChattingController(QObject):
         self.chatting_window = ChattingWindow()
         self.set_user_info()
         self.display_notifications()
+        self.display_friendList()
         self.chatting_window.show()
 
         self.connect_slot()
 
     def connect_slot(self):
-        pass
+        self.websocket_api.add_friend.connect(self.add_friend)
         # self.chatting_window.notification_button.clicked.connect(self.show_notifications)
         # self.chatting_window.friend_list_button.clicked.connect(self.show_friend_list)
         # self.chatting_window.chat_window_button.clicked.connect(self.show_chats)
@@ -53,12 +55,10 @@ class ChattingController(QObject):
     #     self.chatting_window.middle_area.addWidget(notifications_list_widget)
     #     # Similarly, add a widget to the right area if needed
 
-    # @pyqtSlot()
-    # def show_friend_list(self):
-    #     self._clear_middle_right_areas()
-    #     friend_list_widget = FriendListWidget()
-    #     self.chatting_window.middle_area.addWidget(friend_list_widget)
-    #     # Similarly, add a widget to the right area if needed
+    @pyqtSlot()
+    def add_friend(self):
+        pass
+        # Similarly, add a widget to the right area if needed
 
     # @pyqtSlot()
     # def show_chats(self):
@@ -139,7 +139,18 @@ class ChattingController(QObject):
 
             notification_widget.response_signal.connect(
                 lambda sender_id, response: self.handle_friend_response(sender_id, response, notification_widget))
-    
+            
+    def display_friendList(self):
+        self.chatting_window.friend_list_widget.clear_friends()
+        self.friends_widgets = {}
+
+        for friendInfo in self.friendsInfo:
+            name = friendInfo['name']
+            image_path = friendInfo['profile_picture']
+            status = friendInfo['status']
+
+            self.chatting_window.friend_list_widget.add_friend(name, image_path, status)
+
     def handle_friend_response(self, sender_id, response, widget):
         # 서버에 메시지 전송
         message = {

@@ -15,7 +15,7 @@ except ImportError:
 
 
 class WebSocketConnector(QObject):
-    new_notification = pyqtSignal(dict)
+    add_friend = pyqtSignal(dict)
     
     def __init__(self, url):
         super().__init__()
@@ -25,8 +25,8 @@ class WebSocketConnector(QObject):
     def on_message_received(self, message):
         data = json.loads(message)
         clmn.HLOG.debug(f"Received data type: {data['category']}, message: {data['message']}, data: {data['data']}")
-        if data['category'] == 'FRIEND_REQUEST':
-            self.new_notification.emit(data)
+        if data['category'] == 'notifications' and data['message'] == 'friendResponseSuccess':
+            self.add_friend.emit(data['data'])
 
     def send_message(self, message):
         self.realtime_communication.send_message(message)
