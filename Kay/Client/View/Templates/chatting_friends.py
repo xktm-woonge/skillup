@@ -20,6 +20,7 @@ class FriendWidget(QWidget):
 
     def __init__(self, name, image_path, status, parent=None):
         super(FriendWidget, self).__init__(parent)
+        self.setObjectName("FriendWidget")
         self.image_path = image_path
         self.status = status
         self.setFixedSize(275, 70)
@@ -161,6 +162,15 @@ if __name__ == '__main__':
 
     # 친구 위젯 추가 테스트
     friend_list_widget.add_friend("John Doe", r"D:\00.Work\00.Kraken\COM.AUTO.SCRIPT\Tool Project\PAT\Report\20231115-134259\NT\TC001_RoutePlanning.c\2023-11-15 134313_det.png", "online")
+    friend_list_widget.add_friend("Jane Doe", r"D:\Skillup\2023_chatting\Kay\Client\view\static\img\sidebar_friends_icon.png", "offline")
+    friend_list_widget.add_friend("Jane Doe", r"D:\Skillup\2023_chatting\Kay\Client\view\static\img\sidebar_friends_icon.png", "offline")
+    friend_list_widget.add_friend("Jane Doe", r"D:\Skillup\2023_chatting\Kay\Client\view\static\img\sidebar_friends_icon.png", "offline")
+    friend_list_widget.add_friend("Jane Doe", r"D:\Skillup\2023_chatting\Kay\Client\view\static\img\sidebar_friends_icon.png", "offline")
+    friend_list_widget.add_friend("Jane Doe", r"D:\Skillup\2023_chatting\Kay\Client\view\static\img\sidebar_friends_icon.png", "offline")
+    friend_list_widget.add_friend("Jane Doe", r"D:\Skillup\2023_chatting\Kay\Client\view\static\img\sidebar_friends_icon.png", "offline")
+    friend_list_widget.add_friend("Jane Doe", r"D:\Skillup\2023_chatting\Kay\Client\view\static\img\sidebar_friends_icon.png", "offline")
+    friend_list_widget.add_friend("Jane Doe", r"D:\Skillup\2023_chatting\Kay\Client\view\static\img\sidebar_friends_icon.png", "offline")
+    friend_list_widget.add_friend("Jane Doe", r"D:\Skillup\2023_chatting\Kay\Client\view\static\img\sidebar_friends_icon.png", "offline")
     friend_list_widget.add_friend("Jane Doe", r"D:\Skillup\2023_chatting\Kay\Client\view\static\img\sidebar_friends_icon.png", "offline")
 
     friend_list_widget.show()

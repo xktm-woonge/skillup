@@ -38,3 +38,40 @@ FriendWidget {
 FriendWidget QLabel, FriendWidget QPushButton {
     border: none;
 }
+
+/* ScrollBar Customization */
+FriendListWidget QScrollBar:vertical {
+    border: none;
+    background: transparent;
+    width: 5px;
+    margin: 0;
+}
+
+FriendListWidget QScrollBar::handle:vertical {
+    background-color: #aaa;
+    min-height: 20px;
+    border: none;
+    border-radius: 2.5px;
+}
+
+FriendListWidget QScrollBar::add-line:vertical,
+FriendListWidget QScrollBar::sub-line:vertical {
+    border: none;
+    background: none;
+    height: 0;
+}
+
+FriendListWidget QScrollBar::add-page:vertical, 
+FriendListWidget QScrollBar::sub-page:vertical {
+    background: none;
+    border-radius: 2.5px;
+}
+
+QScrollArea {
+    border: none;
+}
+
+/* ScrollArea의 배경색을 흰색으로 설정 */
+QScrollArea {
+    background: white; /* 흰색으로 변경 */
+}

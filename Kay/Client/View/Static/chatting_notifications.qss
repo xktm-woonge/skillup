@@ -89,11 +89,12 @@ NotificationsListWidget QScrollBar::sub-page:vertical {
     border-radius: 2.5px;
 }
 
+QScrollArea {
+    border: none;
+}
+
 QPushButton#delete_button {
     background: transparent;
     border: none;
 }
 
-QScrollArea {
-    border: none;
-}
