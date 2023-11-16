@@ -26,25 +26,6 @@ def get_NotoSan_bold_font():
     # 폰트 등록
     font_id = QFontDatabase.addApplicationFont(font_path)
 
-    # 이 부분은 위에서 언급한 폰트 추가 코드에 이어서 작성합니다.
-
-    # 폰트 추가에 성공했는지 확인
-    if font_id != -1:
-        # 폰트 패밀리 이름 가져오기
-        font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
-
-        # 폰트 생성
-        font = QFont(font_family, 12)  # 폰트 패밀리와 크기 설정
-
-        # 레이블 생성
-        label = QLabel("새로운 폰트 적용 예제")
-        label.setFont(font)  # 폰트 설정
-
-        # 레이블 표시
-        label.show()
-    else:
-        print("폰트 추가 실패: 폰트 파일을 확인하세요.")
-
     # 폰트 패밀리 이름 가져오기
     font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
 

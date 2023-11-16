@@ -17,6 +17,7 @@ except ImportError:
     from utils import *
     from view.templates.chatting_sidebar import Sidebar
     from view.templates.chatting_notifications import NotificationsListWidget
+    from view.templates.chatting_friends import FriendListWidget
 
 
 class ChattingWindow(QWidget):
@@ -46,6 +47,9 @@ class ChattingWindow(QWidget):
         # 다른 위젯도 여기에 추가하면 됩니다.
         self.notifications_list_widget = NotificationsListWidget()
         self.middle_area_widget.addWidget(self.notifications_list_widget)
+
+        self.friend_list_widget = FriendListWidget()
+        self.middle_area_widget.addWidget(self.friend_list_widget)
         
         # Right Area
         self.right_area_widget = QStackedWidget(self)
@@ -71,6 +75,7 @@ class ChattingWindow(QWidget):
         central_widget.setLayout(central_layout)
         self.right_area_widget.addWidget(central_widget)
         
+        self.connect_slot()
         self.sidebar.notification_button.click()
 
         self._setStyle()
@@ -82,12 +87,18 @@ class ChattingWindow(QWidget):
         
     def connect_slot(self):
         self.sidebar.notification_button.clicked.connect(self.show_notifications)
+        self.sidebar.friend_list_button.clicked.connect(self.show_friends)
 
     @pyqtSlot()
     def show_notifications(self):
         self.clear_middle_areas()
         self.middle_area_widget.setCurrentWidget(self.notifications_list_widget)
         # Similarly, add a widget to the right area if needed
+
+    @pyqtSlot()
+    def show_friends(self):
+        self.clear_middle_areas()
+        self.middle_area_widget.setCurrentWidget(self.friend_list_widget)
     
     def clear_middle_areas(self):
         self.middle_area_widget.setCurrentIndex(-1)

@@ -31,14 +31,14 @@ class FriendWidget(QWidget):
 
         # 이름과 상태
         self.name_label = QLabel(name, self)
-        # self.name_label.setFont(font.NOTOSAN_FONT_BOLD)
+        self.name_label.setFont(font.NOTOSAN_FONT_BOLD)
         layout.addWidget(self.name_label)
 
-        # 온라인 상태 표시
-        if status == 'online':
-            self.status_label = QLabel(self)
-            self.status_label.setStyleSheet("QLabel { background-color: green; border-radius: 5px; }")
-            layout.addWidget(self.status_label)
+        # # 온라인 상태 표시
+        # if status == 'online':
+        #     self.status_label = QLabel(self)
+        #     self.status_label.setStyleSheet("QLabel { background-color: green; border-radius: 5px; }")
+        #     layout.addWidget(self.status_label)
 
         self.setLayout(layout)
 
@@ -52,74 +52,98 @@ class FriendListWidget(QWidget):
     def __init__(self, parent=None):
         super(FriendListWidget, self).__init__(parent)
         
-        self.setFixedSize(300, 600)
+        self.middle_width = 300
+        header_height = 50
+        self.height = 600
+        self.add_icon_size = (30, 30)
+        self.add_button_size = (30, 30)
+        header_font = font.NOTOSAN_FONT_BOLD
         
-        layout = QVBoxLayout(self)
+        self.setFixedWidth(self.middle_width)
+        self.setMinimumHeight(self.height)
+        
+        layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
-
-        # 친구 목록 헤더
+        
+        # Header
         header = QWidget(self)
-        header.setFixedHeight(50)
-        header_layout = QHBoxLayout(header)
-        header_label = QLabel("친구목록", header)
-        # header_label.setFont(font.NOTOSAN_FONT_BOLD)
+        header.setFixedSize(self.middle_width, header_height)
+        header.setObjectName("header")
+        header_layout = QHBoxLayout()
+        header_label = QLabel(" 친구 목록")
+        header_label.setFont(header_font)
+        header_label.setObjectName('header_label')
+
+        add_icon_path = f'{Path(__file__).parents[1]}/static/icon/add.svg'
+        add_icon_white = change_svg_color(add_icon_path, "#FFFFFF")  # 흰색으로 변경
+        self.add_button = QPushButton()
+        self.add_button.setIcon(add_icon_white)
+        self.add_button.setIconSize(QSize(*self.add_icon_size))
+        self.add_button.setFixedSize(*self.add_button_size)
+        self.add_button.setProperty('icon_path', add_icon_path)
+        self.add_button.setObjectName('add_button')
+
         header_layout.addWidget(header_label)
-
-        add_button = QPushButton(header)
-        add_icon = QIcon(f'{Path(__file__).parents[1]}/static/icon/add.svg')  # 실제 경로로 변경
-        add_button.setIcon(add_icon)
-        add_button.setIconSize(QSize(24, 24))
-        add_button.setFixedSize(30, 30)
-        header_layout.addWidget(add_button)
-
+        # header_layout.addWidget(self.toggle_slider)
+        header_layout.addStretch(1)  # 중앙 공백 추가
+        header_layout.addWidget(self.add_button)
+        header.setLayout(header_layout)
+        layout.setSpacing(0)
         layout.addWidget(header)
 
-        # 친구 목록 스크롤 영역
-        self.scroll_area = QScrollArea(self)
+        # friends_area
+        friends_area = QWidget(self)
+        self.friends_layout = QVBoxLayout()
+        self.friends_layout.setSpacing(0)  
+        
+        self.friends_layout.setAlignment(Qt.AlignTop)
+
+        # 오프라인 상태 텍스트 레이블
+        self.offline_label = QLabel("오프라인")
+        self.friends_layout.addWidget(self.offline_label)
+
+        self.scroll_area = QScrollArea()
         self.scroll_area.setWidgetResizable(True)
-        self.scroll_area_widget = QWidget()
-        self.scroll_area.setWidget(self.scroll_area_widget)
-        self.friend_list_layout = QVBoxLayout(self.scroll_area_widget)
-        self.friend_list_layout.setAlignment(Qt.AlignTop)
+        self.scroll_area.setWidget(friends_area)
+        friends_area.setLayout(self.friends_layout)
         layout.addWidget(self.scroll_area)
-
-        self.online_label = QLabel("온라인", self)  # 온라인 구분자 추가
-        # self.online_label.setFont(font.NOTOSAN_FONT_MEDIUM)  # 폰트 설정
-        self.online_label.setStyleSheet("color: #000000;")  # 색상 설정
-        self.friend_list_layout.addWidget(self.online_label)
-
-        self.offline_label = QLabel("오프라인", self)  # 오프라인 구분자 추가
-        # self.offline_label.setFont(font.NOTOSAN_FONT_MEDIUM)  # 폰트 설정
-        self.offline_label.setStyleSheet("color: #C0C0C0;")  # 색상 설정
 
         self.setLayout(layout)
         self._setStyle()
-
+        
+    def clear_notifications(self):
+        for i in reversed(range(self.friends_layout.count())): 
+            widget = self.friends_layout.itemAt(i).widget()
+            if widget is not None:
+                widget.deleteLater()
+        
     def _setStyle(self):
-        with open(f'{Path(__file__).parents[1]}/static/friend_list.qss', 'r', encoding='utf-8') as file:
+        with open(f'{Path(__file__).parents[1]}/static/chatting_friends.qss', 'r', encoding='utf-8') as file:
             qss = file.read()
             self.setStyleSheet(qss)
+
+        self.add_button.setCursor(Qt.PointingHandCursor)
 
     def add_friend(self, name, image_path, status):
         widget = FriendWidget(name, image_path, status)
         if status == 'online':
-            self.friend_list_layout.insertWidget(self.friend_list_layout.count() - 1, widget)
+            self.friends_layout.insertWidget(self.friends_layout.count() - 1, widget)
         else:
             if not hasattr(self, 'offline_added'):
-                self.friend_list_layout.addWidget(self.offline_label)  # 오프라인 라벨 추가
+                self.friends_layout.addWidget(self.offline_label)  # 오프라인 라벨 추가
                 setattr(self, 'offline_added', True)
-            self.friend_list_layout.addWidget(widget)
+            self.friends_layout.addWidget(widget)
             widget.set_offline_style()
 
 
 if __name__ == '__main__':
-    # font.Init()
     app = QApplication(sys.argv)
+    font.Init()
     friend_list_widget = FriendListWidget()
 
     # 친구 위젯 추가 테스트
-    friend_list_widget.add_friend("John Doe", r"D:\python_project\chatting_program\Kay\Client\view\static\img\back.png", "online")
-    friend_list_widget.add_friend("Jane Doe", r"D:\python_project\chatting_program\Kay\Client\view\static\img\back.png", "offline")
+    friend_list_widget.add_friend("John Doe", r"D:\Skillup\2023_chatting\Kay\Client\view\static\img\sidebar_friends_icon.png", "online")
+    friend_list_widget.add_friend("Jane Doe", r"D:\Skillup\2023_chatting\Kay\Client\view\static\img\sidebar_friends_icon.png", "offline")
 
     friend_list_widget.show()
     sys.exit(app.exec_())

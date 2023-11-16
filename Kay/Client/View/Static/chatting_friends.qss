@@ -1,0 +1,40 @@
+/* friend_list.qss */
+
+/* Remove border from the header */
+#header {
+    background-color: rgb(79, 42, 184);
+    border: none; /* This ensures the header has no border */
+}
+
+/* Style for the header label */
+QLabel#header_label {
+    font-size: 13px;
+    color: white;
+    margin-bottom: 2px;
+}
+
+/* Remove border from the add button */
+#add_button { 
+    border: none;
+}
+
+/* Remove borders from all widgets by default */
+QWidget {
+    border: none;
+}
+
+/* Remove border from the scroll area and its viewport */
+QScrollArea, QScrollArea > QWidget {
+    border: none;
+}
+
+/* Specific FriendWidget styling */
+FriendWidget {
+    background-color: white;
+    /* Ensure no border is set */
+}
+
+/* You may also want to ensure that the QLabel and QPushButton inside FriendWidget have no borders */
+FriendWidget QLabel, FriendWidget QPushButton {
+    border: none;
+}
