@@ -2,7 +2,7 @@
 
 from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QScrollArea, QApplication
 from PyQt5.QtCore import Qt, pyqtSignal, QSize
-from PyQt5.QtGui import QPixmap, QPainter, QBrush, QPen, QColor
+from PyQt5.QtGui import QPixmap, QPainter, QImage, qGray
 from pathlib import Path
 import sys
 
@@ -40,19 +40,32 @@ class FriendWidget(QWidget):
         self.setLayout(layout)
 
     def modify_image(self):
-        # Load the image
-        pixmap = QPixmap(self.image_path)
+        # Load the image as QImage for manipulation
+        image = QImage(self.image_path)
 
-        # Create a QPixmap to draw the image
+        # Check if the status is offline to apply the grayscale effect
+        if self.status == 'offline':
+            for x in range(image.width()):
+                for y in range(image.height()):
+                    color = image.pixelColor(x, y)
+                    # Convert the pixel to grayscale
+                    gray = qGray(color.rgb())
+                    color.setRed(gray)
+                    color.setGreen(gray)
+                    color.setBlue(gray)
+                    image.setPixelColor(x, y, color)
+
+        # Convert QImage back to QPixmap to display it
+        pixmap = QPixmap.fromImage(image)
         output_pixmap = QPixmap(QSize(50, 50))
         output_pixmap.fill(Qt.transparent)  # Fill with transparent background
 
         # Prepare to draw on the pixmap
         painter = QPainter(output_pixmap)
-
-        # Draw the main image
         painter.setRenderHint(QPainter.Antialiasing)  # For smooth edges
         painter.setRenderHint(QPainter.SmoothPixmapTransform)
+
+        # Draw the main image
         painter.drawPixmap(output_pixmap.rect(), pixmap)
 
         # Finish drawing
@@ -117,9 +130,9 @@ class FriendListWidget(QWidget):
         
         self.friends_layout.setAlignment(Qt.AlignTop)
 
-        # 오프라인 상태 텍스트 레이블
-        self.offline_label = QLabel("오프라인")
-        self.friends_layout.addWidget(self.offline_label)
+        # # 오프라인 상태 텍스트 레이블
+        # self.offline_label = QLabel("오프라인")
+        # self.friends_layout.addWidget(self.offline_label)
 
         self.scroll_area = QScrollArea()
         self.scroll_area.setWidgetResizable(True)
@@ -148,9 +161,9 @@ class FriendListWidget(QWidget):
         if status == 'online':
             self.friends_layout.insertWidget(self.friends_layout.count() - 1, widget)
         else:
-            if not hasattr(self, 'offline_added'):
-                self.friends_layout.addWidget(self.offline_label)  # 오프라인 라벨 추가
-                setattr(self, 'offline_added', True)
+            # if not hasattr(self, 'offline_added'):
+            #     self.friends_layout.addWidget(self.offline_label)  # 오프라인 라벨 추가
+            #     setattr(self, 'offline_added', True)
             self.friends_layout.addWidget(widget)
             widget.set_offline_style()
 
@@ -161,14 +174,16 @@ if __name__ == '__main__':
     friend_list_widget = FriendListWidget()
 
     # 친구 위젯 추가 테스트
-    friend_list_widget.add_friend("John Doe", r"D:\python_project\chatting_program\Kay\Client\view\static\img\background.png", "online")
-    friend_list_widget.add_friend("Jane Doe", r"D:\python_project\chatting_program\Kay\Client\view\static\img\background.png", "offline")
-    friend_list_widget.add_friend("Jane Doe", r"D:\python_project\chatting_program\Kay\Client\view\static\img\background.png", "offline")
-    friend_list_widget.add_friend("Jane Doe", r"D:\python_project\chatting_program\Kay\Client\view\static\img\background.png", "offline")
-    friend_list_widget.add_friend("Jane Doe", r"D:\python_project\chatting_program\Kay\Client\view\static\img\background.png", "offline")
-    friend_list_widget.add_friend("Jane Doe", r"D:\python_project\chatting_program\Kay\Client\view\static\img\background.png", "offline")
-    friend_list_widget.add_friend("Jane Doe", r"D:\python_project\chatting_program\Kay\Client\view\static\img\background.png", "offline")
-    friend_list_widget.add_friend("Jane Doe", r"D:\python_project\chatting_program\Kay\Client\view\static\img\background.png", "offline")
+    friend_list_widget.add_friend("John Doe", f'{Path(__file__).parents[1]}/static/img/background.png', "online")
+    friend_list_widget.add_friend("John Doe", f'{Path(__file__).parents[1]}/static/img/background.png', "online")
+    friend_list_widget.add_friend("John Doe", f'{Path(__file__).parents[1]}/static/img/background.png', "online")
+    friend_list_widget.add_friend("John Doe", f'{Path(__file__).parents[1]}/static/img/background.png', "offline")
+    friend_list_widget.add_friend("John Doe", f'{Path(__file__).parents[1]}/static/img/background.png', "offline")
+    friend_list_widget.add_friend("John Doe", f'{Path(__file__).parents[1]}/static/img/background.png', "offline")
+    friend_list_widget.add_friend("John Doe", f'{Path(__file__).parents[1]}/static/img/background.png', "offline")
+    friend_list_widget.add_friend("John Doe", f'{Path(__file__).parents[1]}/static/img/background.png', "offline")
+    friend_list_widget.add_friend("John Doe", f'{Path(__file__).parents[1]}/static/img/background.png', "offline")
+    friend_list_widget.add_friend("John Doe", f'{Path(__file__).parents[1]}/static/img/background.png', "offline")
 
     friend_list_widget.show()
     sys.exit(app.exec_())
