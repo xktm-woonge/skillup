@@ -184,16 +184,11 @@ if __name__ == '__main__':
     friend_list_widget = FriendListWidget()
 
     # 친구 위젯 추가 테스트
-    friend_list_widget.add_friend("John Doe", f'{Path(__file__).parents[1]}/static/img/background.png', "online")
-    friend_list_widget.add_friend("John Doe", f'{Path(__file__).parents[1]}/static/img/background.png', "online")
-    friend_list_widget.add_friend("John Doe", f'{Path(__file__).parents[1]}/static/img/background.png', "online")
-    friend_list_widget.add_friend("John Doe", f'{Path(__file__).parents[1]}/static/img/background.png', "offline")
-    friend_list_widget.add_friend("John Doe", f'{Path(__file__).parents[1]}/static/img/background.png', "offline")
-    friend_list_widget.add_friend("John Doe", f'{Path(__file__).parents[1]}/static/img/background.png', "offline")
-    friend_list_widget.add_friend("John Doe", f'{Path(__file__).parents[1]}/static/img/background.png', "offline")
-    friend_list_widget.add_friend("John Doe", f'{Path(__file__).parents[1]}/static/img/background.png', "offline")
-    friend_list_widget.add_friend("John Doe", f'{Path(__file__).parents[1]}/static/img/background.png', "offline")
-    friend_list_widget.add_friend("John Doe", f'{Path(__file__).parents[1]}/static/img/background.png', "offline")
+    friend_list_widget.add_friend("John Doe", f'http://127.0.0.1:3000/profile_picture/base_profile.png', "online")
+    friend_list_widget.add_friend("John Doe", f'http://127.0.0.1:3000/profile_picture/base_profile.png', "online")
+    friend_list_widget.add_friend("John Doe", f'http://127.0.0.1:3000/profile_picture/base_profile.png', "online")
+    friend_list_widget.add_friend("John Doe", f'http://127.0.0.1:3000/profile_picture/base_profile.png', "offline")
+    friend_list_widget.add_friend("John Doe", f'http://127.0.0.1:3000/profile_picture/base_profile.png', "offline")
 
     friend_list_widget.show()
     sys.exit(app.exec_())
