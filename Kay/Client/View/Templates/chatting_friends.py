@@ -1,8 +1,8 @@
 # ./view/templates/friend_list_widget.py
 
 from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QScrollArea, QApplication
-from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply
-from PyQt5.QtCore import Qt, pyqtSignal, QSize
+from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest
+from PyQt5.QtCore import Qt, pyqtSignal, QSize, QUrl
 from PyQt5.QtGui import QPixmap, QPainter, QImage, qGray
 from pathlib import Path
 import sys
