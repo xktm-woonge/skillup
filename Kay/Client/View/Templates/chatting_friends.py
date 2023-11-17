@@ -1,10 +1,12 @@
 # ./view/templates/friend_list_widget.py
 
 from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QScrollArea, QApplication
+from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply
 from PyQt5.QtCore import Qt, pyqtSignal, QSize
 from PyQt5.QtGui import QPixmap, QPainter, QImage, qGray
 from pathlib import Path
 import sys
+import validators
 
 try:
     from utils import *
@@ -17,6 +19,7 @@ except ImportError:
 class FriendWidget(QWidget):
     # 사용자 정의 신호 생성, 필요한 경우 사용
     friend_action_signal = pyqtSignal(str)
+    image_loaded_signal = pyqtSignal(QPixmap)
 
     def __init__(self, name, image_path, status, parent=None):
         super(FriendWidget, self).__init__(parent)
@@ -28,7 +31,6 @@ class FriendWidget(QWidget):
         layout = QHBoxLayout(self)
         # 프로필 이미지
         self.img_label = QLabel(self)
-        self.img_label.setPixmap(self.modify_image())
         layout.addWidget(self.img_label)
 
         # 이름과 상태
@@ -39,46 +41,54 @@ class FriendWidget(QWidget):
 
         self.setLayout(layout)
 
-    def modify_image(self):
-        # Load the image as QImage for manipulation
-        image = QImage(self.image_path)
+        # Load the profile picture from the network
+        self.load_profile_picture()
 
-        # Check if the status is offline to apply the grayscale effect
+        # Connect the signal for when the image is loaded
+        self.image_loaded_signal.connect(self.set_profile_picture)
+
+    def load_profile_picture(self):
+        # Check if the image path is a valid URL
+        if validators.url(self.image_path):
+            request = QNetworkRequest(QUrl(self.image_path))
+            manager = QNetworkAccessManager()
+            manager.finished.connect(self.on_image_load)
+            manager.get(request)
+        else:
+            # Assume it is a local file path
+            self.set_profile_picture(QPixmap(self.image_path))
+
+    def on_image_load(self, reply):
+        img_data = reply.readAll()
+        pixmap = QPixmap()
+        if pixmap.loadFromData(img_data):
+            # Emit the signal with the loaded pixmap
+            self.image_loaded_signal.emit(pixmap)
+        else:
+            print("Failed to load image from network.")
+
+    def set_profile_picture(self, pixmap):
+        # If the status is offline, convert the image to grayscale
         if self.status == 'offline':
+            image = pixmap.toImage()
             for x in range(image.width()):
                 for y in range(image.height()):
                     color = image.pixelColor(x, y)
-                    # Convert the pixel to grayscale
                     gray = qGray(color.rgb())
                     color.setRed(gray)
                     color.setGreen(gray)
                     color.setBlue(gray)
                     image.setPixelColor(x, y, color)
+            pixmap = QPixmap.fromImage(image)
 
-        # Convert QImage back to QPixmap to display it
-        pixmap = QPixmap.fromImage(image)
-        output_pixmap = QPixmap(QSize(50, 50))
-        output_pixmap.fill(Qt.transparent)  # Fill with transparent background
-
-        # Prepare to draw on the pixmap
-        painter = QPainter(output_pixmap)
-        painter.setRenderHint(QPainter.Antialiasing)  # For smooth edges
-        painter.setRenderHint(QPainter.SmoothPixmapTransform)
-
-        # Draw the main image
-        painter.drawPixmap(output_pixmap.rect(), pixmap)
-
-        # Finish drawing
-        painter.end()
-
-        # Use or save the resulting image
-        return output_pixmap
+        # Resize and set the pixmap
+        self.img_label.setPixmap(pixmap.scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation))
 
     def set_offline_style(self):
-        # 이미지 회색조 처리
-        self.img_label.setStyleSheet("QLabel { background-color: #C0C0C0; }")
+        # 이미지 회색조 처리는 이미 set_profile_picture 함수에서 수행됨
         # 텍스트 회색조 처리
         self.name_label.setStyleSheet("QLabel { color: #C0C0C0; }")
+
 
 class FriendListWidget(QWidget):
     def __init__(self, parent=None):
