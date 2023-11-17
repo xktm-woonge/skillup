@@ -16,21 +16,16 @@
 }
 
 /* for font */
-.setting .user__name {
-  font-size: 18px;
-  font-weight: 700;
-}
-
-.setting--options .option--text, .room__name, .friends__name, .side_bar--header__title, #gnb .btn::after {
+.room__name, .friends__name, .side_bar--header__title, #gnb .btn::after {
   font-size: 16px;
   font-weight: 400;
 }
 
-.setting--options .option.withdraw .option--text, .setting .user__email, .setting .user__team, .room__status, .friends__status, .notice--btn.actions button, .notice--btn .actions button, .notice--box, .notice--group.normal .notice--box__title::after, .notice--group.team .notice--box__title::after {
+.room__status, .friends__status, .notice--btn.actions button, .notice--btn .actions button, .notice--box, .notice--group.normal .notice--box__title::after, .notice--group.team .notice--box__title::after {
   font-size: 14px;
 }
 
-.setting .user--cover__edit, .friends--group__title, .notice--box__time, #gnb:hover::after, #gnb.active::after, .room__name span, .friends__name span {
+.friends--group__title, .notice--box__time, #gnb:hover::after, #gnb.active::after, .room__name span, .friends__name span {
   font-size: 12px;
   font-weight: 400;
   line-height: 14px; /* 100% */
@@ -64,7 +59,7 @@
   color: var(--white);
 }
 #gnb .btn:hover img, #gnb .btn.active img {
-  filter: invert(100%) sepia(53%) saturate(0%) hue-rotate(319deg) brightness(105%) contrast(102%);
+  filter: var(--filter-white-bgP);
 }
 #gnb .btn::after {
   width: 100%;
@@ -131,7 +126,7 @@
   height: 100%;
 }
 .side_bar--header button img {
-  filter: invert(100%) sepia(53%) saturate(0%) hue-rotate(319deg) brightness(105%) contrast(102%);
+  filter: var(--filter-white-bgP);
   height: 100%;
 }
 .side_bar--body {
@@ -145,6 +140,9 @@
   height: calc(100% - var(--gnbSize));
   overflow-y: auto;
   padding: var(--gap) var(--gap) calc(var(--gnbSize) + 10px);
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
 }
 .side_bar--body.setting {
   padding: 0;
@@ -268,10 +266,10 @@
   border-radius: calc(var(--br-radius) / 2);
 }
 .notice--btn.actions__accept, .notice--btn .actions__accept {
-  filter: invert(55%) sepia(77%) saturate(887%) hue-rotate(40deg) brightness(91%) contrast(94%);
+  filter: var(--filter-Success);
 }
 .notice--btn.actions__reject, .notice--btn .actions__reject {
-  filter: invert(87%) sepia(1%) saturate(65%) hue-rotate(148deg) brightness(117%) contrast(56%);
+  filter: var(--filter-Danger);
 }
 
 /***************************************************
@@ -370,108 +368,4 @@
   text-overflow: ellipsis;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
-}
-
-/***************************************************
-  side_bar setting view 
-****************************************************/
-.setting > * {
-  width: 100%;
-}
-.setting--user {
-  display: grid;
-  grid-template-columns: calc(var(--imgSize) * 3) 1fr;
-  align-items: center;
-  gap: var(--padding);
-  padding: 40px;
-}
-.setting .user--img {
-  width: calc(var(--imgSize) * 3);
-  height: calc(var(--imgSize) * 3);
-  border-radius: 50%;
-  background: url("../img/profile_basic.png") center/cover;
-}
-.setting .user--detail {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-.setting .user--cover {
-  display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
-  flex-direction: column;
-  gap: calc(var(--gap) / 4);
-  width: 100%;
-}
-.setting .user--cover__edit {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 99;
-}
-.setting .user--cover__edit img {
-  width: var(--gap);
-  height: var(--gap);
-}
-.setting .user__name {
-  color: var(--black);
-}
-.setting .user__email, .setting .user__team {
-  color: var(--gray);
-}
-.setting .user--status_message {
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  width: 100%;
-  resize: none;
-  background: transparent;
-}
-.setting--options .option {
-  display: grid;
-  grid-template-columns: 56px 1fr;
-  align-items: center;
-  gap: var(--padding);
-  padding: var(--inputPadding) calc(var(--inputPadding) * 2);
-  background-color: var(--white);
-  cursor: pointer;
-  position: relative;
-}
-.setting--options .option.logout .option--icon {
-  background: var(--Danger-500);
-}
-.setting--options .option:hover {
-  background: var(--background);
-}
-.setting--options .option--icon {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: var(--br-radius);
-  padding: var(--gap);
-  background-color: var(--Success-500);
-}
-.setting--options .option--text {
-  font-weight: normal;
-}
-.setting--options .option.withdraw {
-  background: unset;
-  cursor: help;
-}
-.setting--options .option.withdraw:hover {
-  background: unset;
-}
-.setting--options .option.withdraw .option--icon {
-  display: none;
-}
-.setting--options .option.withdraw .option--text {
-  color: var(--gray);
 }/*# sourceMappingURL=gnb.min.css.map */

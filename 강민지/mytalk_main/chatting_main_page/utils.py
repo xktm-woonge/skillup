@@ -12,7 +12,7 @@ def create_message_box(user_id, data, prev_date):
             }
     
     if data['timestamp'].date() != prev_date.date():
-        context['message_box__date'] = f'<time class="message_box--date">{data["timestamp"].strftime("%B %d, %Y")}</time>'
+        context['message_box__date'] = f'<time class="message_box__date" datetime="{data["timestamp"]}">{data["timestamp"].strftime("%Y-%m-%d")}</time>'
         prev_date = data['timestamp']
     else :
         context['message_box__date'] = ''

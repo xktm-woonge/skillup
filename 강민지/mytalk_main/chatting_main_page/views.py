@@ -183,7 +183,7 @@ def push_load_data(request):
     data_dic['present_status'] = status
     return JsonResponse(data_dic)
 
-def load_chattion_main_page(request):
+def load_chatting_main_page(request):
     if request.method =="GET":
         if request.user.is_authenticated:
             context = {

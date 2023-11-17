@@ -1,4 +1,6 @@
 import json
+import os
+import base64
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from .models import *
@@ -6,8 +8,7 @@ from .utils import *
 from django.contrib.auth import get_user_model
 from .chatbot import Chatbot
 from datetime import datetime
-
-
+from django.conf import settings
 
 class MainPageConsumer(AsyncWebsocketConsumer):
     def __init__(self, *args, **kwargs):
@@ -42,6 +43,10 @@ class MainPageConsumer(AsyncWebsocketConsumer):
                 dp.add_chat_list()
             elif message == 'change_user_status':
                 dp.change_user_status(self.curr_user, text_data_json)
+            elif message == 'change_user_info':
+                await dp.change_user_info(text_data_json, self.curr_user)
+            elif message == 'change_user_pic':
+                await dp.change_user_pic(text_data_json['data'], self.curr_user)
     
         
     
@@ -119,6 +124,32 @@ class DataProvider():
         pass
     
     @database_sync_to_async
+    def change_user_pic(self, data, user):
+        file_info, encoded_data = data.split(';base64,')
+        decoded_data = base64.b64decode(encoded_data)
+        
+        _, file_format = file_info.split('/')
+        file_name = f'user_{user}.{file_format}'
+        file_path =  f'{settings.STATICFILES_DIRS[0]}/img/'
+
+        for before_file in os.listdir(file_path):
+            if before_file.startswith(f'user_{user}.'):
+                os.remove(f'{file_path}{before_file}')
+        
+        with open(f'{file_path}{file_name}', 'wb') as file:
+            file.write(decoded_data)
+        user_model.objects.filter(id=user).update(profile_picture=file_name)
+    
+    @database_sync_to_async
+    def change_user_info(self, data, user):
+        name = data['text']
+        status_message = data['textarea']
+        
+        print(name, status_message, sep='/')
+        
+        user_model.objects.filter(id=user).update(name=name, status_message=status_message)
+    
+    @database_sync_to_async
     def create_message_data(self, data, sender=None):
         send_message = data['send_text']
         room_number = data['room_number']
@@ -135,7 +166,7 @@ class DataProvider():
             'roomnum' :room_number,
         }
         if current_message_time.date() != last_message_time.date():
-            current_data['message_box__date'] = f'<time class="message_box--date">{current_data["timestamp"].strftime("%B %d, %Y")}</time>'
+            current_data['message_box__date'] = f'<time class="message_box__date" datetime="{current_data["timestamp"]}">{current_data["timestamp"].strftime("%Y-%m-%d")}</time>'
         else :
             current_data['message_box__date'] = ''
         

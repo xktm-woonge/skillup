@@ -112,20 +112,20 @@
   color: var(--gray-80);
 }
 .register--form .pw_checker .checker_none::before {
-  filter: invert(90%) sepia(0%) saturate(393%) hue-rotate(137deg) brightness(100%) contrast(70%);
+  filter: var(--filter-gray-80);
 }
 .register--form .pw_checker .checker_fail {
   color: var(--Danger-700);
 }
 .register--form .pw_checker .checker_fail::before {
   background-image: url("../icon/Clear.svg");
-  filter: invert(21%) sepia(82%) saturate(2997%) hue-rotate(342deg) brightness(76%) contrast(86%);
+  filter: var(--filter-Danger);
 }
 .register--form .pw_checker .checker_pass {
   color: var(--Success-700);
 }
 .register--form .pw_checker .checker_pass::before {
-  filter: invert(67%) sepia(36%) saturate(5883%) hue-rotate(44deg) brightness(96%) contrast(94%);
+  filter: var(--filter-Success);
 }
 .register .btn--register {
   background: var(--primary-500);
@@ -253,7 +253,7 @@
 }
 .chat--footer__box .btn {
   padding: calc(var(--gap) / 2);
-  filter: invert(62%) sepia(0%) saturate(1878%) hue-rotate(157deg) brightness(90%) contrast(93%);
+  filter: var(--filter-gray);
   cursor: pointer;
 }
 .chat--footer__box .btn:hover {

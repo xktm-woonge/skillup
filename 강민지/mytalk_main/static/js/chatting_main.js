@@ -1,6 +1,5 @@
 // DOM 요소 캐시
 const sideBarTabs = Array.from(document.getElementsByClassName("side_bar--tab"));
-const userImgs = document.querySelectorAll(".profile");
 
 /** 쿠키에서 csrf Token 가져오기 */
 const csrfToken = getCSRFCookie();
@@ -34,6 +33,7 @@ function handleResponse(response) {
 /** 프로필 사진 설정 */
 // 각 tag에 저장되어 있는 dataset의 파일을 불러온다.
 function setProfilePic() {
+  const userImgs = document.querySelectorAll(".profile");
   userImgs.forEach(function (userImg) {
     let profilePictureUrl = userImg.dataset.image || "profile_basic.png";
     userImg.style.background = `url('../static/img/${profilePictureUrl}') center / cover`;
@@ -117,7 +117,6 @@ function loadCurrUserData() {
   })
     .then(handleResponse)
     .then(function (page_data) {
-      setProfilePic();
       if (page_data != "") {
         document.getElementById("online_friends").innerHTML += createFriendsList(page_data.friend_list.online);
         document.getElementById("offline_friends").innerHTML += createFriendsList(page_data.friend_list.offline);
@@ -126,10 +125,16 @@ function loadCurrUserData() {
         document.querySelector(".setting--user").innerHTML = page_data.curr_user_data;
         document.querySelector(".activeSet").value = page_data.present_status;
       }
+      setProfilePic();
       add_user_status_event();
       webSocketInitialization(socketPath, 'load');
+      settingUserEditing();
     });
 }
+
+// 실행
+/* loadCurrUserData();*/
+window.onload = loadCurrUserData();
 
 
 
@@ -179,6 +184,59 @@ function chattingListClickerTest() {
 }
 
 
-// 실행
-/* loadCurrUserData();*/
-window.onload = loadCurrUserData();
+// 파일 처리 함수
+function addProfileFile(fileData, used='apply') {
+  let fileReader = new FileReader();
+  fileReader.onload = (fileEvent) => {
+    fileResult = fileEvent.target.result
+    if(used === "send"){
+      let file_data = {"message":"change_user_pic"}
+      file_data["data"] = fileResult
+      socket.send(JSON.stringify(file_data));
+    } else{
+      fileData.parentNode.style.background = `url('${fileResult}') center / cover`;
+    }
+  };
+  fileReader.readAsDataURL(fileData.files[0]);
+}
+
+function toggleEditingMode(user, userInputs, toggleBtn) {
+  if (!user.classList.contains("editing")) {
+    toggleBtn.querySelector("img").src = "/static/icon/Check.svg";
+    toggleBtn.querySelector("p").innerText = "저장";
+    userInputs.forEach((input) => {
+      input.disabled = false;
+    });
+  } else {
+    let edit_data = {"message":"change_user_info"}
+    toggleBtn.querySelector("img").src = "/static/icon/Edit.svg";
+    toggleBtn.querySelector("p").innerText = "수정";
+    userInputs.forEach((input) => {
+      input.disabled = true;
+      if(input.type === "file" && input.files && input.files.length > 0){
+        addProfileFile(input, "send");
+      } else {
+        edit_data[`${input.type}`] = input.value;
+      }
+    });
+    socket.send(JSON.stringify(edit_data));
+  }
+  user.classList.toggle("editing");
+}
+
+function settingUserEditing() {
+  const user = document.querySelector(".setting--user");
+  const userInputs = user.querySelectorAll("input, textarea");
+  const toggleBtn = document.querySelector(".editToggle");
+  const userPicture = user.querySelector("#profile_uploader");
+
+  toggleBtn.addEventListener("click", function () {
+    toggleEditingMode(user, userInputs, toggleBtn);
+  });
+  userPicture.addEventListener("change", function(){
+    addProfileFile(this);
+  })
+
+}
+
+// window.onload = settingUserEditing;

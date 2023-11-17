@@ -1,21 +1,20 @@
 {% load static %}
-<div class="user--img"></div>
+<div class="user--img profile" data-image="{{ profile_picture }}">
+    <input type="file" name="profile_uploader" id="profile_uploader"  accept=".jpg, .jpeg, .png" hidden>
+    <label for="profile_uploader" class="profile_uploader"><img src="{% static 'icon/Add_photo.svg'%}" alt="Edit icon" class="icon__edit" /></label>
+</div>
 
 <div class="user--detail">
 
-    <div class="user--cover">
-        <input type='text' class="user__name" value="{{ name }}" disabled></input>
-        <p class="user__team">{{ team }}</p>
-        <p class="user__email" >{{ email }}</p>
+    <input disabled type='text' class="user__name" value="{{ name }}" >
+    <p class="user__team">{{ team }}기획2팀 누구</p>
+    <p class="user__email" >{{ email }}</p>
+    
+    <textarea disabled class="user--status_message" type="text" maxlength="38" rows="2" value="{{ status_message }}" placeholder="상태메세지를 입력해주세요.">{{ status_message }}</textarea>
+
+    <div class="editToggle">
+        <img src="{% static 'icon/Edit.svg'%}" alt="Edit icon" class="icon__edit" />
+        <p>수정</p>
     </div>
-    
-    <textarea class="user--status_message" type="text" maxlength="38" rows="2" value="{{ status_message }}" disabled>{{ status_message }}</textarea>
-    
-
-    <input type="checkbox" id="editBox" class="user--cover__edit-box">
-
-    <label for="editBox" class="user--cover__edit">
-        <img src="{% static 'icon/Edit.svg'%}" alt="Edit icon">수정</input>
-    </label>
 
 </div>
