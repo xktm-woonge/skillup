@@ -25,7 +25,12 @@ class Messages(models.Model):
     conversation = models.ForeignKey(Conversations, on_delete=models.CASCADE)
     message_text = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
-
+    
+class MessageReceivers(models.Model):
+    receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    message = models.ForeignKey(Messages, on_delete=models.CASCADE)
+    is_read = models.BooleanField(default=False)
+        
 class Notifications(models.Model):
     TYPE_CHOICES = [
         ('SYSTEM', 'system'),
@@ -34,9 +39,12 @@ class Notifications(models.Model):
         ('TEAM', 'team'),
         ('NORMAL', 'normal'),
     ]
-
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='notifications_received')
     type = models.CharField(max_length=20, choices=TYPE_CHOICES)
     content = models.TextField()
     sender = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
     created_at = models.DateTimeField(auto_now_add=True)
+
+class NotificationReceivers(models.Model):
+    receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    notification = models.ForeignKey(Notifications, on_delete=models.CASCADE)
+    is_conform = models.BooleanField(default=False)

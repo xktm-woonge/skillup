@@ -11,18 +11,34 @@ function addDefaultSocketFunction(message){
 }
 
 function addChattingSocketFunction(message){
-    if (["send_message", "recive_mesaage"].indexOf(message.message) !== -1){
+    if (["send_message", "receive_mesaage"].indexOf(message.message) !== -1){
         console.log(message.message);
-        let roomnum = message.data["roomnum"];
-        document.getElementsByClassName("chat--body")[0].innerHTML += add_message_box(message);
+        document.getElementsByClassName("chat--body")[0].innerHTML += addMessageBox(message);
         scrollToBottomInChatting();
     }
 }
 
 function addChatJustReceiveFuntion(message){
-    if(message.message === "recive_mesaage"){
+    if(["send_message", "receive_mesaage"].indexOf(message.message) !== -1){
         let roomnum = message.data["roomnum"];
         document.getElementById(`room_num_${roomnum}`).querySelector(".room__status").textContent = message.data["message"];
+    }
+}
+
+function addNotiFunction(message){
+    if(message.message === 'friend_request'){
+
+    }
+    else if(message.message === 'system'){
+
+    }
+    else if(message.message === 'receive_message'){
+
+    }
+}
+function addReloadFunction(message){
+    if(message.message === "reload"){
+        loadCurrUserData();
     }
 }
 
@@ -39,31 +55,28 @@ function webSocketInitialization(initSocketPath, action){
         default:
             messageHandlers.push(addDefaultSocketFunction);
             messageHandlers.push(addChatJustReceiveFuntion);
+            messageHandlers.push(addReloadFunction);
+            messageHandlers.push(addNotiFunction);
     }
     socket.onmessage = function (e) {
         let message = JSON.parse(e.data); // message 정의
-        
+        print(message);
         for (const handler of messageHandlers) {
             handler(message);
         }
     };
 }
 
-
-function change_friend_status(user_name){
-
-}
-
 // message box 추가하는 함수
-function add_message_box(data){
-    let message_box_template = MESSAGE_BOX;
+function addMessageBox(data){
+    let messageBoxTemplate = MESSAGE_BOX;
     let messageBoxItem = data.data;
-    let messageBoxHTML = applyTemplate(message_box_template, messageBoxItem);
+    let messageBoxHTML = applyTemplate(messageBoxTemplate, messageBoxItem);
     return messageBoxHTML;
 }
 
 // form data를 json 형식으로 변경하여 전달하는 함수
-function trans_form_data_to_json(formData){
+function transFormDataToJson(formData){
     const jsonData = {};
     formData.forEach((value, key) => {
         jsonData[key] = value;
@@ -72,13 +85,12 @@ function trans_form_data_to_json(formData){
 }
 
 // message를 websocket을 통해 보내는 함수
-function send_message() {
+function sendMessage() {
     let send_message_data = new FormData(document.getElementById("send_message"));
-    let room_num = send_message_data.get("room_number");
 
     if (send_message_data.get("send_text")){
         send_message_data.append("message", "send_message");
-        send_message_data = trans_form_data_to_json(send_message_data);
+        send_message_data = transFormDataToJson(send_message_data);
         socket.send(send_message_data);
         document.querySelector(".chat--footer__text").value = "";
     }
@@ -86,7 +98,7 @@ function send_message() {
 
 
 // user의 상태가 변경되었을 때 적용 함수
-function add_user_status_event() {
+function addUserStatusEvent() {
     document.querySelector(".activeSet").addEventListener("change", function(e) {
         let send_data = JSON.stringify({"message":"change_user_status","changed_status": e.target.value});
         socket.send(send_data);
@@ -95,15 +107,15 @@ function add_user_status_event() {
 
 
 // 메세지를 보내는 함수
-function add_event() {
+function addEvent() {
     document.getElementById("send_message").addEventListener("submit", function(e) {
         e.preventDefault();
-        send_message();
+        sendMessage();
     });
     document.querySelector(".chat--footer__text").addEventListener("keydown", function(e) {
         if (e.key === "Enter"){
             e.preventDefault();
-            send_message();
+            sendMessage();
         }
     });
 }
@@ -136,3 +148,9 @@ document.getElementById("user_logout").addEventListener("click", function(e){
     e.preventDefault();
     userLogout();
 });
+
+
+// 자꾸 파이썬이랑 헷갈려서 임시로 만든 함수
+function print(string){
+    console.log(string);
+}

@@ -108,6 +108,17 @@ function sendedMessage(message_data) {
 }
 
 
+function addOfflineUser(data){
+  let offlinePoint = document.getElementById("offline_friends");
+  let childNodes = offlinePoint.childNodes;
+  print(childNodes.length);
+  for (let i = childNodes.length - 1; i > 2; i--) {
+    print(childNodes[i]);
+    offlinePoint.removeChild(childNodes[i]);
+  }
+  offlinePoint.innerHTML += createFriendsList(data);
+}
+
 
 /** 현재 사용자 데이터 로드 함수 */
 // load 시 해당 유저의 정보 DB에서 전달 받음
@@ -118,17 +129,17 @@ function loadCurrUserData() {
     .then(handleResponse)
     .then(function (page_data) {
       if (page_data != "") {
-        document.getElementById("online_friends").innerHTML += createFriendsList(page_data.friend_list.online);
-        document.getElementById("offline_friends").innerHTML += createFriendsList(page_data.friend_list.offline);
-        document.querySelector(".side_bar--body.room").innerHTML += createChatList(page_data.chatting_room_list);
+        document.getElementById("online_friends").innerHTML = createFriendsList(page_data.friend_list.online);
+        document.querySelector(".side_bar--body.room").innerHTML = createChatList(page_data.chatting_room_list);
         document.querySelector(".side_bar--body.notice").innerHTML = createNoticesBox(page_data.notice_data);
         document.querySelector(".setting--user").innerHTML = page_data.curr_user_data;
         document.querySelector(".activeSet").value = page_data.present_status;
+        addOfflineUser(page_data.friend_list.offline);
       }
       setProfilePic();
-      add_user_status_event();
       webSocketInitialization(socketPath, 'load');
       settingUserEditing();
+      addUserStatusEvent();
     });
 }
 
@@ -164,10 +175,14 @@ function loadChattingMessageData(room_num) {
         .getElementById("chatting_room_detail")
         .classList.remove("displayNone");
       scrollToBottomInChatting();
-      add_event();
+      addEvent();
       document.getElementById("empty_contents").classList.add("displayNone");
-      webSocketInitialization(socketPath+`${room_num}/`, 'enter_chat_room');
-    });
+      webSocketInitialization(socketPath+`${room_num}/`, "enter_chat_room");      
+    })
+    .then(
+      socket.send(JSON.stringify({"message":"enter_chatting_room", "room_number":room_num})),
+      document.querySelector(`#room_num_${room_num}`).classList.remove("new")
+    )
 }
 
 
@@ -179,7 +194,7 @@ function chattingListClickerTest() {
     .getElementById("chatting_room_detail")
     .classList.remove("displayNone");
   scrollToBottomInChatting();
-  add_event();
+  addEvent();
   document.getElementById("empty_contents").classList.add("displayNone");
 }
 

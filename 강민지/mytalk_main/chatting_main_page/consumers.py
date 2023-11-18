@@ -9,6 +9,7 @@ from django.contrib.auth import get_user_model
 from .chatbot import Chatbot
 from datetime import datetime
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 
 class MainPageConsumer(AsyncWebsocketConsumer):
     def __init__(self, *args, **kwargs):
@@ -19,8 +20,6 @@ class MainPageConsumer(AsyncWebsocketConsumer):
         self.curr_user = dp.get_curr_user_data(self.scope['user'])
         user_id = self.scope['url_route']['kwargs']['user_id']
         connected_users[user_id] = self
-        # main_page_consumers = {k: v for k, v in connected_users.items() if isinstance(v, MainPageConsumer)}
-        # print(main_page_consumers, 'main', sep='/')
         
 
     async def disconnect(self, close_code):
@@ -28,27 +27,13 @@ class MainPageConsumer(AsyncWebsocketConsumer):
     
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        # print(text_data_json)
         message = text_data_json["message"]
         
         
         if self.curr_user is None:
             await self.send(json.dumps({'message':'user_auth_error'}))
         else:
-            if message == 'add_notice':
-                dp.add_notice_boxs()
-            elif message == 'add_friend':
-                dp.add_friends_list()
-            elif message == 'add_chat':
-                dp.add_chat_list()
-            elif message == 'change_user_status':
-                dp.change_user_status(self.curr_user, text_data_json)
-            elif message == 'change_user_info':
-                await dp.change_user_info(text_data_json, self.curr_user)
-            elif message == 'change_user_pic':
-                await dp.change_user_pic(text_data_json['data'], self.curr_user)
-    
-        
+            await dp.message_read(message, text_data_json, self.curr_user)
     
     
 class ChatRoomConsumer(AsyncWebsocketConsumer):
@@ -65,9 +50,6 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
-        # print(self.scope['url_route']['kwargs']['room_num'])
-        # chat_room_consumers = {k: v for k, v in connected_users.items() if isinstance(v, ChatRoomConsumer)}
-        # print(chat_room_consumers, 'room', sep='/')
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(
@@ -80,37 +62,69 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
         # print(text_data_json)
         message = text_data_json["message"]
         
-        if message == 'enter_chatting_room':
-                dp.enter_chatting_room()
+        if self.curr_user is None:
+            await self.send(json.dumps({'message':'user_auth_error'}))
         elif message == 'send_message':
             message_box_data, is_chatbot_conv = await dp.create_message_data(text_data_json, self.curr_user)
             message_box_data['direction'] = 'send'
             message_box_data['roomnum'] = text_data_json['room_number']
             await self.send(json.dumps({'message':'send_message', 'data': message_box_data}))
-            if is_chatbot_conv:
-                chat_data = await dp.chatbot_conv(self.curr_user, text_data_json)
-                await self.send(json.dumps({'message':'recive_mesaage','data': chat_data}))
-            else :
-                message_box_data['direction'] = 'given'
-                await self.channel_layer.group_send(
-                    self.room_group_name,  # 그룹 이름
-                    {'type': 'recive_mesaage','data': message_box_data, 'sender_channel_name': self.channel_name},
-                )
-
-    async def recive_mesaage(self, event):
+            await self.comform_conv_user(is_chatbot_conv, text_data_json, self.curr_user, message_box_data)
+        else:
+            await dp.message_read(message, text_data_json, self.curr_user)
+        
+    async def comform_conv_user(self, ischatbot, data, user, message_box_data):
+        if ischatbot:
+            chat_data = await dp.chatbot_conv(user, data)
+            await self.send(json.dumps({'message':'receive_mesaage','data': chat_data}))
+        else :
+            message_box_data['direction'] = 'given'
+            await self.channel_layer.group_send(
+                self.room_group_name,  # 그룹 이름
+                {'type': 'receive_mesaage','data': message_box_data, 'sender_channel_name': self.channel_name},
+            )
+            
+                
+    async def receive_mesaage(self, event):
         if self.channel_name != event.get('sender_channel_name'):
-            await self.send(text_data=json.dumps({'message':'recive_mesaage', 'data':event['data']}))
-                    
+            await self.send(text_data=json.dumps({'message':'receive_mesaage', 'data':event['data']}))            
                     
 class DataProvider():
     def __init__(self):
         pass
+    
+    async def message_read(self, message, data, user):
+        if message == 'add_notice':
+            self.add_notice_boxs()
+        elif message == 'add_friend':
+            self.add_friends_list()
+        elif message == 'add_chat':
+            self.add_chat_list()
+        elif message == 'change_user_status':
+            await self.change_user_status(user, data)
+        elif message == 'change_user_info':
+            await self.change_user_info(data, user)
+        elif message == 'change_user_pic':
+            await self.change_user_pic(data['data'], user)
+        elif message == 'enter_chatting_room':
+            await self.enter_chatting_room(data['room_number'], user)
+        
+        if message in ['change_user_status', 'change_user_info']:
+            friends_id = await self.get_curr_user_friends(user)
+            for i in friends_id:
+                try:
+                    await connected_users[f"{i}"].send(json.dumps({'message':'reload'}))
+                except KeyError:
+                    continue
+  
+            
         
     def get_curr_user_data(self, user_scope):
         user = user_scope
         if hasattr(user, 'is_authenticated') and user.is_authenticated:
             return user.id
         return None
+    
     def add_notice_boxs(self):
         pass
     
@@ -120,8 +134,14 @@ class DataProvider():
     def add_chat_list(self):
         pass
     
-    def enter_chatting_room(self):
-        pass
+    @database_sync_to_async
+    def enter_chatting_room(self, room_num, user):
+        messages = Messages.objects.filter(conversation_id=room_num).values_list('id', flat=True)
+        for message_id in messages:
+            try:
+                MessageReceivers.objects.filter(message_id=message_id, receiver_id=user).update(is_read=True)
+            except ObjectDoesNotExist:
+                continue
     
     @database_sync_to_async
     def change_user_pic(self, data, user):
@@ -145,8 +165,6 @@ class DataProvider():
         name = data['text']
         status_message = data['textarea']
         
-        print(name, status_message, sep='/')
-        
         user_model.objects.filter(id=user).update(name=name, status_message=status_message)
     
     @database_sync_to_async
@@ -156,8 +174,12 @@ class DataProvider():
         is_chatbot_conv = Conversations.objects.get(id=room_number).is_chatbot
         last_message_time = Messages.objects.filter(conversation_id=room_number).last().timestamp
         
-        # if sender is not None:
-        #     Messages.objects.create(message_text=send_message, conversation_id=room_number, sender_id=sender)
+        if sender is not None:
+            Messages.objects.create(message_text=send_message, conversation_id=room_number, sender_id=sender)
+            message_id = Messages.objects.filter(conversation_id=room_number).last().id
+            receviers = ConversationParticipants.objects.filter(conversation_id=room_number).exclude(user_id=sender)
+            for receiver in receviers.values():
+                MessageReceivers.objects.create(message_id=message_id, receiver_id=receiver['user_id'])
         current_message_time = Messages.objects.filter(conversation_id=room_number).last().timestamp
         
         current_data = {
@@ -166,13 +188,11 @@ class DataProvider():
             'roomnum' :room_number,
         }
         if current_message_time.date() != last_message_time.date():
-            current_data['message_box__date'] = f'<time class="message_box__date" datetime="{current_data["timestamp"]}">{current_data["timestamp"].strftime("%Y-%m-%d")}</time>'
+            current_data['message_box__date'] = f'<time class="message_box__date" datetime="{current_data["time"]}">{current_data["time"].strftime("%Y-%m-%d")}</time>'
         else :
             current_data['message_box__date'] = ''
         
         return current_data, is_chatbot_conv
-    
-    
     
     @database_sync_to_async
     def chatbot_conv(self, curr_user,data):
@@ -193,12 +213,15 @@ class DataProvider():
     @database_sync_to_async
     def change_user_status(self, curr_user, data):
         user_model.objects.filter(id=curr_user).update(status=data['changed_status'])
-        friends = self.get_curr_user_friends(curr_user)
     
     @database_sync_to_async
     def get_curr_user_friends(self, curr_user):
+        friends_id = []
         get_user_id = user_model.objects.get(id=curr_user).id
-        return Friends.objects.filter(user_id=get_user_id)
+        for i in Friends.objects.filter(user_id=get_user_id).values():
+            friends_id.append(i['friend_id'])
+        return friends_id
+        
     
     @database_sync_to_async
     def send_conneted_user(self, curr_user,room_num):

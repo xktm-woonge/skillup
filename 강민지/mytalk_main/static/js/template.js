@@ -1,5 +1,5 @@
 const NOTICE_BOX = `
-<div class="notice--group {{noti_type}}">
+<div class="notice--group {{noti_type}} {{noti_num}}">
     <div class="notice--type">
       <img src={{img_src}} alt="">
     </div>
@@ -30,7 +30,7 @@ const FRIENDS_LIST = `
 `
 
 const CHAT_LIST = `
-<li class="room--box" id="room_num_{{room_num}}" onclick="loadChattingMessageData({{room_num}})">
+<li class="room--box {{get_new}}" id="room_num_{{room_num}}" onclick="loadChattingMessageData({{room_num}})">
     <div class="room--profile profile {{user_status}}" data-image="{{conv_picture}}"></div>
     <div class="room--detail">
         <input type="hidden">
