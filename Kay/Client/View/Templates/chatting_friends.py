@@ -52,13 +52,14 @@ class FriendWidget(QWidget):
         if validators.url(self.image_path):
             request = QNetworkRequest(QUrl(self.image_path))
             manager = QNetworkAccessManager()
-            manager.finished.connect(self.on_image_load)
-            manager.get(request)
+            reply = manager.get(request)
+            reply.finished.connect(self.on_image_load)
         else:
             # Assume it is a local file path
             self.set_profile_picture(QPixmap(self.image_path))
 
-    def on_image_load(self, reply):
+    def on_image_load(self):
+        reply = self.sender()
         img_data = reply.readAll()
         pixmap = QPixmap()
         if pixmap.loadFromData(img_data):
