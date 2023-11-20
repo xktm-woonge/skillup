@@ -1,12 +1,10 @@
 # ./view/templates/friend_list_widget.py
 
 from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QScrollArea, QApplication
-from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest
-from PyQt5.QtCore import Qt, pyqtSignal, QSize, QUrl
+from PyQt5.QtCore import Qt, pyqtSignal, QSize
 from PyQt5.QtGui import QPixmap, QPainter, QImage, qGray
 from pathlib import Path
 import sys
-import validators
 
 try:
     from utils import *
@@ -19,9 +17,8 @@ except ImportError:
 class FriendWidget(QWidget):
     # 사용자 정의 신호 생성, 필요한 경우 사용
     friend_action_signal = pyqtSignal(str)
-    image_loaded_signal = pyqtSignal(QPixmap)
 
-    def __init__(self, name, image_path, status, parent=None):
+    def __init__(self, name, email, image_path, status, parent=None):
         super(FriendWidget, self).__init__(parent)
         self.setObjectName("FriendWidget")
         self.image_path = image_path
@@ -31,65 +28,69 @@ class FriendWidget(QWidget):
         layout = QHBoxLayout(self)
         # 프로필 이미지
         self.img_label = QLabel(self)
+        self.img_label.setPixmap(self.modify_image())
         layout.addWidget(self.img_label)
 
         # 이름과 상태
         self.name_label = QLabel(name, self)
         self.name_label.setFont(font.NOTOSAN_FONT_BOLD)
         layout.addWidget(self.name_label)
+
+        # 이메일 라벨 추가
+        self.email_label = QLabel(email, self)
+        self.email_label.setFont(font.NOTOSAN_FONT_BOLD)  # 폰트 설정 (NOTOSAN_FONT_BOLD보다 작은 폰트 사용)
+        self.email_label.setStyleSheet("QLabel { font-size: 10pt; }")  # 폰트 사이즈 조정
+
+        # 이름과 상태, 이메일 레이아웃 추가
+        name_status_layout = QVBoxLayout()  # 이름과 상태, 이메일을 수직 레이아웃에 추가
+        name_status_layout.addWidget(self.name_label)
+        name_status_layout.addWidget(self.email_label)
+        layout.addLayout(name_status_layout)  # 기존 수평 레이아웃에 수직 레이아웃 추가
+
         layout.addStretch(1)
 
         self.setLayout(layout)
 
-        # Load the profile picture from the network
-        self.load_profile_picture()
+    def modify_image(self):
+        # Load the image as QImage for manipulation
+        image = QImage(self.image_path)
 
-        # Connect the signal for when the image is loaded
-        self.image_loaded_signal.connect(self.set_profile_picture)
-
-    def load_profile_picture(self):
-        # Check if the image path is a valid URL
-        if validators.url(self.image_path):
-            request = QNetworkRequest(QUrl(self.image_path))
-            manager = QNetworkAccessManager()
-            reply = manager.get(request)
-            reply.finished.connect(self.on_image_load)
-        else:
-            # Assume it is a local file path
-            self.set_profile_picture(QPixmap(self.image_path))
-
-    def on_image_load(self):
-        reply = self.sender()
-        img_data = reply.readAll()
-        pixmap = QPixmap()
-        if pixmap.loadFromData(img_data):
-            # Emit the signal with the loaded pixmap
-            self.image_loaded_signal.emit(pixmap)
-        else:
-            print("Failed to load image from network.")
-
-    def set_profile_picture(self, pixmap):
-        # If the status is offline, convert the image to grayscale
+        # Check if the status is offline to apply the grayscale effect
         if self.status == 'offline':
-            image = pixmap.toImage()
             for x in range(image.width()):
                 for y in range(image.height()):
                     color = image.pixelColor(x, y)
+                    # Convert the pixel to grayscale
                     gray = qGray(color.rgb())
                     color.setRed(gray)
                     color.setGreen(gray)
                     color.setBlue(gray)
                     image.setPixelColor(x, y, color)
-            pixmap = QPixmap.fromImage(image)
 
-        # Resize and set the pixmap
-        self.img_label.setPixmap(pixmap.scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        # Convert QImage back to QPixmap to display it
+        pixmap = QPixmap.fromImage(image)
+        output_pixmap = QPixmap(QSize(50, 50))
+        output_pixmap.fill(Qt.transparent)  # Fill with transparent background
+
+        # Prepare to draw on the pixmap
+        painter = QPainter(output_pixmap)
+        painter.setRenderHint(QPainter.Antialiasing)  # For smooth edges
+        painter.setRenderHint(QPainter.SmoothPixmapTransform)
+
+        # Draw the main image
+        painter.drawPixmap(output_pixmap.rect(), pixmap)
+
+        # Finish drawing
+        painter.end()
+
+        # Use or save the resulting image
+        return output_pixmap
 
     def set_offline_style(self):
-        # 이미지 회색조 처리는 이미 set_profile_picture 함수에서 수행됨
+        # 이미지 회색조 처리
+        self.img_label.setStyleSheet("QLabel { background-color: #C0C0C0; }")
         # 텍스트 회색조 처리
         self.name_label.setStyleSheet("QLabel { color: #C0C0C0; }")
-
 
 class FriendListWidget(QWidget):
     def __init__(self, parent=None):
@@ -167,8 +168,8 @@ class FriendListWidget(QWidget):
 
         self.add_button.setCursor(Qt.PointingHandCursor)
 
-    def add_friend(self, name, image_path, status):
-        widget = FriendWidget(name, image_path, status)
+    def add_friend(self, name, email, image_path, status):
+        widget = FriendWidget(name, email, image_path, status)
         if status == 'online':
             self.friends_layout.insertWidget(self.friends_layout.count() - 1, widget)
         else:
@@ -185,11 +186,16 @@ if __name__ == '__main__':
     friend_list_widget = FriendListWidget()
 
     # 친구 위젯 추가 테스트
-    friend_list_widget.add_friend("John Doe", f'http://127.0.0.1:3000/profile_picture/base_profile.png', "online")
-    friend_list_widget.add_friend("John Doe", f'http://127.0.0.1:3000/profile_picture/base_profile.png', "online")
-    friend_list_widget.add_friend("John Doe", f'http://127.0.0.1:3000/profile_picture/base_profile.png', "online")
-    friend_list_widget.add_friend("John Doe", f'http://127.0.0.1:3000/profile_picture/base_profile.png', "offline")
-    friend_list_widget.add_friend("John Doe", f'http://127.0.0.1:3000/profile_picture/base_profile.png', "offline")
+    friend_list_widget.add_friend("John Doe", "john@example.com", f'{Path(__file__).parents[1]}/static/img/base_profile-removebg-preview.png', "online")
+    friend_list_widget.add_friend("John Doe", "john@example.com", f'{Path(__file__).parents[1]}/static/img/base_profile-removebg-preview.png', "online")
+    friend_list_widget.add_friend("John Doe", "john@example.com", f'{Path(__file__).parents[1]}/static/img/base_profile-removebg-preview.png', "online")
+    friend_list_widget.add_friend("John Doe", "john@example.com", f'{Path(__file__).parents[1]}/static/img/base_profile-removebg-preview.png', "online")
+    friend_list_widget.add_friend("John Doe", "john@example.com", f'{Path(__file__).parents[1]}/static/img/base_profile-removebg-preview.png', "online")
+    friend_list_widget.add_friend("John Doe", "john@example.com", f'{Path(__file__).parents[1]}/static/img/base_profile-removebg-preview.png', "offline")
+    friend_list_widget.add_friend("John Doe", "john@example.com", f'{Path(__file__).parents[1]}/static/img/base_profile-removebg-preview.png', "offline")
+    friend_list_widget.add_friend("John Doe", "john@example.com", f'{Path(__file__).parents[1]}/static/img/base_profile-removebg-preview.png', "offline")
+    friend_list_widget.add_friend("John Doe", "john@example.com", f'{Path(__file__).parents[1]}/static/img/base_profile-removebg-preview.png', "offline")
+    friend_list_widget.add_friend("John Doe", "john@example.com", f'{Path(__file__).parents[1]}/static/img/base_profile-removebg-preview.png', "offline")
 
     friend_list_widget.show()
     sys.exit(app.exec_())
