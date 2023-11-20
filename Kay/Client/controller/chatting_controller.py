@@ -146,10 +146,11 @@ class ChattingController(QObject):
 
         for friendInfo in self.friendsInfo:
             name = friendInfo['name']
+            email = friendInfo['email']
             image_path = friendInfo['profile_picture']
             status = friendInfo['status']
 
-            self.chatting_window.friend_list_widget.add_friend(name, image_path, status)
+            self.chatting_window.friend_list_widget.add_friend(name, email, image_path, status)
 
     def handle_friend_response(self, sender_id, response, widget):
         # 서버에 메시지 전송
