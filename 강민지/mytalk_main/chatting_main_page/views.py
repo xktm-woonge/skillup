@@ -67,6 +67,7 @@ def create_chatting_room(user_data, room):
         'conv_picture' : user_data.profile_picture,
         'user_status' : f"{user_data.status}",
         'room_num' : room['conversation_id'],
+        'team' : '',
     }
         
     return context

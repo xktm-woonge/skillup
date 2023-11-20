@@ -140,6 +140,9 @@ function loadCurrUserData() {
       webSocketInitialization(socketPath, 'load');
       settingUserEditing();
       addUserStatusEvent();
+      addDeleteNoticeEvent();
+      addFriendAcceptEvent();
+      addFriendRejectEvent();
     });
 }
 
@@ -228,6 +231,7 @@ function toggleEditingMode(user, userInputs, toggleBtn) {
     toggleBtn.querySelector("p").innerText = "수정";
     userInputs.forEach((input) => {
       input.disabled = true;
+      // 아래는 수정된 내용 websocket으로 전달하는 내용
       if(input.type === "file" && input.files && input.files.length > 0){
         addProfileFile(input, "send");
       } else {

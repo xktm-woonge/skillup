@@ -4,20 +4,23 @@ var socket = null;
 
 // 웹소켓 통신으로 변경할 함수
 
+// 유저 로그인 확인 함수 --- 수정 예정
 function addDefaultSocketFunction(message){
     if(message.message === "user_auth_error"){
         console.log("유저 인증 에러");
     }
 }
 
+// 채팅방 내 대화 시 소켓 통신 후 실행할 함수
 function addChattingSocketFunction(message){
     if (["send_message", "receive_mesaage"].indexOf(message.message) !== -1){
-        console.log(message.message);
+        // console.log(message.message);
         document.getElementsByClassName("chat--body")[0].innerHTML += addMessageBox(message);
         scrollToBottomInChatting();
     }
 }
 
+// 채팅방에 들어가 있지 않은 경우 소켓 통신 후 실행할 함수
 function addChatJustReceiveFuntion(message){
     if(["send_message", "receive_mesaage"].indexOf(message.message) !== -1){
         let roomnum = message.data["roomnum"];
@@ -25,23 +28,32 @@ function addChatJustReceiveFuntion(message){
     }
 }
 
+// 알림창 내부 소켓 통신 후 실행할 함수 -- 개발 중
 function addNotiFunction(message){
-    if(message.message === 'friend_request'){
+    if(message.message === "friend_request"){
 
     }
-    else if(message.message === 'system'){
+    else if(message.message === "system"){
 
     }
-    else if(message.message === 'receive_message'){
+    else if(message.message === "receive_message"){
 
+    }
+    else if(message.message === "delete_notice"){
+        let notiNum = message["noti_num"];
+        let deleteElement = document.querySelector(`.notice--group.num_${notiNum}`);
+        deleteElement.remove();
     }
 }
+
+// user 정보 변경 시 sideBar reload 적용 함수
 function addReloadFunction(message){
     if(message.message === "reload"){
         loadCurrUserData();
     }
 }
 
+// room 마다 소켓 레이어 재생성하기 위한 함수
 function webSocketInitialization(initSocketPath, action){
     if(socket){
         socket.onmessage = null;
@@ -95,6 +107,56 @@ function sendMessage() {
         document.querySelector(".chat--footer__text").value = "";
     }
 }
+
+
+// notice box 내 notice number를 찾아서 반환하는 함수
+function findNumInClassName(classList){
+    let numClass = Array.from(classList).find(className => className.startsWith("num_"));
+    let match = numClass.match(/\d+/);
+    if (match) {
+        return parseInt(match[0], 10);
+        } else {
+        return null
+    }
+}
+
+// delete 버튼을 누를 떄 실행 할 함수
+function addDeleteNoticeEvent(){
+    document.querySelectorAll(".notice--btn.delete").forEach(function(button){
+        button.addEventListener("click", function(e){
+            let parentClassList = this.parentElement.classList;
+            let noticeNum = findNumInClassName(parentClassList);
+            socket.send(JSON.stringify({"message":"delete_notice", "noti_num":noticeNum}));
+        })
+    })
+}
+
+
+
+// 아래 두 함수 비슷한 게 너무 많아서 차후 가능한 방향 찾아서 통합하고 싶음
+// 친구 요청 수락 시 실행 할 함수
+function addFriendAcceptEvent(){
+    document.querySelectorAll(".actions__accept").forEach(function(accept){
+        accept.addEventListener("click", function(e){
+            let parentClassList = this.parentElement.parentElement.classList;
+            let friendNotiNum = findNumInClassName(parentClassList);
+            socket.send(JSON.stringify({"message":"accept_friend", "noti_num":friendNotiNum}));
+        })
+    })
+}
+
+// 친구 요청 거절 시 실행 할 함수
+function addFriendRejectEvent(){
+    document.querySelectorAll(".actions__reject").forEach(function(reject){
+        reject.addEventListener("click", function(e){
+            let parentClassList = this.parentElement.parentElement.classList;
+            let friendNotiNum = findNumInClassName(parentClassList);
+            socket.send(JSON.stringify({"message":"reject_friend", "noti_num":friendNotiNum}));
+        })
+    })
+}
+
+
 
 
 // user의 상태가 변경되었을 때 적용 함수

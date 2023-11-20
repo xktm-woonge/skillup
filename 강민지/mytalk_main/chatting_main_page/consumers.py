@@ -108,6 +108,12 @@ class DataProvider():
             await self.change_user_pic(data['data'], user)
         elif message == 'enter_chatting_room':
             await self.enter_chatting_room(data['room_number'], user)
+        elif message == 'delete_notice':
+            await self.delete_notice(data, user)
+            await connected_users[f'{user}'].send(json.dumps({'message':'delete_notice','noti_num':data['noti_num']}))
+        elif message in ['accept_friend', 'reject_friend']:
+            friends = await self.process_friends_request(data, user)
+            await connected_users[f'{user}'].send(json.dumps({'message':'delete_notice','noti_num':data['noti_num']}))
         
         if message in ['change_user_status', 'change_user_info']:
             friends_id = await self.get_curr_user_friends(user)
@@ -134,6 +140,24 @@ class DataProvider():
     def add_chat_list(self):
         pass
     
+    @database_sync_to_async
+    def process_friends_request(self, data, user):
+        notice_number = data['noti_num']
+        friend_requester = Notifications.objects.get(id=notice_number).sender_id
+        if data['message'] == 'accept_friend':
+            print(f"frinends_requester={friend_requester}, user={user}")
+            # Friends.objects.create(friend_id=friend_requester, user_id=user)
+            # Friends.objects.create(friend_id=user, user_id=friend_requester)
+        else:
+            print('거절이야')
+        # NotificationReceivers.objects.filter(notification_id=notice_number, receiver_id=user).update(is_conform=True)
+            
+        
+    @database_sync_to_async
+    def delete_notice(self, data, user):
+        notice_number = data['noti_num']
+        NotificationReceivers.objects.filter(notification_id=notice_number, receiver_id=user).update(is_conform=True)
+        
     @database_sync_to_async
     def enter_chatting_room(self, room_num, user):
         messages = Messages.objects.filter(conversation_id=room_num).values_list('id', flat=True)
