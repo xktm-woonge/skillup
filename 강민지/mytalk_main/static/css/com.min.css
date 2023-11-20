@@ -267,9 +267,6 @@ input[disabled] + input[type=submit] {
   background-color: rgba(0, 0, 0, 0.2);
   cursor: pointer;
 }
-.setting--user.editing .user--detail input, .setting--user.editing .user--detail textarea {
-  padding: calc(var(--gap) / 2);
-}
 .setting--user.editing .user__name {
   width: 70%;
   color: var(--back);
@@ -281,8 +278,7 @@ input[disabled] + input[type=submit] {
 }
 .setting--user.editing .user--status_message {
   color: var(--back);
-  border: 1px solid var(--primary-500);
-  border-bottom: 2px solid var(--primary-500);
+  border-color: var(--primary-500);
 }
 .setting--user.editing .editToggle {
   border-color: transparent;
@@ -315,10 +311,14 @@ input[disabled] + input[type=submit] {
   height: 100%;
   position: relative;
 }
+.setting .user--detail p {
+  padding: 0 calc(var(--gap) / 2);
+}
 .setting .user--detail input, .setting .user--detail textarea {
-  padding: calc(var(--gap) / 2) 0;
+  padding: calc(var(--gap) / 2);
   background-color: transparent;
   border-radius: 0;
+  border: 1px solid transparent;
   border-bottom: 2px solid transparent;
 }
 .setting .user__name {
@@ -332,8 +332,7 @@ input[disabled] + input[type=submit] {
   min-height: calc(var(--padding) * 2);
   max-height: calc(var(--padding) * 3);
   margin-top: calc(var(--gap) / 2);
-  resize: vertical;
-  border: 0;
+  resize: none;
 }
 .setting .user--status_message:focus {
   outline: none;

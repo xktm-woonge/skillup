@@ -143,6 +143,7 @@ function loadCurrUserData() {
       addDeleteNoticeEvent();
       addFriendAcceptEvent();
       addFriendRejectEvent();
+      addOpenChattingFromFriendsListEvent();
     });
 }
 

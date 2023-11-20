@@ -123,7 +123,7 @@ function findNumInClassName(classList){
 // delete 버튼을 누를 떄 실행 할 함수
 function addDeleteNoticeEvent(){
     document.querySelectorAll(".notice--btn.delete").forEach(function(button){
-        button.addEventListener("click", function(e){
+        button.addEventListener("click", function(){
             let parentClassList = this.parentElement.classList;
             let noticeNum = findNumInClassName(parentClassList);
             socket.send(JSON.stringify({"message":"delete_notice", "noti_num":noticeNum}));
@@ -137,7 +137,7 @@ function addDeleteNoticeEvent(){
 // 친구 요청 수락 시 실행 할 함수
 function addFriendAcceptEvent(){
     document.querySelectorAll(".actions__accept").forEach(function(accept){
-        accept.addEventListener("click", function(e){
+        accept.addEventListener("click", function(){
             let parentClassList = this.parentElement.parentElement.classList;
             let friendNotiNum = findNumInClassName(parentClassList);
             socket.send(JSON.stringify({"message":"accept_friend", "noti_num":friendNotiNum}));
@@ -148,7 +148,7 @@ function addFriendAcceptEvent(){
 // 친구 요청 거절 시 실행 할 함수
 function addFriendRejectEvent(){
     document.querySelectorAll(".actions__reject").forEach(function(reject){
-        reject.addEventListener("click", function(e){
+        reject.addEventListener("click", function(){
             let parentClassList = this.parentElement.parentElement.classList;
             let friendNotiNum = findNumInClassName(parentClassList);
             socket.send(JSON.stringify({"message":"reject_friend", "noti_num":friendNotiNum}));
@@ -157,6 +157,16 @@ function addFriendRejectEvent(){
 }
 
 
+
+// 친구 목록 Double Click 시 실행될 함수
+function addOpenChattingFromFriendsListEvent(){
+    document.querySelectorAll('.friends--box').forEach(function(friendList){
+        friendList.addEventListener("dblclick", function(){
+            let selectedName = this.querySelector(".friends__name").textContent;
+            socket.send(JSON.stringify({"message":"enter_chat_from_friends", "friend_name":selectedName}))
+        })
+    })
+}
 
 
 // user의 상태가 변경되었을 때 적용 함수

@@ -205,10 +205,6 @@ input {
         background-color: rgba(0,0,0,.2);
         cursor: pointer;
       }
-      .user--detail { input, textarea {
-          padding: calc(var(--gap) / 2);
-        }
-      }
       .user__name { 
         width: 70%;
         color:var(--back);
@@ -220,8 +216,7 @@ input {
       }
       .user--status_message {
         color:var(--back);
-        border: 1px solid var(--primary-500);
-        border-bottom: 2px solid var(--primary-500);
+        border-color: var(--primary-500);
       }
       .editToggle {
         border-color: transparent;
@@ -251,13 +246,14 @@ input {
       width: 100%;
       height: 100%;
       position: relative;
+      p { padding: 0 calc(var(--gap) / 2); }
       input, textarea {
-        padding: calc(var(--gap) / 2) 0; 
+        padding: calc(var(--gap) / 2); 
         background-color: transparent;
         border-radius: 0; 
+        border: 1px solid transparent;
         border-bottom: 2px solid transparent;
       }
-      //input[type="checkbox"] {display: none}
     }
     &__name{
       @extend %title;
@@ -274,7 +270,7 @@ input {
       max-height: calc(var(--padding) * 3);
       margin-top: calc(var(--gap) / 2);
       &:focus { outline: none;}
-      resize: vertical; border: 0
+      resize: none;
     }
   }
   .editToggle { 

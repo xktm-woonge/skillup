@@ -114,6 +114,8 @@ class DataProvider():
         elif message in ['accept_friend', 'reject_friend']:
             friends = await self.process_friends_request(data, user)
             await connected_users[f'{user}'].send(json.dumps({'message':'delete_notice','noti_num':data['noti_num']}))
+        elif message == 'enter_chat_from_friends':
+            await self.enter_chat_from_friends()
         
         if message in ['change_user_status', 'change_user_info']:
             friends_id = await self.get_curr_user_friends(user)
@@ -139,6 +141,28 @@ class DataProvider():
     
     def add_chat_list(self):
         pass
+    
+    @database_sync_to_async
+    def enter_chat_from_friends(self, data, user):
+        room_num = ''
+        friend_id = user_model.objects.get(name=data['friend_name']).id
+        part_chat_id = ConversationParticipants.objects.filter(user_id=user).values_list('id', flat=True)
+        
+        if friend_id == 3:
+            chatbot_room_list = Conversations.objects.filter(is_chatbot=True).values_list('id', flat=True)
+        # 아래 수정 필요
+        #     room_num = list(set(chatbot_room_list) & set(part_chat_id))
+        # else:
+        #     friend_part_chat_id = ConversationParticipants.objects.filter(user_id=friend_id).values_list('id', flat=True)
+        #     intersection = list(set(friend_part_chat_id) & set(part_chat_id))
+        #     if intersection:
+        #         for i in intersection:
+        #             try:
+        #                 room_num = Conversations.objects.get(id=intersection, type="private").id
+        #             except:
+        #                 continue
+        # return room_num
+            
     
     @database_sync_to_async
     def process_friends_request(self, data, user):

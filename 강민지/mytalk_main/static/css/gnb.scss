@@ -265,14 +265,31 @@
     padding: var(--padding);
     cursor: pointer;
     @extend %activeDotsHoverBorder;
+    &.new {
+      .room__name::after {
+        content: '';
+        background-color: var(--Danger-700);
+        display: inline-block;
+        //padding: calc(var(--gap) / 2);
+        $size: 6px;
+        width: $size; height: $size;
+        border-radius: 50%;
+        margin-left: $size;
+      }
+      .room__status {
+        font-weight: bold;
+      }
+    }
   }
   &--profile {
     @include activeDot();
   }
   &__name {
+    @include flexBox();
     @extend %body1;
     font-weight: bold;
     margin-bottom: 4px;
+    position: relative;
     span { @extend %sideInnerTeam; }
   }
   &__status {
