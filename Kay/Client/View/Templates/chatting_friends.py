@@ -9,8 +9,6 @@ import sys
 try:
     from utils import *
 except ImportError:
-    import sys
-    from pathlib import Path
     sys.path.append(str(Path(__file__).parents[2]))
     from utils import *
 
