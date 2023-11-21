@@ -3,6 +3,8 @@
 from PyQt5.QtCore import Qt, QUrl, QSize, QObject, pyqtSlot
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest
+import sys
+from pathlib import Path
 
 try:
     from utils import *
@@ -11,8 +13,6 @@ try:
     from view.templates.chatting_friends import FriendWidget
     from controller.websocket_connector import WebSocketConnector
 except ImportError:
-    import sys
-    from pathlib import Path
     sys.path.append(str(Path(__file__).parents[1]))
     from utils import *
     from view.templates import ChattingWindow
@@ -147,10 +147,19 @@ class ChattingController(QObject):
         for friendInfo in self.friendsInfo:
             name = friendInfo['name']
             email = friendInfo['email']
-            image_path = friendInfo['profile_picture']
+            # image_path = friendInfo['profile_picture']
+            image_path = f'{Path(__file__).parents[1]}/view/static/img/base_profile-removebg-preview.png'
             status = friendInfo['status']
 
-            self.chatting_window.friend_list_widget.add_friend(name, email, image_path, status)
+            friend_widget = FriendWidget(name, email, image_path, status)
+            self.chatting_window.friend_list_widget.friends_layout.addWidget(friend_widget)
+
+            # 더블 클릭 시그널에 슬롯 연결
+            friend_widget.doubleClicked.connect(self.print_friend_info)
+
+    # 더블 클릭 정보를 처리하는 슬롯
+    def print_friend_info(self, name, email, image_path):
+        print(f"Name: {name}, Email: {email}, Image Path: {image_path}")
 
     def handle_friend_response(self, sender_id, response, widget):
         # 서버에 메시지 전송

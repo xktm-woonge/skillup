@@ -17,6 +17,7 @@ except ImportError:
 class FriendWidget(QWidget):
     # 사용자 정의 신호 생성, 필요한 경우 사용
     friend_action_signal = pyqtSignal(str)
+    doubleClicked = pyqtSignal(str, str, str)
 
     def __init__(self, name, email, image_path, status, parent=None):
         super(FriendWidget, self).__init__(parent)
@@ -39,10 +40,14 @@ class FriendWidget(QWidget):
         self.img_label.setPixmap(self.modify_image())
         layout.addWidget(self.img_label)
 
+        # 이름과 이메일 레이블에 대한 참조를 저장합니다.
+        self.name_label = QLabel(name, self.inner_widget)
+        self.email_label = QLabel(email, self.inner_widget)
+
         # 이름과 상태, 이메일 레이아웃 추가
         name_status_layout = QVBoxLayout()  # 이름과 상태, 이메일을 수직 레이아웃에 추가
-        name_status_layout.addWidget(QLabel(name, self.inner_widget))
-        name_status_layout.addWidget(QLabel(email, self.inner_widget))
+        name_status_layout.addWidget(self.name_label)
+        name_status_layout.addWidget(self.email_label)
         layout.addLayout(name_status_layout)  # 기존 수평 레이아웃에 수직 레이아웃 추가
 
         layout.addStretch(1)
@@ -74,6 +79,10 @@ class FriendWidget(QWidget):
             elif event.type() == QEvent.Leave:
                 self.setStyleSheet("background-color: none;")  # 원래 스타일로 복구
         return super().eventFilter(source, event)
+    
+    def mouseDoubleClickEvent(self, event):
+        # 더블 클릭 시그널을 발생시킵니다.
+        self.doubleClicked.emit(self.name_label.text(), self.email_label.text(), self.image_path)
 
 class FriendListWidget(QWidget):
     def __init__(self, parent=None):
