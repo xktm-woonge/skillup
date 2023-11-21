@@ -1,7 +1,7 @@
 # ./view/templates/friend_list_widget.py
 
 from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QScrollArea, QApplication
-from PyQt5.QtCore import Qt, pyqtSignal, QSize
+from PyQt5.QtCore import Qt, pyqtSignal, QSize, QEvent
 from PyQt5.QtGui import QPixmap, QPainter, QImage, qGray
 from pathlib import Path
 import sys
@@ -23,74 +23,57 @@ class FriendWidget(QWidget):
         self.setObjectName("FriendWidget")
         self.image_path = image_path
         self.status = status
+
+        # 전체 위젯에 대한 QHBoxLayout
+        outer_layout = QHBoxLayout(self)
         self.setFixedSize(275, 70)
 
-        layout = QHBoxLayout(self)
+        # 내부 위젯 생성 및 스타일 설정
+        self.inner_widget = QWidget()
+        self.inner_widget.setObjectName("InnerWidget")
+        layout = QHBoxLayout(self.inner_widget)
+        outer_layout.addWidget(self.inner_widget)
+
         # 프로필 이미지
-        self.img_label = QLabel(self)
+        self.img_label = QLabel(self.inner_widget)
         self.img_label.setPixmap(self.modify_image())
         layout.addWidget(self.img_label)
 
-        # 이름과 상태
-        self.name_label = QLabel(name, self)
-        self.name_label.setFont(font.NOTOSAN_FONT_BOLD)
-        layout.addWidget(self.name_label)
-
-        # 이메일 라벨 추가
-        self.email_label = QLabel(email, self)
-        self.email_label.setFont(font.NOTOSAN_FONT_BOLD)  # 폰트 설정 (NOTOSAN_FONT_BOLD보다 작은 폰트 사용)
-        self.email_label.setStyleSheet("QLabel { font-size: 10pt; }")  # 폰트 사이즈 조정
-
         # 이름과 상태, 이메일 레이아웃 추가
         name_status_layout = QVBoxLayout()  # 이름과 상태, 이메일을 수직 레이아웃에 추가
-        name_status_layout.addWidget(self.name_label)
-        name_status_layout.addWidget(self.email_label)
+        name_status_layout.addWidget(QLabel(name, self.inner_widget))
+        name_status_layout.addWidget(QLabel(email, self.inner_widget))
         layout.addLayout(name_status_layout)  # 기존 수평 레이아웃에 수직 레이아웃 추가
 
         layout.addStretch(1)
 
-        self.setLayout(layout)
+        # 마우스 hover 이벤트 설정
+        self.inner_widget.installEventFilter(self)
 
     def modify_image(self):
-        # Load the image as QImage for manipulation
-        image = QImage(self.image_path)
+        # 이미지를 로드하고 크기를 조정합니다.
+        pixmap = QPixmap(self.image_path)
+        pixmap = pixmap.scaled(30, 30, Qt.KeepAspectRatio, Qt.SmoothTransformation)
 
-        # Check if the status is offline to apply the grayscale effect
+        # 회색조 처리를 여기에서 수행합니다.
         if self.status == 'offline':
-            for x in range(image.width()):
-                for y in range(image.height()):
-                    color = image.pixelColor(x, y)
-                    # Convert the pixel to grayscale
-                    gray = qGray(color.rgb())
-                    color.setRed(gray)
-                    color.setGreen(gray)
-                    color.setBlue(gray)
-                    image.setPixelColor(x, y, color)
+            image = pixmap.toImage()
+            image = image.convertToFormat(QImage.Format_Grayscale8)
+            pixmap = QPixmap.fromImage(image)
 
-        # Convert QImage back to QPixmap to display it
-        pixmap = QPixmap.fromImage(image)
-        output_pixmap = QPixmap(QSize(50, 50))
-        output_pixmap.fill(Qt.transparent)  # Fill with transparent background
-
-        # Prepare to draw on the pixmap
-        painter = QPainter(output_pixmap)
-        painter.setRenderHint(QPainter.Antialiasing)  # For smooth edges
-        painter.setRenderHint(QPainter.SmoothPixmapTransform)
-
-        # Draw the main image
-        painter.drawPixmap(output_pixmap.rect(), pixmap)
-
-        # Finish drawing
-        painter.end()
-
-        # Use or save the resulting image
-        return output_pixmap
+        return pixmap
 
     def set_offline_style(self):
-        # 이미지 회색조 처리
-        self.img_label.setStyleSheet("QLabel { background-color: #C0C0C0; }")
-        # 텍스트 회색조 처리
-        self.name_label.setStyleSheet("QLabel { color: #C0C0C0; }")
+        self.inner_widget.setStyleSheet("QLabel { color: #C0C0C0; }")
+
+    # 이벤트 필터를 사용하여 마우스 hover 시 변경 사항을 적용
+    def eventFilter(self, source, event):
+        if source == self.inner_widget:
+            if event.type() == QEvent.Enter:
+                self.setStyleSheet("background-color: lightgrey;")  # 배경색 변경
+            elif event.type() == QEvent.Leave:
+                self.setStyleSheet("background-color: none;")  # 원래 스타일로 복구
+        return super().eventFilter(source, event)
 
 class FriendListWidget(QWidget):
     def __init__(self, parent=None):
