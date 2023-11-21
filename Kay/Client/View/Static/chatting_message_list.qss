@@ -1,0 +1,87 @@
+/* friend_list.qss */
+
+/* Remove border from the header */
+#header {
+    background-color: rgb(79, 42, 184);
+    border: none; /* This ensures the header has no border */
+}
+
+/* Style for the header label */
+QLabel#header_label {
+    font-size: 13px;
+    color: white;
+    margin-bottom: 2px;
+}
+
+/* Remove border from the add button */
+#add_button { 
+    border: none;
+}
+
+/* Remove borders from all widgets by default */
+QWidget {
+    border: none;
+}
+
+/* Remove border from the scroll area and its viewport */
+QScrollArea, QScrollArea > QWidget {
+    border: none;
+}
+
+/* Specific FriendWidget styling */
+FriendWidget {
+    background-color: white;
+    /* Ensure no border is set */
+}
+
+/* You may also want to ensure that the QLabel and QPushButton inside FriendWidget have no borders */
+FriendWidget QLabel, FriendWidget QPushButton {
+    border: none;
+}
+
+/* ScrollBar Customization */
+FriendListWidget QScrollBar:vertical {
+    border: none;
+    background: transparent;
+    width: 5px;
+    margin: 0;
+}
+
+FriendListWidget QScrollBar::handle:vertical {
+    background-color: #aaa;
+    min-height: 20px;
+    border: none;
+    border-radius: 2.5px;
+}
+
+FriendListWidget QScrollBar::add-line:vertical,
+FriendListWidget QScrollBar::sub-line:vertical {
+    border: none;
+    background: none;
+    height: 0;
+}
+
+FriendListWidget QScrollBar::add-page:vertical, 
+FriendListWidget QScrollBar::sub-page:vertical {
+    background: none;
+    border-radius: 2.5px;
+}
+
+QScrollArea {
+    border: none;
+}
+
+/* ScrollArea의 배경색을 흰색으로 설정 */
+QScrollArea {
+    background: white; /* 흰색으로 변경 */
+}
+
+/* FriendWidget:hover 부분을 제거하거나 빈 상태로 둡니다. */
+FriendWidget:hover {
+    /* 여기에 아무 것도 설정하지 않습니다. */
+}
+
+/* FriendWidget QLabel과 QPushButton의 배경색을 투명하게 설정합니다. */
+FriendWidget QLabel, FriendWidget QPushButton {
+    background-color: transparent;
+}
