@@ -140,18 +140,7 @@ def conv_user_data(user, roomnum):
     conv_user = ConversationParticipants.objects.filter(conversation_id=roomnum).exclude(user_id=user).first()    
     conv_user = user_model.objects.get(id=conv_user.user_id)
     last_message = Messages.objects.filter(conversation_id=roomnum).exclude(sender_id=user).last()
-    last_reply_time = last_message.timestamp.astimezone(pytz.utc).replace(tzinfo=None)
-    delta = (datetime.now() - last_reply_time)
-    if delta.total_seconds() < 60 :
-        last_reply_time = f'{delta.seconds}초'
-    else :
-        if delta.total_seconds() < 3600 :
-            last_reply_time = f'{delta.seconds//60}분'
-        else :
-            if delta.total_seconds() < 86400 :
-                last_reply_time = f'{delta.seconds//3600}시간'
-            else :
-                last_reply_time = f'{delta.days}일'
+    last_reply_time = last_message.timestamp.strftime("%Y-%m-%d %H:%M:%S")
     if Conversations.objects.get(id=roomnum).type == 'private':
         conv_status = 'offline'
         if conv_user.is_online :

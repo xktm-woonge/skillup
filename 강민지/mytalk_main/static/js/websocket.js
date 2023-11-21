@@ -18,6 +18,9 @@ function addChattingSocketFunction(message){
         document.getElementsByClassName("chat--body")[0].innerHTML += addMessageBox(message);
         scrollToBottomInChatting();
     }
+    if(message.message === "receive_mesaage"){
+        document.querySelector(".chat--user_info__recent").setAttribute('datetime', new Date());
+    }
 }
 
 // 채팅방에 들어가 있지 않은 경우 소켓 통신 후 실행할 함수
@@ -49,34 +52,46 @@ function addNotiFunction(message){
 // user 정보 변경 시 sideBar reload 적용 함수
 function addReloadFunction(message){
     if(message.message === "reload"){
-        loadCurrUserData();
+        loadCurrUserData(true);
+    }
+}
+function addChatUserInfoReloadFunction(message){
+    if(message.message === "reload"){
+        loadChattingMessageData(currRoomNum, true);
     }
 }
 
 // room 마다 소켓 레이어 재생성하기 위한 함수
-function webSocketInitialization(initSocketPath, action){
-    if(socket){
-        socket.onmessage = null;
-        socket.close();
-    }
-    socket = new WebSocket(`${initSocketPath}`);
-    let messageHandlers = [];
-    switch (action){
-        case "enter_chat_room":
-            messageHandlers.push(addChattingSocketFunction);
-        default:
-            messageHandlers.push(addDefaultSocketFunction);
-            messageHandlers.push(addChatJustReceiveFuntion);
-            messageHandlers.push(addReloadFunction);
-            messageHandlers.push(addNotiFunction);
-    }
-    socket.onmessage = function (e) {
-        let message = JSON.parse(e.data); // message 정의
-        print(message);
-        for (const handler of messageHandlers) {
-            handler(message);
+function webSocketInitialization(initSocketPath, action) {
+    return new Promise((resolve, reject) => {
+        if (socket) {
+            socket.onmessage = null;
+            socket.close();
         }
-    };
+        socket = new WebSocket(`${initSocketPath}`);
+        let messageHandlers = [];
+        switch (action) {
+            case "enter_chat_room":
+                setInterval(userResponseTime, 1000);
+                messageHandlers.push(addChattingSocketFunction);
+                messageHandlers.push(addChatUserInfoReloadFunction);
+            default:
+                messageHandlers.push(addDefaultSocketFunction);
+                messageHandlers.push(addChatJustReceiveFuntion);
+                messageHandlers.push(addReloadFunction);
+                messageHandlers.push(addNotiFunction);
+        }
+        socket.onopen = () => {
+            resolve(); // WebSocket이 생성되면 resolve 호출
+        };
+        socket.onmessage = function (e) {
+            let message = JSON.parse(e.data); // message 정의
+            // print(message);
+            for (const handler of messageHandlers) {
+                handler(message);
+            }
+        };
+    });
 }
 
 // message box 추가하는 함수
@@ -194,27 +209,40 @@ function addEvent() {
 
 // user logout
 function userLogout(){
-    fetch("/main/logout_api/", {
-        method: "POST",
-        headers: {
-            "Content-Type" : "application/json",
-            "X-CSRFToken" : csrfToken
-        },
-        body: JSON.stringify({"status":"logout"}),
-    }).then(function(response){
-        if(response.ok){
-            return response.json();
-        } else{
-            throw new Error("Error:: "+response.status);
+    swal({
+        title: "Log out",
+        text: "로그아웃 하시겠습니까?",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+    }).then(function(willLogout){
+        if(willLogout){
+            fetch("/main/logout_api/", {
+                method: "POST",
+                headers: {
+                    "Content-Type" : "application/json",
+                    "X-CSRFToken" : csrfToken
+                },
+                body: JSON.stringify({"status":"logout"}),
+            }).then(function(response){
+                if(response.ok){
+                    return response.json();
+                } else{
+                    throw new Error("Error:: "+response.status);
+                }
+            })
+            .then(function(data){
+                if(data.message === "Success"){
+                    swal("로그아웃 되었습니다.", {
+                        icon: "success",
+                    });
+                    socket.close();
+                    window.location.href = "../";
+                }
+            })
         }
-    })
-    .then(function(data){
-        if(data.message === "Success"){
-            alert("로그아웃 되었습니다.");
-            window.location.href = "../";
-        }
-    })
-}
+    }
+)}
 
 document.getElementById("user_logout").addEventListener("click", function(e){
     e.preventDefault();

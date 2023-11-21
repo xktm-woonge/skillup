@@ -27,15 +27,12 @@
 }
 
 @mixin messageDirection($direction: left, $color: var(--gray-50), $size: 16px) {
-  &::after{
-    content: "";
-    border: $size solid transparent;
-    border-top: 0;
-    border-bottom-color: $color;
-    position: absolute;
-    bottom: 0;
-    #{$direction}: $size / 2 + 1;
-  }
+  content: "";
+  border: $size solid transparent;
+  border-top: 0;
+  border-bottom-color: $color;
+  position: absolute;
+  #{$direction}: $size / 2 + 1;
 }
 
 %profile {
@@ -46,10 +43,8 @@
 }
 
 %activeDotsHoverBorder {
-  &:hover{ 
-    background-color:var(--white); @extend %boxShadow;
-    .profile { &::before{border-color:var(--white);} }
-  }
+  background-color:var(--white); @extend %boxShadow;
+  .profile { &::before{border-color:var(--white);} }
 }
 
 %boxShadow {

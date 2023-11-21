@@ -121,6 +121,10 @@ input {
     filter: unset;
     padding: var(--buttonPadding);
   }
+  &--Delete_all {
+    img {filter: var(--filter-Danger);}
+    color: var(--Danger-700);
+  }
 }
 
 .profile {
@@ -178,148 +182,27 @@ input {
 }
 
 
-
-
-
-
-
 /***************************************************
-  side_bar setting view 
+  alert box 
 ****************************************************/
-.setting {
-  > * {width: 100%;}
-  &--user {
-    display: grid;
-    grid-template-columns: calc(var(--imgSize) * 3) 1fr;
-    align-items: center;
-    gap: var(--padding);
-    padding: 40px;
-    position: relative;
-    &.editing {
-      background: var(--white);
-      .user--img .profile_uploader {
-        @include flexBox(center);
-        width: 100%; height: 100%;
-        position: absolute;
-        top: 0;left: 0;
-        background-color: rgba(0,0,0,.2);
-        cursor: pointer;
-      }
-      .user__name { 
-        width: 70%;
-        color:var(--back);
-        border-bottom: 2px solid var(--primary-500);
-      }
-      .user__team,
-      .user__email { 
-        color:var(--gray-80);
-      }
-      .user--status_message {
-        color:var(--back);
-        border-color: var(--primary-500);
-      }
-      .editToggle {
-        border-color: transparent;
-        background-color: var(--primary-500);
-        @extend %boxShadow;
-        img {filter: var(--filter-white-bgP);}
-        p {color: var(--white);}
-      }
-    }
+.alert {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: var(--white);
+  margin: var(--padding) 0 var(--padding) var(--padding);
+  padding: var(--padding);
+  border-radius: var(--br-radius) 0 0 var(--br-radius);
+  @extend %boxShadow;
+  &::after {
+    //content: url('../icon/Clear.svg');
+    display: inline-block;
+    width: var(--padding);
+    height: var(--padding);
+    filter: invert(87%) sepia(1%) saturate(65%) hue-rotate(148deg) brightness(117%) contrast(56%);
   }
-  .user {
-    &--img {
-      width: calc(var(--imgSize) * 3);
-      height: calc(var(--imgSize) * 3);
-      border-radius: 50%;
-      background: url('../img/profile_basic.png') center / cover;
-      overflow: hidden;
-      position: relative;
-      .profile_uploader {
-        display: none;
-      }
-    }
-    &--detail {
-      @include flexBox(space-between, flex-start);
-      flex-direction: column;
-      gap: 4px;
-      width: 100%;
-      height: 100%;
-      position: relative;
-      p { padding: 0 calc(var(--gap) / 2); }
-      input, textarea {
-        padding: calc(var(--gap) / 2); 
-        background-color: transparent;
-        border-radius: 0; 
-        border: 1px solid transparent;
-        border-bottom: 2px solid transparent;
-      }
-    }
-    &__name{
-      @extend %title;
-      color:var(--gray);
-    }
-    &__team,
-    &__email { 
-      @extend %body2;
-      color:var(--gray);
-    }
-    &--status_message {
-      width: 100%;
-      min-height: calc(var(--padding) * 2);
-      max-height: calc(var(--padding) * 3);
-      margin-top: calc(var(--gap) / 2);
-      &:focus { outline: none;}
-      resize: none;
-    }
-  }
-  .editToggle { 
-    @include flexBox(); gap: 4px; @extend %caption;
-    border: 1px solid;
-    color: black;
-    border-radius: calc(var(--br-radius) / 2);
-    position: absolute;
-    top: 0;right: 0;
-    padding: 8px;
-    z-index: 99;
-    cursor: pointer;
-    filter: var(--filter-white);
-    img {width: var(--gap); height: var(--gap);}
-    &:hover { filter:unset;}
-  }
+}
 
-  &--options {
-    .option {
-      display: grid;
-      grid-template-columns: 56px 1fr;
-      align-items: center;
-      gap: var(--padding);
-      padding: var(--inputPadding) calc(var(--inputPadding) * 2);
-      background-color: var(--white);
-      cursor: pointer;
-      position: relative;
-      &.logout { .option--icon {background: var(--Danger-500);}}
-      &:hover { background: var(--background) }
-      &--icon {
-        @include flexBox(center);
-        border-radius: var(--br-radius);
-        padding: var(--gap);
-        background-color: var(--Success-500);
-      }
-      &--text {
-        @extend %body1;
-        font-weight: normal;
-      }
-      &.withdraw {
-        background: unset; 
-        cursor: help; 
-        &:hover{background: unset;}
-        .option--icon {display: none;}
-        .option--text {
-          @extend %body2;
-          color: var(--gray);
-        }
-      }
-    }
-  }
+[class^="alert--"] {
+  display: none;
 }

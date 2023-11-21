@@ -212,7 +212,6 @@
   border-top: 0;
   border-bottom-color: var(--gray-50);
   position: absolute;
-  bottom: 0;
   left: 9px;
 }
 .chat--body .message_box.send {
@@ -225,7 +224,6 @@
   border-top: 0;
   border-bottom-color: var(--Semi-Darker);
   position: absolute;
-  bottom: 0;
   right: 9px;
 }
 .chat--body .message_box.send .message_box__text {

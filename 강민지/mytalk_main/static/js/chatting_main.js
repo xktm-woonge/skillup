@@ -1,5 +1,6 @@
 // DOM 요소 캐시
 const sideBarTabs = Array.from(document.getElementsByClassName("side_bar--tab"));
+var currRoomNum = 0;
 
 /** 쿠키에서 csrf Token 가져오기 */
 const csrfToken = getCSRFCookie();
@@ -111,9 +112,7 @@ function sendedMessage(message_data) {
 function addOfflineUser(data){
   let offlinePoint = document.getElementById("offline_friends");
   let childNodes = offlinePoint.childNodes;
-  print(childNodes.length);
   for (let i = childNodes.length - 1; i > 2; i--) {
-    print(childNodes[i]);
     offlinePoint.removeChild(childNodes[i]);
   }
   offlinePoint.innerHTML += createFriendsList(data);
@@ -122,7 +121,7 @@ function addOfflineUser(data){
 
 /** 현재 사용자 데이터 로드 함수 */
 // load 시 해당 유저의 정보 DB에서 전달 받음
-function loadCurrUserData() {
+function loadCurrUserData(reload=false) {
   fetch("/main/push_data_api/", {
     method: "GET",
   })
@@ -136,8 +135,10 @@ function loadCurrUserData() {
         document.querySelector(".activeSet").value = page_data.present_status;
         addOfflineUser(page_data.friend_list.offline);
       }
+      if(!reload){
+        webSocketInitialization(socketPath, 'load');
+      }
       setProfilePic();
-      webSocketInitialization(socketPath, 'load');
       settingUserEditing();
       addUserStatusEvent();
       addDeleteNoticeEvent();
@@ -152,7 +153,6 @@ function loadCurrUserData() {
 window.onload = loadCurrUserData();
 
 
-
 /** 채팅방 메시지 스크롤 함수 */
 // chatting room 에서 메시지를 가장 아래부터 볼 수 있게 스크롤하는 함수
 function scrollToBottomInChatting() {
@@ -162,7 +162,8 @@ function scrollToBottomInChatting() {
 
 /** 채팅 메시지 데이터 로드 함수 */
 // chatting room 진입 시 해당 room에서 나눈 대화 load
-function loadChattingMessageData(room_num) {
+function loadChattingMessageData(room_num, reload=false) {
+  currRoomNum = room_num;
   fetch("/main/get_message_api/", {
     method: "POST",
     headers: {
@@ -181,14 +182,38 @@ function loadChattingMessageData(room_num) {
       scrollToBottomInChatting();
       addEvent();
       document.getElementById("empty_contents").classList.add("displayNone");
-      webSocketInitialization(socketPath+`${room_num}/`, "enter_chat_room");      
+      if (!reload) {
+        webSocketInitialization(socketPath + `${room_num}/`, "enter_chat_room")
+          .then(function(){
+            socket.send(JSON.stringify({"message": "enter_chatting_room", "room_number": room_num}));
+            document.querySelector(`#room_num_${room_num}`).classList.remove("new");
+          });
+      }
     })
-    .then(
-      socket.send(JSON.stringify({"message":"enter_chatting_room", "room_number":room_num})),
-      document.querySelector(`#room_num_${room_num}`).classList.remove("new")
-    )
 }
 
+
+// 채팅방 user가 마지막으로 보낸 시간 확인
+function userResponseTime(){
+  const lastResponseTime = document.querySelector(".chat--user_info__recent");
+  const lastTime = new Date(lastResponseTime.getAttribute('datetime'));
+  const now = new Date();
+
+  const timeDifference = now - lastTime;
+  const seconds = Math.floor(timeDifference / 1000);
+  let differenceString = "";
+
+  if (seconds < 60) {
+    differenceString = "방금";
+  } else if (seconds >= 60 && seconds < 3600) {
+    differenceString = `${Math.floor(seconds / 60)}` + "분";
+  } else if (seconds >= 3600 && seconds < 86400) {
+    differenceString = `${Math.floor(seconds / 3600)}` + "시간";
+  } else {
+    differenceString = `${Math.floor(seconds / 86400)}` + "일";
+  }
+  lastResponseTime.textContent = differenceString + " 전 응답";
+}
 
 
 // 임시용 데이터 테스트 함수
@@ -219,6 +244,7 @@ function addProfileFile(fileData, used='apply') {
   fileReader.readAsDataURL(fileData.files[0]);
 }
 
+// 수정 시 username unique 확인해야 함
 function toggleEditingMode(user, userInputs, toggleBtn) {
   if (!user.classList.contains("editing")) {
     toggleBtn.querySelector("img").src = "/static/icon/Check.svg";
@@ -241,8 +267,18 @@ function toggleEditingMode(user, userInputs, toggleBtn) {
     });
     socket.send(JSON.stringify(edit_data));
   }
+  if (toggleBtn.classList.contains("editing") ) {
+    swal({
+      title: "Success",
+      text: "저장되었습니다.",
+      icon: "success",
+      button: "닫기",
+    });
+  }
   user.classList.toggle("editing");
+  toggleBtn.classList.toggle("editing");
 }
+
 
 function settingUserEditing() {
   const user = document.querySelector(".setting--user");

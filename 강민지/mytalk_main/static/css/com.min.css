@@ -7,7 +7,7 @@
   border-radius: var(--br-radius);
 }
 
-.setting--user.editing .editToggle, .main_view .login--box, .main_view .register--box, .btn, input {
+.alert, .main_view .login--box, .main_view .register--box, .btn, input {
   filter: drop-shadow(0px 2px 10px rgba(0, 0, 0, 0.05));
 }
 
@@ -17,21 +17,16 @@
   font-weight: 700;
 }
 
-.setting .user__name {
-  font-size: 18px;
-  font-weight: 700;
-}
-
 * {
   font-size: 16px;
   font-weight: 400;
 }
 
-.setting--options .option.withdraw .option--text, .setting .user__team, .setting .user__email, .btn--small {
+.btn--small {
   font-size: 14px;
 }
 
-.setting .editToggle, .activeSet {
+.activeSet {
   font-size: 12px;
   font-weight: 400;
   line-height: 14px; /* 100% */
@@ -176,6 +171,12 @@ input[disabled] + input[type=submit] {
   filter: unset;
   padding: var(--buttonPadding);
 }
+.btn--Delete_all {
+  color: var(--Danger-700);
+}
+.btn--Delete_all img {
+  filter: var(--filter-Danger);
+}
 
 .profile::before {
   background-color: var(--gray-80);
@@ -239,164 +240,24 @@ input[disabled] + input[type=submit] {
 }
 
 /***************************************************
-  side_bar setting view 
+  alert box 
 ****************************************************/
-.setting > * {
-  width: 100%;
-}
-.setting--user {
-  display: grid;
-  grid-template-columns: calc(var(--imgSize) * 3) 1fr;
-  align-items: center;
-  gap: var(--padding);
-  padding: 40px;
-  position: relative;
-}
-.setting--user.editing {
-  background: var(--white);
-}
-.setting--user.editing .user--img .profile_uploader {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  background-color: rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-}
-.setting--user.editing .user__name {
-  width: 70%;
-  color: var(--back);
-  border-bottom: 2px solid var(--primary-500);
-}
-.setting--user.editing .user__team,
-.setting--user.editing .user__email {
-  color: var(--gray-80);
-}
-.setting--user.editing .user--status_message {
-  color: var(--back);
-  border-color: var(--primary-500);
-}
-.setting--user.editing .editToggle {
-  border-color: transparent;
-  background-color: var(--primary-500);
-}
-.setting--user.editing .editToggle img {
-  filter: var(--filter-white-bgP);
-}
-.setting--user.editing .editToggle p {
-  color: var(--white);
-}
-.setting .user--img {
-  width: calc(var(--imgSize) * 3);
-  height: calc(var(--imgSize) * 3);
-  border-radius: 50%;
-  background: url("../img/profile_basic.png") center/cover;
-  overflow: hidden;
-  position: relative;
-}
-.setting .user--img .profile_uploader {
-  display: none;
-}
-.setting .user--detail {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  flex-direction: column;
-  gap: 4px;
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-.setting .user--detail p {
-  padding: 0 calc(var(--gap) / 2);
-}
-.setting .user--detail input, .setting .user--detail textarea {
-  padding: calc(var(--gap) / 2);
-  background-color: transparent;
-  border-radius: 0;
-  border: 1px solid transparent;
-  border-bottom: 2px solid transparent;
-}
-.setting .user__name {
-  color: var(--gray);
-}
-.setting .user__team, .setting .user__email {
-  color: var(--gray);
-}
-.setting .user--status_message {
-  width: 100%;
-  min-height: calc(var(--padding) * 2);
-  max-height: calc(var(--padding) * 3);
-  margin-top: calc(var(--gap) / 2);
-  resize: none;
-}
-.setting .user--status_message:focus {
-  outline: none;
-}
-.setting .editToggle {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 4px;
-  border: 1px solid;
-  color: black;
-  border-radius: calc(var(--br-radius) / 2);
+.alert {
   position: absolute;
   top: 0;
   right: 0;
-  padding: 8px;
-  z-index: 99;
-  cursor: pointer;
-  filter: var(--filter-white);
+  background: var(--white);
+  margin: var(--padding) 0 var(--padding) var(--padding);
+  padding: var(--padding);
+  border-radius: var(--br-radius) 0 0 var(--br-radius);
 }
-.setting .editToggle img {
-  width: var(--gap);
-  height: var(--gap);
+.alert::after {
+  display: inline-block;
+  width: var(--padding);
+  height: var(--padding);
+  filter: invert(87%) sepia(1%) saturate(65%) hue-rotate(148deg) brightness(117%) contrast(56%);
 }
-.setting .editToggle:hover {
-  filter: unset;
-}
-.setting--options .option {
-  display: grid;
-  grid-template-columns: 56px 1fr;
-  align-items: center;
-  gap: var(--padding);
-  padding: var(--inputPadding) calc(var(--inputPadding) * 2);
-  background-color: var(--white);
-  cursor: pointer;
-  position: relative;
-}
-.setting--options .option.logout .option--icon {
-  background: var(--Danger-500);
-}
-.setting--options .option:hover {
-  background: var(--background);
-}
-.setting--options .option--icon {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: var(--br-radius);
-  padding: var(--gap);
-  background-color: var(--Success-500);
-}
-.setting--options .option--text {
-  font-weight: normal;
-}
-.setting--options .option.withdraw {
-  background: unset;
-  cursor: help;
-}
-.setting--options .option.withdraw:hover {
-  background: unset;
-}
-.setting--options .option.withdraw .option--icon {
+
+[class^=alert--] {
   display: none;
-}
-.setting--options .option.withdraw .option--text {
-  color: var(--gray);
 }/*# sourceMappingURL=com.min.css.map */

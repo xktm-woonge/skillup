@@ -62,7 +62,12 @@
     display: none;
     height: 100%;
     max-height: 100vh;
-    &.active { display: block; }
+    &.active { 
+      display: block;
+      .side_bar--header__dropdown {
+        @include flexBox();
+      }
+    }
   }
   &--header {
     @include flexBox(space-between);
@@ -70,7 +75,7 @@
     height: var(--gnbSize);
     background-color: var(--Semi-Darker);
     padding: var(--padding);
-    * {color: var(--white);}
+    > * {color: var(--white);}
     &__title{@extend %body1;}
     button {
       height: 100%;
@@ -85,6 +90,36 @@
     //    height: 24px;
     //  }
     //}
+    &__dropdown {
+      display: none;
+      flex-direction: column;
+      width: fit-content;
+      position: absolute;
+      top: calc(var(--gnbSize) - var(--padding) / 2);
+      right: calc(var(--padding) / 2);
+      z-index: 99;
+      @extend %boxShadow;
+      cursor: pointer;
+      &::before{
+        $size: 8px;
+        @include messageDirection(top, var(--white), $size);
+        top: - $size;
+        right: calc(var(--padding) - 2px);
+      }
+      li {
+        @extend %body2;
+        @include flexBox();
+        width: 100%;
+        gap: calc(var(--gap) / 2);
+        background-color: var(--white);
+        border-bottom: 1px solid var(--gray-50);
+        filter: unset;
+        &:hover { background-color:var(--background)}
+        $borderRadius: calc(var(--br-radius) / 2);
+        &:first-child { border-top-left-radius: $borderRadius; border-top-right-radius: $borderRadius; }
+        &:last-child{  border-bottom-left-radius: $borderRadius; border-bottom-right-radius: $borderRadius;  border: 0;}
+      }
+    }
   }
   &--body {
     @include flexBox(flex-start, flex-start);
@@ -100,18 +135,6 @@
     -ms-user-select: none;
     user-select: none;
     &.setting {padding: 0;}
-  }
-  &--footer {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    background-color: var(--gray-50);
-    width: 100%;
-    height: var(--gnbSize);
-    position: absolute;
-    bottom: 0;
-    .btn {
-      @include flexBox(center);
-    }
   }
 }
 
@@ -218,7 +241,14 @@
       color: var(--gray-80);
       @extend %caption;
     }
-    &.on .friends--box{ cursor: pointer; @extend %activeDotsHoverBorder; }
+    &.on .friends--box{ 
+      cursor: pointer;
+      &:hover{ @extend %activeDotsHoverBorder; 
+        &::after {
+          content: url(../icon/Add_comment.svg);
+        }
+      }
+    }
     &.off .friends {
       &--box {opacity: .5;}
       &--profile::before {display: none;}
@@ -227,6 +257,8 @@
   &--box {
     display: grid;
     grid-template-columns: var(--imgSize) 1fr;
+    align-items: center;
+    grid-auto-flow: column;
     gap: var(--gap);
     width: 100%;
     padding: var(--gap) var(--padding);
@@ -264,7 +296,7 @@
     width: 100%;
     padding: var(--padding);
     cursor: pointer;
-    @extend %activeDotsHoverBorder;
+    &:hover{ @extend %activeDotsHoverBorder; }
     &.new {
       .room__name::after {
         content: '';
@@ -295,5 +327,147 @@
   &__status {
     @include ellipseBox();
     @extend %body2;
+  }
+}
+
+
+/***************************************************
+  side_bar setting view 
+****************************************************/
+.setting {
+  > * {width: 100%;}
+  &--user {
+    display: grid;
+    grid-template-columns: calc(var(--imgSize) * 3) 1fr;
+    align-items: center;
+    gap: var(--padding);
+    padding: 40px;
+    position: relative;
+    &.editing {
+      background: var(--white);
+      .user--img .profile_uploader {
+        @include flexBox(center);
+        width: 100%; height: 100%;
+        position: absolute;
+        top: 0;left: 0;
+        background-color: rgba(0,0,0,.2);
+        cursor: pointer;
+      }
+      .user__name { 
+        width: 70%;
+        color:var(--back);
+        border-bottom: 2px solid var(--primary-500);
+      }
+      .user__team,
+      .user__email { 
+        color:var(--gray-80);
+      }
+      .user--status_message {
+        color:var(--back);
+        border-color: var(--primary-500);
+      }
+      .editToggle {
+        border-color: transparent;
+        background-color: var(--primary-500);
+        @extend %boxShadow;
+        img {filter: var(--filter-white-bgP);}
+        p {color: var(--white);}
+      }
+    }
+  }
+  .user {
+    &--img {
+      width: calc(var(--imgSize) * 3);
+      height: calc(var(--imgSize) * 3);
+      border-radius: 50%;
+      background: url('../img/profile_basic.png') center / cover;
+      overflow: hidden;
+      position: relative;
+      .profile_uploader {
+        display: none;
+      }
+    }
+    &--detail {
+      @include flexBox(space-between, flex-start);
+      flex-direction: column;
+      gap: 4px;
+      width: 100%;
+      height: 100%;
+      position: relative;
+      p { padding: 0 calc(var(--gap) / 2); }
+      input, textarea {
+        padding: calc(var(--gap) / 2); 
+        background-color: transparent;
+        border-radius: 0; 
+        border: 1px solid transparent;
+        border-bottom: 2px solid transparent;
+      }
+    }
+    &__name{
+      @extend %title;
+      color:var(--gray);
+    }
+    &__team,
+    &__email { 
+      @extend %body2;
+      color:var(--gray);
+    }
+    &--status_message {
+      width: 100%;
+      min-height: calc(var(--padding) * 2);
+      max-height: calc(var(--padding) * 3);
+      margin-top: calc(var(--gap) / 2);
+      &:focus { outline: none;}
+      resize: none;
+    }
+  }
+  .editToggle { 
+    @include flexBox(); gap: 4px; @extend %caption;
+    border: 1px solid;
+    color: black;
+    border-radius: calc(var(--br-radius) / 2);
+    position: absolute;
+    top: 0;right: 0;
+    padding: 8px;
+    z-index: 99;
+    cursor: pointer;
+    filter: var(--filter-white);
+    img {width: var(--gap); height: var(--gap);}
+    &:hover { filter:unset;}
+  }
+
+  &--options {
+    .option {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      align-items: center;
+      gap: var(--padding);
+      padding: var(--inputPadding) calc(var(--inputPadding) * 2);
+      background-color: var(--white);
+      cursor: pointer;
+      position: relative;
+      &.logout { .option--icon {background: var(--Danger-500);}}
+      &:hover { background: var(--background) }
+      &--icon {
+        @include flexBox(center);
+        border-radius: var(--br-radius);
+        padding: var(--gap);
+        background-color: var(--Success-500);
+      }
+      &--text {
+        @extend %body1;
+        font-weight: normal;
+      }
+      &.withdraw {
+        background: unset; 
+        cursor: help; 
+        &:hover{background: unset;}
+        .option--icon {display: none;}
+        .option--text {
+          @extend %body2;
+          color: var(--gray);
+        }
+      }
+    }
   }
 }

@@ -163,12 +163,12 @@
       }
       &.given {
         padding-left: var(--padding);
-        @include messageDirection();
+        &::after{ @include messageDirection()}
       }
       &.send {
         padding-right: var(--padding);
         flex-direction: row-reverse;
-        @include messageDirection(right, var(--Semi-Darker));
+        &::after{ @include messageDirection(right, var(--Semi-Darker))}
         .message_box__text {
           background-color: var(--Semi-Darker);
           color: var(--white);

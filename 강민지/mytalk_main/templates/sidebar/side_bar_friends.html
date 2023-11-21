@@ -1,7 +1,12 @@
 {% load static %}
 <div class="side_bar--header">
   <span class="side_bar--header__title">친구목록</span>
-  <button class="side_bar--header--add"><img src="{% static 'icon/Add.svg'%}" alt="Add button icon"></button>
+  <button class="side_bar--header--btn"><img src="{% static 'icon/Dots.svg'%}" alt="Add button icon"></button>
+  <ul class="side_bar--header__dropdown">
+    <li class="btn btn--Person_add"><img src="{% static 'icon/Person_add.svg'%}" alt="Person_add icon">친구 추가</li>
+    <!--<li class="btn btn--Add_comment"><img src="{% static 'icon/Add_comment.svg'%}" alt="Add_comment icon">신규 채팅방 만들기</li>-->
+    <li class="btn btn--People_outline"><img src="{% static 'icon/People_outline.svg'%}" alt="People_outline icon">그룹 채팅방 만들기</li>
+  </ul>
 </div>
 
 <div class="side_bar--body friends">

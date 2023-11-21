@@ -1,7 +1,11 @@
 {% load static %}
 <div class="side_bar--header">
   <span class="side_bar--header__title">알림</span>
-  <button class="side_bar--header--dots dots--notice"><img src="{% static 'icon/Dots.svg'%}" alt="GNB Dots icon"></button>
+  <button class="side_bar--header--btn"><img src="{% static 'icon/Dots.svg'%}" alt="GNB Dots icon"></button>
+  <ul class="side_bar--header__dropdown">
+    <li class="btn btn--Done_all"><img src="{% static 'icon/Done_all.svg'%}" alt="People_outline icon">친구요청 전체 수락</li>
+    <li class="btn btn--Delete_all"><img src="{% static 'icon/Delete_all.svg'%}" alt="People_outline icon">전체 삭제</li>
+  </ul>
 </div>
 
 <div class="side_bar--body notice">
@@ -72,3 +76,4 @@
   </div>
 
 </div>
+

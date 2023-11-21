@@ -10,14 +10,14 @@ const NOTICE_BOX = `
     </div>
     {{button_type}}
 </div>
-`
+`;
 
 const NOTICE_BOX_SELECT = `
 <div class="notice--btn actions">
     <button class="actions__accept"><img src="../static/icon/Check.svg" alt="수락 버튼">수락</button>
     <button class="actions__reject"><img src="../static/icon/Clear.svg" alt="거절 버튼">거절</button>
 </div>
-`
+`;
 
 const FRIENDS_LIST = `
 <li class="friends--box">
@@ -27,7 +27,7 @@ const FRIENDS_LIST = `
         <div class="friends__status">{{status_message}}</div>          
     </div>
 </li>
-`
+`;
 
 const CHAT_LIST = `
 <li class="room--box {{get_new}}" id="room_num_{{room_num}}" onclick="loadChattingMessageData({{room_num}})">
@@ -38,7 +38,7 @@ const CHAT_LIST = `
         <div class="room__status">{{conv_final_message}}</div>
     </div>
 </li>
-`
+`;
 
 const MESSAGE_BOX = `
 {{message_box__date}}
@@ -46,4 +46,4 @@ const MESSAGE_BOX = `
     <div class="message_box__text">{{message}}</div>
     <time class="message_box__time" datetime="{{time}}">{{time}}</time>
 </div>
-`
+`;
