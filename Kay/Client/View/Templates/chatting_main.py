@@ -11,6 +11,7 @@ try:
     from view.templates.chatting_sidebar import Sidebar
     from view.templates.chatting_notifications import NotificationsListWidget
     from view.templates.chatting_friends import FriendListWidget
+    from view.templates.chatting_list import ChatListWidget
 except ImportError:
     import sys
     from pathlib import Path
@@ -51,6 +52,9 @@ class ChattingWindow(QWidget):
 
         self.friend_list_widget = FriendListWidget()
         self.middle_area_widget.addWidget(self.friend_list_widget)
+
+        self.chatting_list_widget = ChatListWidget()
+        self.middle_area_widget.addWidget(self.chatting_list_widget)
         
         # Right Area
         self.right_area_widget = QStackedWidget(self)
@@ -89,23 +93,29 @@ class ChattingWindow(QWidget):
     def connect_slot(self):
         self.sidebar.notification_button.clicked.connect(self.show_notifications)
         self.sidebar.friend_list_button.clicked.connect(self.show_friends)
+        self.sidebar.chat_window_button.clicked.connect(self.show_chattings)
 
     @pyqtSlot()
     def show_notifications(self):
-        self.clear_middle_areas()
+        # self.clear_middle_areas()
         self.middle_area_widget.setCurrentWidget(self.notifications_list_widget)
         # Similarly, add a widget to the right area if needed
 
     @pyqtSlot()
     def show_friends(self):
-        self.clear_middle_areas()
+        # self.clear_middle_areas()
         self.middle_area_widget.setCurrentWidget(self.friend_list_widget)
+
+    @pyqtSlot()
+    def show_chattings(self):
+        # self.clear_middle_areas()
+        self.middle_area_widget.setCurrentWidget(self.chatting_list_widget)
     
-    def clear_middle_areas(self):
-        self.middle_area_widget.setCurrentIndex(-1)
+    # def clear_middle_areas(self):
+    #     self.middle_area_widget.setCurrentIndex(-1)
         
-    def clear_right_areas(self):
-        self.right_area_widget.setCurrentIndex(-1)
+    # def clear_right_areas(self):
+    #     self.right_area_widget.setCurrentIndex(-1)
 
     def enterEvent(self, event):
         self.sidebar.raise_()  # Make sure sidebar is above other widgets

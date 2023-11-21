@@ -131,7 +131,7 @@ class ChatListWidget(QWidget):
                 widget.deleteLater()
         
     def _setStyle(self):
-        with open(f'{Path(__file__).parents[1]}/static/chatting_message_list.qss', 'r', encoding='utf-8') as file:
+        with open(f'{Path(__file__).parents[1]}/static/chatting_list.qss', 'r', encoding='utf-8') as file:
             qss = file.read()
             self.setStyleSheet(qss)
 
