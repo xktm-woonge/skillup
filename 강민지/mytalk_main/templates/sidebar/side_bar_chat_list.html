@@ -1,23 +1,13 @@
 {% load static %}
 <div class="side_bar--header">
   <span class="side_bar--header__title">채팅</span>
-  <button class="side_bar--header--btn"><img src="{% static 'icon/Add.svg'%}" alt="GNB Dots icon"></button>
+  <button class="side_bar--header__btn"><img src="{% static 'icon/Dots.svg'%}" alt="GNB Dots icon"></button>
   <ul class="side_bar--header__dropdown">
-    <li class="btn btn--People_outline"><img src="{% static 'icon/People_outline.svg'%}" alt="People_outline icon">그룹 채팅방 만들기</li>
+    <li class="btn btn--Add_comment"><img src="{% static 'icon/Add_comment.svg'%}" alt="Add_comment icon">신규 채팅방 만들기</li>
+    <li class="btn btn--Delete_sellect"><img src="{% static 'icon/Delete_all.svg'%}" alt="People_outline icon">선택 삭제</li>
   </ul>
 </div>
 
 <ul class="side_bar--body room">
-
   <!--template.js CHAT_LIST-->
-
-  <li class="room--box" id="room_num_1" onclick="chattingListClickerTest(1)">
-    <div class="room--profile profile {{ user_status }}" data-image="{{ conv_picture }}profile_ted.png"></div>
-    <div class="room--detail">
-      <input type="hidden">
-      <div class="room__name">{{ conv_user_name }} 이찬희 (온라인) <span>{{ conv_team }}기획2팀 · 팀장 (원격)</span> </div>
-      <div class="room__status">{{ conv_final_message }} 국무총리·국무위원 또는 정부위원은국회나 그 위원회에국회나 그 위원회에국회나 그 위원회에</div>
-    </div>
-  </li>
-
 </ul>

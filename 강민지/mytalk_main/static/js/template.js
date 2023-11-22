@@ -21,7 +21,8 @@ const NOTICE_BOX_SELECT = `
 
 const FRIENDS_LIST = `
 <li class="friends--box">
-    <div class="friends--profile profile {{status}}" data-image="{{profile_picture}}"></div>
+    <input type="checkbox" id="{{name}}" class="group--checkbox" disabled hidden />
+    <label class="friends--profile profile {{status}}" data-image="{{profile_picture}}" for="{{name}}"></label>
     <div class="friends--detail">
         <div class="friends__name">{{name}}<span>{{team}}</span></div>
         <div class="friends__status">{{status_message}}</div>          
@@ -43,7 +44,7 @@ const CHAT_LIST = `
 const MESSAGE_BOX = `
 {{message_box__date}}
 <div class="message_box {{direction}}">
-    <div class="message_box__text">{{message}}</div>
+    <div class="message_box__text" contentEditable="true">{{message}}</div>
     <time class="message_box__time" datetime="{{time}}">{{time}}</time>
 </div>
 `;

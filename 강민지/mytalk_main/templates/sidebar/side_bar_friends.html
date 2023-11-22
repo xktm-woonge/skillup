@@ -1,40 +1,31 @@
 {% load static %}
 <div class="side_bar--header">
   <span class="side_bar--header__title">친구목록</span>
-  <button class="side_bar--header--btn"><img src="{% static 'icon/Dots.svg'%}" alt="Add button icon"></button>
+  <button class="side_bar--header__btn"><img src="{% static 'icon/Dots.svg'%}" alt="Add button icon"></button>
   <ul class="side_bar--header__dropdown">
-    <li class="btn btn--Person_add"><img src="{% static 'icon/Person_add.svg'%}" alt="Person_add icon">친구 추가</li>
-    <!--<li class="btn btn--Add_comment"><img src="{% static 'icon/Add_comment.svg'%}" alt="Add_comment icon">신규 채팅방 만들기</li>-->
-    <li class="btn btn--People_outline"><img src="{% static 'icon/People_outline.svg'%}" alt="People_outline icon">그룹 채팅방 만들기</li>
+    <li class="btn btn--Person_add" id="alert--add_Friend"><img src="{% static 'icon/Person_add.svg'%}" alt="Person_add icon">친구 추가</li>
+    <li class="btn btn--People_outline" id="friend_selector"><img src="{% static 'icon/People_outline.svg'%}" alt="People_outline icon">그룹 채팅방 만들기</li>
   </ul>
 </div>
 
 <div class="side_bar--body friends">
 
-  <div id="online_friends" class="friends--group on">
+  <ul id="online_friends" class="friends--group on">
 
     <!--template.js FRIENDS_LIST-->
 
-    <a class="friends--box">
-      <div class="friends--profile profile active" data-image="profile_ted.png"></div>
-      <div class="friends--detail">
-        <div class="friends__name">이찬희 (온라인) <span>기획2팀 · 팀장 (원격)</span> </div>
-        <div class="friends__status">모든 국민은 인간다운 생활을 할 권리를 가진다. 대통령이 임시회의 집회를 요구할 때에는 기간과 집회요구의 이유를 명시하여야 한다.</div>
-      </div>
-    </a>
+  </ul>
 
-    <a class="friends--box">
-      <div class="friends--profile profile away" data-image=""></div>
-      <div class="friends--detail">
-        <div class="friends__name">유창현 (자리비움) <span>기획2팀 · 팀장 (사무실)</span> </div>
-        <div class="friends__status">국무총리·국무위원 또는 정부위원은 국회나 그 위원회에 출석하여 </div>
-      </div>
-    </a>
+  <ul id="offline_friends" class="friends--group off">
 
-  </div>
-
-  <div id="offline_friends" class="friends--group off">
     <p class="friends--group__title"> 오프라인 </p>
-  </div>
 
+  </ul>
+
+</div>
+
+<div class="group--selector">
+  <div class="profile"><span>+ 0</span></div>
+  <input type="text" class="text" placeholder="다른 사람 검색..." />
+  <button class="btn btn--start">시작</button>
 </div>

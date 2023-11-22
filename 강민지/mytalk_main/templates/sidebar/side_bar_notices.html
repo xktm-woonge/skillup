@@ -1,79 +1,16 @@
 {% load static %}
 <div class="side_bar--header">
   <span class="side_bar--header__title">알림</span>
-  <button class="side_bar--header--btn"><img src="{% static 'icon/Dots.svg'%}" alt="GNB Dots icon"></button>
+  <button class="side_bar--header__btn"><img src="{% static 'icon/Dots.svg'%}" alt="GNB Dots icon"></button>
   <ul class="side_bar--header__dropdown">
     <li class="btn btn--Done_all"><img src="{% static 'icon/Done_all.svg'%}" alt="People_outline icon">친구요청 전체 수락</li>
-    <li class="btn btn--Delete_all"><img src="{% static 'icon/Delete_all.svg'%}" alt="People_outline icon">전체 삭제</li>
+    <li class="btn btn--Delete_all red" id="alert--Delete_all"><img src="{% static 'icon/Delete_all.svg'%}" alt="People_outline icon">전체 삭제</li>
   </ul>
 </div>
 
 <div class="side_bar--body notice">
 
   <!--template.js NOTICE_BOX-->
-  
-  <div class="notice--group system">
-    <div class="notice--type">
-      <img src="{% static 'icon/Notification.svg' %}" alt="">
-    </div>
-    <div class="notice--box">
-      <div class="notice--box__title"><p>새로운 업데이트가 출시되었습니다!</p></div>
-      <div class="notice--box__content">이제 채팅 기능을 더욱 개선했습니다. 지금 바로 새로운 기능을 확인해보세요!</div>
-      <div class="notice--box__time">2023-10-29</div>
-    </div>
-    <button class="notice--btn delete"></button>
-  </div>
-
-  <div class="notice--group danger">
-    <div class="notice--type">
-      <img src="{% static 'icon/Notification.svg' %}" alt="">
-    </div>
-    <div class="notice--box">
-      <div class="notice--box__title"><p> 시스템 점검 안내 </p></div>
-      <div class="notice--box__content">오전 2시부터 4시까지 일시적으로 서비스가 중단됩니다.</div>
-      <div class="notice--box__time">2023-10-29</div>
-    </div>
-    <button class="notice--btn delete"></button>
-  </div>
-
-  <div class="notice--group friends">
-    <div class="notice--type">
-      <img src="{% static 'img/profile_basic.png' %}" alt="">
-    </div>
-    <div class="notice--box">
-      <div class="notice--box__title"><p>새로운 친구추가 요청</p></div>
-      <div class="notice--box__content">최종현{{ REQUEST_NAME }} 님이 친구 추가를 요청하셨습니다.</div>
-      <div class="notice--box__time">2023-10-29</div>
-    </div>
-    <div class="notice--btn actions">
-      <button class="actions__accept"><img src="{% static 'icon/Check.svg' %}" alt="수락 버튼">수락</button>
-      <button class="actions__reject"><img src="{% static 'icon/Clear.svg' %}" alt="거절 버튼">거절</button>
-    </div>
-  </div>
-
-  <div class="notice--group team">
-    <div class="notice--type">
-      <img src="{% static 'img/profile_ted.png' %}" alt="profile image" data-image="">
-    </div>
-    <div class="notice--box">
-      <div class="notice--box__title"><p>[💻 기획 2팀] 2023 하반기 스프린트 애자일 팀프로젝트</p></div>
-      <div class="notice--box__content">프로젝트 A에 새로운 파일이 추가되었습니다. 이 파일은 모든 팀원이 확인해야 합니다. 각자 업무에 맞게 작업해주세요.프로젝트 A에 새로운 파일이 추가되었습니다. 이 파일은 모든 팀원이 확인해야 합니다. 각자 업무에 맞게 작업해주세요.</div>
-      <div class="notice--box__time">2023-10-29</div>
-    </div>
-    <button class="notice--btn delete"></button>
-  </div>
-
-  <div class="notice--group normal">
-    <div class="notice--type">
-      <img src="{% static 'img/profile_ted.png' %}" alt="profile image" data-image="">
-    </div>
-    <div class="notice--box">
-      <div class="notice--box__title"><p>{{ sender_name }} SENDER_NAME</p></div>
-      <div class="notice--box__content">{{ message }} MESSAGE </div>
-      <div class="notice--box__time">{{ sending_date }} SENDING_DATE</div>
-    </div>
-    <button class="notice--btn delete"></button>
-  </div>
 
 </div>
 

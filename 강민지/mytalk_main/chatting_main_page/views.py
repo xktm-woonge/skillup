@@ -1,9 +1,7 @@
 import json
-import pytz
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
-from django.utils import timezone
-from django.contrib.auth import authenticate, get_user_model, logout
+from django.contrib.auth import get_user_model, logout
 from django.template.loader import get_template
 from django.templatetags.static import static
 from django.utils.safestring import mark_safe
@@ -11,6 +9,7 @@ from datetime import datetime
 from .models import *
 from .utils import *
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import IntegrityError
 
 user_model = get_user_model()
 
@@ -51,26 +50,11 @@ def set_friend_list_data(friend_info):
     context = {
         "name" : friend_info.name,
         "team" : '',
-        "status" : friend_info.status,
+        "status" : 'offline' if not friend_info.is_online else friend_info.status,
         "status_message" : friend_info.status_message if friend_info.status_message and friend_info.status_message != "None" else "",
         "profile_picture" : friend_info.profile_picture,
     }
     return show_user_status, context
-
-
-def create_chatting_room(user_data, room): 
-    final_message = Messages.objects.filter(conversation_id=room['conversation_id']).last()
-    
-    context = {
-        'conv_user_name' : user_data.name, 
-        'conv_final_message' : final_message.message_text,
-        'conv_picture' : user_data.profile_picture,
-        'user_status' : f"{user_data.status}",
-        'room_num' : room['conversation_id'],
-        'team' : '',
-    }
-        
-    return context
 
 def get_notice_list(request):
     notice_contents = {}
@@ -95,29 +79,17 @@ def get_friend_list(request):
                 offline_contents[f'{i}'] = friend_content
     return {'online' : online_contents, 'offline': offline_contents}
 
-def check_new_message(user, room_num):
-    messages = Messages.objects.filter(conversation_id=room_num).exclude(sender_id=user).values_list('id', flat=True)
-    for message_id in messages:
-        result = MessageReceivers.objects.filter(message_id=message_id, receiver_id=user, is_read=False).exists()
-        if result:
-            return "new"
-    return ""
-        
-
 def get_chatting_room_list(request):
-    chat_lists_num = []
     chatting_list_contents = {}
-    chat_lists = ConversationParticipants.objects.filter(user_id=request.user.id)
+    chat_lists = ConversationParticipants.objects.filter(user_id=request.user.id).values_list('conversation_id', flat=True)
     
     if chat_lists:
-        for chatting in chat_lists.values() :
-            chat_lists_num.append(chatting['conversation_id'])
-        for chat in chat_lists_num:
+        for chat in chat_lists:
             conv_room = ConversationParticipants.objects.filter(conversation_id=chat)
             for room, i in zip(conv_room.values(), range(conv_room.count())):
                 user_data = user_model.objects.get(id=room['user_id'])
                 if user_data.id != request.user.id:
-                    chatting_list_contents[f'{i}'] = create_chatting_room(user_data, room)
+                    chatting_list_contents[f'{i}'] = create_chatting_room(user_data, room['conversation_id'])
                     chatting_list_contents[f'{i}']['get_new'] = check_new_message(request.user.id, chat)
                     
     return chatting_list_contents
@@ -139,8 +111,11 @@ def get_curr_user_data(request):
 def conv_user_data(user, roomnum):
     conv_user = ConversationParticipants.objects.filter(conversation_id=roomnum).exclude(user_id=user).first()    
     conv_user = user_model.objects.get(id=conv_user.user_id)
-    last_message = Messages.objects.filter(conversation_id=roomnum).exclude(sender_id=user).last()
-    last_reply_time = last_message.timestamp.strftime("%Y-%m-%d %H:%M:%S")
+    try:
+        last_reply_time = Messages.objects.filter(conversation_id=roomnum).exclude(sender_id=user).last().timestamp.strftime("%Y-%m-%d %H:%M:%S")
+    except AttributeError:
+        last_reply_time = ''
+        
     if Conversations.objects.get(id=roomnum).type == 'private':
         conv_status = 'offline'
         if conv_user.is_online :
@@ -164,7 +139,7 @@ def conv_user_data(user, roomnum):
 def get_message_data(request):
     chat_content = ""
     message_contents = ""
-    conv_user_content = ""
+    conv_user_content = {}
     prev_message_date = datetime(2000, 1, 1) # 시간을 비교하기 위해 임의의 값으로 설정
     conversations_num = json.loads(request.body.decode('utf-8'))['room_num']
     chat_page_template = get_template('contents/chatting.html')
@@ -181,10 +156,9 @@ def get_message_data(request):
             except ObjectDoesNotExist:
                 get_temp['direction'] = 'send'
             message_contents += message_template.render(get_temp)
-        conv_user_content = conv_user_data(request.user.id, conversations_num)
-        conv_user_content['message_boxs'] = message_contents
-        conv_user_content['csrf_token'] = request.META.get('CSRF_COOKIE'),
-        
+    conv_user_content = conv_user_data(request.user.id, conversations_num)
+    conv_user_content['message_boxs'] = message_contents
+    conv_user_content['csrf_token'] = request.META.get('CSRF_COOKIE'),
     chat_content = mark_safe(chat_page_template.render(conv_user_content))
     return JsonResponse({'message':'Success', 'data':chat_content})
 
@@ -197,6 +171,15 @@ def push_load_data(request):
     data_dic['curr_user_data'], status = get_curr_user_data(request)
     data_dic['present_status'] = status
     return JsonResponse(data_dic)
+
+def set_changed_user_info(request):
+    user_info = json.loads(request.body.decode('utf-8'))
+    try:
+        user_model.objects.filter(id=request.user.id).update(name=user_info["text"], status_message=user_info["textarea"])
+        return JsonResponse({'message':'Success'})
+    except IntegrityError:
+        return JsonResponse({'message':'user_name_duplication'})
+    
 
 def load_chatting_main_page(request):
     if request.method =="GET":

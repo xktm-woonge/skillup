@@ -10,6 +10,14 @@ function addDefaultSocketFunction(message){
         console.log("유저 인증 에러");
     }
 }
+function changeSideBar(goto){
+    removeActiveClass(gnbButtons);
+    removeActiveClass(gnbSides);
+    closeDropdowns();
+    document.querySelector(`#${goto}`).classList.add("active");
+    document.querySelector(`#side_bar_${goto}`).classList.add("active");
+}
+
 
 // 채팅방 내 대화 시 소켓 통신 후 실행할 함수
 function addChattingSocketFunction(message){
@@ -60,6 +68,22 @@ function addChatUserInfoReloadFunction(message){
         loadChattingMessageData(currRoomNum, true);
     }
 }
+function addChatListFunction(message){
+    if(message.message === "add_chat_list"){
+        document.querySelector(".side_bar--body.room").innerHTML += createChatList({"1":message.data});
+    }
+}
+
+function addEnterChatRoomFromFriendFunction(message){
+    if(message.message === "enter_chat_room_from_friend"){
+        currRoomNum = message.room_num;
+        if(message.is_new_chat){
+            socket.send(JSON.stringify({"message":"add_chat_list", "room_number":currRoomNum}))
+        }
+        changeSideBar("chat");
+        loadChattingMessageData(currRoomNum);
+    }
+}
 
 // room 마다 소켓 레이어 재생성하기 위한 함수
 function webSocketInitialization(initSocketPath, action) {
@@ -72,7 +96,7 @@ function webSocketInitialization(initSocketPath, action) {
         let messageHandlers = [];
         switch (action) {
             case "enter_chat_room":
-                setInterval(userResponseTime, 1000);
+                setInterval(userResponseTime, 100);
                 messageHandlers.push(addChattingSocketFunction);
                 messageHandlers.push(addChatUserInfoReloadFunction);
             default:
@@ -80,6 +104,8 @@ function webSocketInitialization(initSocketPath, action) {
                 messageHandlers.push(addChatJustReceiveFuntion);
                 messageHandlers.push(addReloadFunction);
                 messageHandlers.push(addNotiFunction);
+                messageHandlers.push(addEnterChatRoomFromFriendFunction);
+                messageHandlers.push(addChatListFunction);
         }
         socket.onopen = () => {
             resolve(); // WebSocket이 생성되면 resolve 호출
@@ -146,32 +172,16 @@ function addDeleteNoticeEvent(){
     })
 }
 
-
-
-// 아래 두 함수 비슷한 게 너무 많아서 차후 가능한 방향 찾아서 통합하고 싶음
-// 친구 요청 수락 시 실행 할 함수
-function addFriendAcceptEvent(){
-    document.querySelectorAll(".actions__accept").forEach(function(accept){
-        accept.addEventListener("click", function(){
+// 친구 요청 버튼 Click 시 실행 될 함수
+function addFriendEvent(actionType) {
+    document.querySelectorAll(".actions__" + actionType).forEach(function (element) {
+        element.addEventListener("click", function () {
             let parentClassList = this.parentElement.parentElement.classList;
             let friendNotiNum = findNumInClassName(parentClassList);
-            socket.send(JSON.stringify({"message":"accept_friend", "noti_num":friendNotiNum}));
-        })
-    })
+            socket.send(JSON.stringify({"message": `${actionType}_friend`, "noti_num": friendNotiNum}));
+        });
+    });
 }
-
-// 친구 요청 거절 시 실행 할 함수
-function addFriendRejectEvent(){
-    document.querySelectorAll(".actions__reject").forEach(function(reject){
-        reject.addEventListener("click", function(){
-            let parentClassList = this.parentElement.parentElement.classList;
-            let friendNotiNum = findNumInClassName(parentClassList);
-            socket.send(JSON.stringify({"message":"reject_friend", "noti_num":friendNotiNum}));
-        })
-    })
-}
-
-
 
 // 친구 목록 Double Click 시 실행될 함수
 function addOpenChattingFromFriendsListEvent(){
@@ -209,11 +219,8 @@ function addEvent() {
 
 // user logout
 function userLogout(){
-    swal({
-        title: "Log out",
-        text: "로그아웃 하시겠습니까?",
-        icon: "warning",
-        buttons: true,
+    swal("Log out", "로그아웃 하시겠습니까?", "warning", {
+        buttons: ["취소", "로그아웃"],
         dangerMode: true,
     }).then(function(willLogout){
         if(willLogout){
@@ -233,18 +240,22 @@ function userLogout(){
             })
             .then(function(data){
                 if(data.message === "Success"){
+                    socket.send(JSON.stringify({ "message": "user_logout" }));
                     swal("로그아웃 되었습니다.", {
-                        icon: "success",
-                    });
-                    socket.close();
-                    window.location.href = "../";
+                        icon: "success", 
+                    }).then(function (moveScreen) {
+                        if (moveScreen) {
+                            socket.close();
+                            window.location.href = "../";
+                        }
+                    })
                 }
             })
         }
-    }
-)}
+    })
+}
 
-document.getElementById("user_logout").addEventListener("click", function(e){
+document.getElementById("alert--logout").addEventListener("click", function(e){
     e.preventDefault();
     userLogout();
 });

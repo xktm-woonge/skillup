@@ -91,15 +91,16 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
                     
 class DataProvider():
     def __init__(self):
-        pass
+        self.send_data = {}
     
     async def message_read(self, message, data, user):
         if message == 'add_notice':
             self.add_notice_boxs()
         elif message == 'add_friend':
             self.add_friends_list()
-        elif message == 'add_chat':
-            self.add_chat_list()
+        elif message == 'add_chat_list':
+            chat_list_context = await self.add_chat_list(data['room_number'], user)
+            self.send_data = {'message':'add_chat_list','data':chat_list_context}
         elif message == 'change_user_status':
             await self.change_user_status(user, data)
         elif message == 'change_user_info':
@@ -110,20 +111,27 @@ class DataProvider():
             await self.enter_chatting_room(data['room_number'], user)
         elif message == 'delete_notice':
             await self.delete_notice(data, user)
-            await connected_users[f'{user}'].send(json.dumps({'message':'delete_notice','noti_num':data['noti_num']}))
+            self.send_data = {'message':'delete_notice','noti_num':data['noti_num']}
         elif message in ['accept_friend', 'reject_friend']:
             friends = await self.process_friends_request(data, user)
-            await connected_users[f'{user}'].send(json.dumps({'message':'delete_notice','noti_num':data['noti_num']}))
+            self.send_data = {'message':'delete_notice','noti_num':data['noti_num']}
         elif message == 'enter_chat_from_friends':
-            await self.enter_chat_from_friends()
+            room_num, is_new_chat = await self.enter_chat_from_friends(data['friend_name'], user)
+            self.send_data = {'message':'enter_chat_room_from_friend', 'room_num':room_num, 'is_new_chat':is_new_chat}
         
-        if message in ['change_user_status', 'change_user_info']:
+        if message in ['change_user_status', 'change_user_info', 'user_logout', 'user_login']:
             friends_id = await self.get_curr_user_friends(user)
             for i in friends_id:
                 try:
                     await connected_users[f"{i}"].send(json.dumps({'message':'reload'}))
                 except KeyError:
                     continue
+        if message in ['add_chat_list', 'delete_notice', 'accept_friend', 'reject_friend', 'enter_chat_from_friends']:
+            await self.send_to_client(self.send_data, user)
+    
+    async def send_to_client(self, send_data, user):
+        await connected_users[f'{user}'].send(json.dumps(send_data))
+        
   
             
         
@@ -139,29 +147,49 @@ class DataProvider():
     def add_friends_list(self):
         pass
     
-    def add_chat_list(self):
-        pass
+    @database_sync_to_async
+    def add_chat_list(self, room_num, user):
+        conv_user_id = ConversationParticipants.objects.filter(conversation_id=room_num).exclude(user_id=user).first().user_id
+        user_data = user_model.objects.get(id=conv_user_id)
+        context = create_chatting_room(user_data, room_num)
+        context['get_new'] = check_new_message(user, room_num)
+        return context
+        
     
     @database_sync_to_async
-    def enter_chat_from_friends(self, data, user):
+    def enter_chat_from_friends(self, friend_name, user):
         room_num = ''
-        friend_id = user_model.objects.get(name=data['friend_name']).id
-        part_chat_id = ConversationParticipants.objects.filter(user_id=user).values_list('id', flat=True)
+        is_chatbot = False
+        is_new_chat = False
+        friend_id = user_model.objects.get(name=friend_name).id
+        part_chat_id = ConversationParticipants.objects.filter(user_id=user).values_list('conversation_id', flat=True)
         
         if friend_id == 3:
-            chatbot_room_list = Conversations.objects.filter(is_chatbot=True).values_list('id', flat=True)
-        # 아래 수정 필요
-        #     room_num = list(set(chatbot_room_list) & set(part_chat_id))
-        # else:
-        #     friend_part_chat_id = ConversationParticipants.objects.filter(user_id=friend_id).values_list('id', flat=True)
-        #     intersection = list(set(friend_part_chat_id) & set(part_chat_id))
-        #     if intersection:
-        #         for i in intersection:
-        #             try:
-        #                 room_num = Conversations.objects.get(id=intersection, type="private").id
-        #             except:
-        #                 continue
-        # return room_num
+            is_chatbot = True
+            chatbot_room_list = Conversations.objects.filter(is_chatbot=is_chatbot).values_list('id', flat=True)
+            room_num_list = set(part_chat_id) & set(chatbot_room_list)
+            
+        else:
+            private_room_id = Conversations.objects.filter(type='private').exclude(is_chatbot=True).values_list('id', flat=True)
+            friend_room_id = ConversationParticipants.objects.filter(user_id=friend_id).values_list('conversation_id', flat=True)
+            user_private_room_id = set(part_chat_id) & set(private_room_id)
+            room_num_list = user_private_room_id & set(friend_room_id)
+                
+        if room_num_list:
+                room_num = room_num_list.pop()
+        else:
+            last_conv_num =  Conversations.objects.filter().last().id
+            room_num = last_conv_num + 1
+            Conversations.objects.create(id=room_num,is_chatbot=is_chatbot)
+            ConversationParticipants.objects.create(conversation_id=room_num, user_id=user)
+            ConversationParticipants.objects.create(conversation_id=room_num, user_id=friend_id)
+            is_new_chat = True
+            if is_chatbot:
+                text = '당신의 챗팅 친구 TED입니다. 무엇이 궁금하세요?'
+                Messages.objects.create(message_text=text, conversation_id=room_num, sender_id=friend_id)
+                last_message_id = Messages.objects.filter(sender_id=friend_id).last().id
+                MessageReceivers.objects.create(message_id=last_message_id, receiver_id=user)
+        return room_num, is_new_chat
             
     
     @database_sync_to_async
@@ -198,7 +226,7 @@ class DataProvider():
         
         _, file_format = file_info.split('/')
         file_name = f'user_{user}.{file_format}'
-        file_path =  f'{settings.STATICFILES_DIRS[0]}/img/'
+        file_path =  f'{settings.STATICFILES_DIRS[0]}/img/user/'
 
         for before_file in os.listdir(file_path):
             if before_file.startswith(f'user_{user}.'):
@@ -206,7 +234,7 @@ class DataProvider():
         
         with open(f'{file_path}{file_name}', 'wb') as file:
             file.write(decoded_data)
-        user_model.objects.filter(id=user).update(profile_picture=file_name)
+        user_model.objects.filter(id=user).update(profile_picture=f'user/{file_name}')
     
     @database_sync_to_async
     def change_user_info(self, data, user):
@@ -223,11 +251,12 @@ class DataProvider():
         last_message_time = Messages.objects.filter(conversation_id=room_number).last().timestamp
         
         if sender is not None:
-            Messages.objects.create(message_text=send_message, conversation_id=room_number, sender_id=sender)
-            message_id = Messages.objects.filter(conversation_id=room_number).last().id
+            # Messages.objects.create(message_text=send_message, conversation_id=room_number, sender_id=sender)
+            # message_id = Messages.objects.filter(conversation_id=room_number).last().id
             receviers = ConversationParticipants.objects.filter(conversation_id=room_number).exclude(user_id=sender)
             for receiver in receviers.values():
-                MessageReceivers.objects.create(message_id=message_id, receiver_id=receiver['user_id'])
+                # MessageReceivers.objects.create(message_id=message_id, receiver_id=receiver['user_id'])
+                pass
         current_message_time = Messages.objects.filter(conversation_id=room_number).last().timestamp
         
         current_data = {
