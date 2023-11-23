@@ -4,6 +4,23 @@ from PyQt5.QtGui import *
 import sys
 from pathlib import Path
 
+try:
+    from utils import *
+except ImportError:
+    sys.path.append(str(Path(__file__).parents[2]))
+    from utils import *
+
+
+class EnterTextEdit(QTextEdit):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+    def keyPressEvent(self, event):
+        if (event.key() in [Qt.Key_Return, Qt.Key_Enter]) and not (event.modifiers() & Qt.ShiftModifier):
+            self.parent().send_message()
+        else:
+            super().keyPressEvent(event)
+
 
 class MessageBubble(QWidget):
     def __init__(self, timestamp, text, sender, parent=None):
@@ -110,9 +127,11 @@ class ChattingInterface(QWidget):
 
         # Bottom Area
         bottom_layout = QHBoxLayout()
-        self.message_input = QTextEdit()
+        self.message_input = EnterTextEdit(self)
         self.message_input.setFixedHeight(50)
-        send_button = QPushButton("Send")
+        send_button = QPushButton()
+        send_icon = QIcon(f'{Path(__file__).parents[1]}/static/icon/Send.svg')  # SVG 이미지 파일 경로
+        send_button.setIcon(send_icon)
         send_button.clicked.connect(self.send_message)
         bottom_layout.addWidget(self.message_input)
         bottom_layout.addWidget(send_button)
@@ -136,6 +155,9 @@ class ChattingInterface(QWidget):
             QApplication.processEvents()
             self.scroll_to_bottom()
 
+            # 입력창에 포커스를 되돌립니다.
+            self.message_input.setFocus()
+
     def add_message(self, message, timestamp, is_user):
         # 새 메시지 버블을 생성하고 레이아웃에 추가
         message_bubble = MessageBubble(timestamp, message, is_user)
@@ -153,6 +175,9 @@ class ChattingInterface(QWidget):
         
         # 메시지 레이아웃을 메시지 위젯에 추가합니다.
         self.messages_layout.addLayout(message_layout)
+
+        # 이벤트 처리를 강제로 실행하여 위젯을 업데이트합니다.
+        QApplication.processEvents()
         
         # 스크롤을 아래로 이동합니다.
         self.scroll_to_bottom()
