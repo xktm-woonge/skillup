@@ -131,10 +131,7 @@ class ChattingInterface(QWidget):
         if message_text.strip():  # 메시지가 비어있지 않은 경우에만 처리
             # 현재 시간을 가져옵니다.
             current_time = QTime.currentTime().toString("HH:mm")
-            # MessageBubble 인스턴스를 생성합니다.
-            message_bubble = MessageBubble(current_time, message_text, True)
-            # 메시지 레이아웃에 MessageBubble 위젯을 추가합니다.
-            self.messages_layout.addWidget(message_bubble)
+            self.add_message(message_text, current_time, True)
             self.message_input.clear()
             QApplication.processEvents()
             self.scroll_to_bottom()
