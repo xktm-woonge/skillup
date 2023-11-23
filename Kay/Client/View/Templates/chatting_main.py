@@ -12,6 +12,7 @@ try:
     from view.templates.chatting_notifications import NotificationsListWidget
     from view.templates.chatting_friends import FriendListWidget
     from view.templates.chatting_list import ChatListWidget
+    from view.templates.chatting_messages import ChattingInterface
 except ImportError:
     import sys
     from pathlib import Path
@@ -20,6 +21,7 @@ except ImportError:
     from view.templates.chatting_sidebar import Sidebar
     from view.templates.chatting_notifications import NotificationsListWidget
     from view.templates.chatting_friends import FriendListWidget
+    from view.templates.chatting_messages import ChattingInterface
 
 
 class ChattingWindow(QWidget):
@@ -60,6 +62,9 @@ class ChattingWindow(QWidget):
         self.right_area_widget = QStackedWidget(self)
         self.right_area_widget.setGeometry(
             self.sidebar_width + self.middle_width, 0, self.right_width, self.height)
+        
+        self.chatting_messages = ChattingInterface()
+        self.right_area_widget.addWidget(self.chatting_messages)
         
         # 중앙에 표시될 위젯을 위한 레이아웃
         central_layout = QVBoxLayout()
@@ -110,12 +115,6 @@ class ChattingWindow(QWidget):
     def show_chattings(self):
         # self.clear_middle_areas()
         self.middle_area_widget.setCurrentWidget(self.chatting_list_widget)
-    
-    # def clear_middle_areas(self):
-    #     self.middle_area_widget.setCurrentIndex(-1)
-        
-    # def clear_right_areas(self):
-    #     self.right_area_widget.setCurrentIndex(-1)
 
     def enterEvent(self, event):
         self.sidebar.raise_()  # Make sure sidebar is above other widgets

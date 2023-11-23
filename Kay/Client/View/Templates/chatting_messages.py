@@ -1,35 +1,74 @@
-from PyQt5.QtWidgets import (
-    QApplication, QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, QScrollArea, QFrame
-)
-from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 import sys
 from pathlib import Path
 
-class MessageBubble(QLabel):
-    def __init__(self, message, timestamp, is_user):
-        super().__init__(message)
-        self.timestamp = QLabel(timestamp)
-        self.is_user = is_user
-        self.initUI()
 
-    def initUI(self):
-        self.setWordWrap(True)
-        self.setFrameStyle(QFrame.StyledPanel)
-        self.setStyleSheet("""
-            QLabel {
-                background-color: #83d0c9;
-                border-radius: 10px;
-                padding: 5px 10px;
-                margin: 5px;
-            }
-        """)
-        self.timestamp.setStyleSheet("font-size: 8pt; color: #555;")
+class MessageBubble(QWidget):
+    def __init__(self, timestamp, text, sender, parent=None):
+        super(MessageBubble, self).__init__(parent)
+        self.timestamp = timestamp
+        self.text = text
+        self.sender = sender  # True if the user sent the message, False otherwise
+        self.font = QFont()
+        self.font.setFamily("Arial")
+        self.font.setPointSize(12)
+        self.metrics = QFontMetrics(self.font)
+        self.padding = 10
+        self.bubble_padding = 20  # 텍스트와 말풍선 테두리 사이의 여백
+        self.calculateDimensions()
 
-        layout = QVBoxLayout() if self.is_user else QVBoxLayout()
-        layout.addWidget(self, alignment=Qt.AlignRight if self.is_user else Qt.AlignLeft)
-        layout.addWidget(self.timestamp, alignment=Qt.AlignRight if self.is_user else Qt.AlignLeft)
-        self.setLayout(layout)
+    def calculateDimensions(self):
+        # 텍스트의 최대 너비를 설정합니다.
+        self.text_max_width = 200
+        # 텍스트 렉트를 계산합니다.
+        text_rect = self.metrics.boundingRect(0, 0, self.text_max_width, 10000, Qt.TextWordWrap, self.text)
+        # 말풍선의 실제 크기를 계산합니다.
+        self.bubble_width = text_rect.width() + self.bubble_padding * 2
+        self.bubble_height = text_rect.height() + self.bubble_padding * 2 + self.metrics.height()
+        self.setFixedSize(self.bubble_width, self.bubble_height)
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)
+        painter.setFont(self.font)
+
+        # Set colors based on who sent the message
+        bubble_color = QColor("#800080") if self.sender else QColor("#D3D3D3")
+        text_color = QColor("#FFFFFF") if self.sender else QColor("#000000")
+        time_color = QColor("#888888")
+
+        # Paint the bubble
+        painter.setBrush(bubble_color)
+        painter.setPen(Qt.NoPen)
+        bubble_rect = QRect(0, 0, self.bubble_width, self.bubble_height - self.metrics.height())
+        painter.drawRoundedRect(bubble_rect, 10, 10)
+
+        # Paint the text
+        painter.setPen(text_color)
+        text_rect = QRect(self.bubble_padding / 2, self.bubble_padding / 2, 
+                          self.bubble_width - self.bubble_padding, 
+                          self.bubble_height - self.bubble_padding - self.metrics.height())
+        painter.drawText(text_rect, Qt.AlignLeft | Qt.TextWordWrap, self.text)
+
+        # Paint the timestamp outside the bubble
+        painter.setPen(time_color)
+        time_rect = QRect(bubble_rect.left() if not self.sender else bubble_rect.right() - self.metrics.width(self.timestamp) - self.padding,
+                          bubble_rect.bottom() - self.padding / 2, self.metrics.width(self.timestamp), self.metrics.height())
+        painter.drawText(time_rect, Qt.AlignCenter, self.timestamp)
+
+        # Paint the tail of the bubble
+        tail_direction = 1 if self.sender else -1
+        tail_start = QPoint(bubble_rect.right() - 10 if self.sender else bubble_rect.left() + 10, bubble_rect.bottom())
+        tail_mid = QPoint(bubble_rect.right() + 10 * tail_direction if self.sender else bubble_rect.left() - 10 * tail_direction, bubble_rect.bottom() + 10)
+        tail_end = QPoint(tail_start.x() - 20 * tail_direction, tail_start.y())
+        tail_polygon = QPolygon([tail_start, tail_mid, tail_end])
+        painter.drawPolygon(tail_polygon)
+
+    def sizeHint(self):
+        # Provide a suggested size for the widget based on the text content
+        return QSize(self.bubble_width, self.bubble_height)
 
 
 class ChattingInterface(QWidget):
@@ -60,6 +99,7 @@ class ChattingInterface(QWidget):
 
         top_layout.addWidget(profile_pic_label)
         top_layout.addLayout(name_email_layout)
+        top_layout.addStretch(1)
         
         # Middle Area
         self.messages_widget = QWidget()  # 내부 위젯을 먼저 생성
@@ -70,7 +110,8 @@ class ChattingInterface(QWidget):
 
         # Bottom Area
         bottom_layout = QHBoxLayout()
-        self.message_input = QLineEdit()
+        self.message_input = QTextEdit()
+        self.message_input.setFixedHeight(50)
         send_button = QPushButton("Send")
         send_button.clicked.connect(self.send_message)
         bottom_layout.addWidget(self.message_input)
@@ -85,14 +126,38 @@ class ChattingInterface(QWidget):
         self.setLayout(main_layout)
     
     def send_message(self):
-        # Emit the new_message signal with the input text, current timestamp, and True to indicate it's a user message
-        self.new_message.emit(self.message_input.text(), "Now", True)
-        self.message_input.clear()
+        # 사용자 메시지를 추가하는 작업을 처리
+        message_text = self.message_input.toPlainText()
+        if message_text.strip():  # 메시지가 비어있지 않은 경우에만 처리
+            # 현재 시간을 가져옵니다.
+            current_time = QTime.currentTime().toString("HH:mm")
+            # MessageBubble 인스턴스를 생성합니다.
+            message_bubble = MessageBubble(current_time, message_text, True)
+            # 메시지 레이아웃에 MessageBubble 위젯을 추가합니다.
+            self.messages_layout.addWidget(message_bubble)
+            self.message_input.clear()
+            QApplication.processEvents()
+            self.scroll_to_bottom()
 
     def add_message(self, message, timestamp, is_user):
-        # Create a new message bubble and add it to the layout
-        message_bubble = MessageBubble(message, timestamp, is_user)
-        self.messages_layout.addWidget(message_bubble)
+        # 새 메시지 버블을 생성하고 레이아웃에 추가
+        message_bubble = MessageBubble(timestamp, message, is_user)
+        # 각 메시지를 위한 가로 레이아웃을 생성합니다.
+        message_layout = QHBoxLayout()
+        
+        if is_user:
+            # 사용자 메시지인 경우 오른쪽 정렬을 위해 왼쪽에 스트레치를 추가합니다.
+            message_layout.addStretch(1)
+            message_layout.addWidget(message_bubble)
+        else:
+            # 다른 사람 메시지인 경우 왼쪽 정렬을 위해 오른쪽에 스트레치를 추가합니다.
+            message_layout.addWidget(message_bubble)
+            message_layout.addStretch(1)
+        
+        # 메시지 레이아웃을 메시지 위젯에 추가합니다.
+        self.messages_layout.addLayout(message_layout)
+        
+        # 스크롤을 아래로 이동합니다.
         self.scroll_to_bottom()
 
     def scroll_to_bottom(self):
