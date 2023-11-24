@@ -42,8 +42,8 @@ class MessageBubble(QWidget):
         # 텍스트 렉트를 계산합니다.
         text_rect = self.metrics.boundingRect(0, 0, self.text_max_width, 10000, Qt.TextWordWrap, self.text)
         # 말풍선의 실제 크기를 계산합니다.
-        self.bubble_width = text_rect.width() + self.bubble_padding * 2
-        self.bubble_height = text_rect.height() + self.bubble_padding * 2 + self.metrics.height()
+        self.bubble_width = text_rect.width() + self.bubble_padding
+        self.bubble_height = text_rect.height() + self.bubble_padding + self.metrics.height()
         self.setFixedSize(self.bubble_width, self.bubble_height)
 
     def paintEvent(self, event):
