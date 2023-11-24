@@ -52,7 +52,7 @@ class MessageBubble(QWidget):
         painter.setFont(self.font)
 
         # Set colors based on who sent the message
-        bubble_color = QColor("#800080") if self.sender else QColor("#D3D3D3")
+        bubble_color = QColor("#4f2ab8") if self.sender else QColor("#D3D3D3")
         text_color = QColor("#FFFFFF") if self.sender else QColor("#000000")
         time_color = QColor("#888888")
 
@@ -121,6 +121,7 @@ class ChattingInterface(QWidget):
         # Middle Area
         self.messages_widget = QWidget()  # 내부 위젯을 먼저 생성
         self.messages_layout = QVBoxLayout(self.messages_widget)  # 내부 위젯에 레이아웃 적용
+        self.messages_layout.setAlignment(Qt.AlignTop)
         self.messages_area = QScrollArea()  # 스크롤 영역 생성
         self.messages_area.setWidgetResizable(True)
         self.messages_area.setWidget(self.messages_widget)  # 스크롤 영역에 내부 위젯 설정
