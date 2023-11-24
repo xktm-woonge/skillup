@@ -26,7 +26,7 @@ class MessageBubble(QWidget):
     def __init__(self, timestamp, text, sender, parent=None):
         super(MessageBubble, self).__init__(parent)
         self.timestamp = timestamp
-        self.text = text
+        self.text = self.insert_newlines(text, 70)
         self.sender = sender  # True if the user sent the message, False otherwise
         self.font = QFont()
         self.font.setFamily("Arial")
@@ -38,9 +38,10 @@ class MessageBubble(QWidget):
 
     def calculateDimensions(self):
         # 텍스트의 최대 너비를 설정합니다.
-        self.text_max_width = 200
+        self.text_max_width = 10000
         # 텍스트 렉트를 계산합니다.
-        text_rect = self.metrics.boundingRect(0, 0, self.text_max_width, 10000, Qt.TextWordWrap, self.text)
+        # Qt.TextWrapAnywhere를 사용하여 글자 단위로 줄바꿈합니다.
+        text_rect = self.metrics.boundingRect(0, 0, self.text_max_width, 10000, Qt.TextWrapAnywhere, self.text)
         # 말풍선의 실제 크기를 계산합니다.
         self.bubble_width = text_rect.width() + self.bubble_padding
         self.bubble_height = text_rect.height() + self.bubble_padding + self.metrics.height()
@@ -86,6 +87,10 @@ class MessageBubble(QWidget):
     def sizeHint(self):
         # Provide a suggested size for the widget based on the text content
         return QSize(self.bubble_width, self.bubble_height)
+    
+    def insert_newlines(self, text, line_length):
+        # 30자마다 줄바꿈을 추가하는 함수
+        return '\n'.join(text[i:i+line_length] for i in range(0, len(text), line_length))
 
 
 class ChattingInterface(QWidget):
@@ -162,6 +167,7 @@ class ChattingInterface(QWidget):
     def add_message(self, message, timestamp, is_user):
         # 새 메시지 버블을 생성하고 레이아웃에 추가
         message_bubble = MessageBubble(timestamp, message, is_user)
+        message_bubble.calculateDimensions()
         # 각 메시지를 위한 가로 레이아웃을 생성합니다.
         message_layout = QHBoxLayout()
         
