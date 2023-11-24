@@ -21,6 +21,7 @@ except ImportError:
     from view.templates.chatting_sidebar import Sidebar
     from view.templates.chatting_notifications import NotificationsListWidget
     from view.templates.chatting_friends import FriendListWidget
+    from view.templates.chatting_list import ChatListWidget
     from view.templates.chatting_messages import ChattingInterface
 
 
@@ -115,6 +116,11 @@ class ChattingWindow(QWidget):
     def show_chattings(self):
         # self.clear_middle_areas()
         self.middle_area_widget.setCurrentWidget(self.chatting_list_widget)
+
+    @pyqtSlot()
+    def show_messages(self):
+        # self.clear_middle_areas()
+        self.right_area_widget.setCurrentWidget(self.chatting_messages)
 
     def enterEvent(self, event):
         self.sidebar.raise_()  # Make sure sidebar is above other widgets

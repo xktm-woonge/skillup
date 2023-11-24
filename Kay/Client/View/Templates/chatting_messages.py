@@ -23,9 +23,8 @@ class EnterTextEdit(QTextEdit):
 
 
 class MessageBubble(QWidget):
-    def __init__(self, timestamp, text, sender, parent=None):
+    def __init__(self, text, sender, parent=None):
         super(MessageBubble, self).__init__(parent)
-        self.timestamp = timestamp
         self.text = self.insert_newlines(text, 70)
         self.sender = sender  # True if the user sent the message, False otherwise
         self.font = QFont()
@@ -55,7 +54,6 @@ class MessageBubble(QWidget):
         # Set colors based on who sent the message
         bubble_color = QColor("#4f2ab8") if self.sender else QColor("#D3D3D3")
         text_color = QColor("#FFFFFF") if self.sender else QColor("#000000")
-        time_color = QColor("#888888")
 
         # Paint the bubble
         painter.setBrush(bubble_color)
@@ -65,24 +63,12 @@ class MessageBubble(QWidget):
 
         # Paint the text
         painter.setPen(text_color)
-        text_rect = QRect(self.bubble_padding / 2, self.bubble_padding / 2, 
+        text_rect = QRect(self.bubble_padding // 2, self.bubble_padding // 2, 
                           self.bubble_width - self.bubble_padding, 
                           self.bubble_height - self.bubble_padding - self.metrics.height())
         painter.drawText(text_rect, Qt.AlignLeft | Qt.TextWordWrap, self.text)
 
-        # Paint the timestamp outside the bubble
-        painter.setPen(time_color)
-        time_rect = QRect(bubble_rect.left() if not self.sender else bubble_rect.right() - self.metrics.width(self.timestamp) - self.padding,
-                          bubble_rect.bottom() - self.padding / 2, self.metrics.width(self.timestamp), self.metrics.height())
-        painter.drawText(time_rect, Qt.AlignCenter, self.timestamp)
-
-        # Paint the tail of the bubble
-        tail_direction = 1 if self.sender else -1
-        tail_start = QPoint(bubble_rect.right() - 10 if self.sender else bubble_rect.left() + 10, bubble_rect.bottom())
-        tail_mid = QPoint(bubble_rect.right() + 10 * tail_direction if self.sender else bubble_rect.left() - 10 * tail_direction, bubble_rect.bottom() + 10)
-        tail_end = QPoint(tail_start.x() - 20 * tail_direction, tail_start.y())
-        tail_polygon = QPolygon([tail_start, tail_mid, tail_end])
-        painter.drawPolygon(tail_polygon)
+        painter.end() 
 
     def sizeHint(self):
         # Provide a suggested size for the widget based on the text content
@@ -103,7 +89,6 @@ class ChattingInterface(QWidget):
         self.name = name
         self.email = email
         self.initUI()
-        self.new_message.connect(self.add_message)
 
     def initUI(self):
         # Top Area
@@ -160,24 +145,27 @@ class ChattingInterface(QWidget):
             self.message_input.clear()
             QApplication.processEvents()
             self.scroll_to_bottom()
+            self.new_message.emit(message_text, current_time, True)
 
             # 입력창에 포커스를 되돌립니다.
             self.message_input.setFocus()
 
-    def add_message(self, message, timestamp, is_user):
+    def add_message(self, message, current_time, is_user):
         # 새 메시지 버블을 생성하고 레이아웃에 추가
-        message_bubble = MessageBubble(timestamp, message, is_user)
+        message_bubble = MessageBubble(message, is_user)
         message_bubble.calculateDimensions()
         # 각 메시지를 위한 가로 레이아웃을 생성합니다.
         message_layout = QHBoxLayout()
-        
+        current_time_label = QLabel(current_time)
         if is_user:
             # 사용자 메시지인 경우 오른쪽 정렬을 위해 왼쪽에 스트레치를 추가합니다.
             message_layout.addStretch(1)
+            message_layout.addWidget(current_time_label)
             message_layout.addWidget(message_bubble)
         else:
             # 다른 사람 메시지인 경우 왼쪽 정렬을 위해 오른쪽에 스트레치를 추가합니다.
             message_layout.addWidget(message_bubble)
+            message_layout.addWidget(current_time_label)
             message_layout.addStretch(1)
         
         # 메시지 레이아웃을 메시지 위젯에 추가합니다.
@@ -198,6 +186,7 @@ class ChattingInterface(QWidget):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+    font.Init()
     # 프로필 정보 설정
     profile_image_path = f'{Path(__file__).parents[1]}/static/img/base_profile-removebg-preview.png'
     name = '홍길동'
