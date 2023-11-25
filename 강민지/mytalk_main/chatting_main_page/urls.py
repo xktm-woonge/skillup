@@ -9,4 +9,5 @@ urlpatterns = [
     path('push_data_api/', views.push_load_data, name='push_data_api'),
     path('get_message_api/', views.get_message_data, name='get_message_api'),
     path('set_changed_user_info_api/', views.set_changed_user_info, name='set_changed_user_info_api'),
+    path('friend_request_api/', views.friend_request, name='friend_request_api'),
 ]

@@ -108,19 +108,15 @@ function sendedMessage(message_data) {
 }
 
 
-function addOfflineUser(data){
+function addOfflineUser(data, load=true){
 	let offlinePoint = document.getElementById("offline_friends");
-	let childNodes = offlinePoint.childNodes;
-	for (let i = childNodes.length - 1; i > 2; i--) {
-		offlinePoint.removeChild(childNodes[i]);
+	if (load){
+		let childNodes = offlinePoint.childNodes;
+		for (let i = childNodes.length - 1; i > 2; i--) {
+			offlinePoint.removeChild(childNodes[i]);
+		}
 	}
 	offlinePoint.innerHTML += createFriendsList(data);
-}
-
-function dotsEvents(){
-    const acceptFriendsAll = document.querySelector(".btn--Done_all");
-    const deleteNoticesAll = document.querySelector(".btn--Delete_all");
-    // const 
 }
 
 function runEvents(){
@@ -144,15 +140,15 @@ function loadCurrUserData(reload=false) {
 		if (page_data != "") {
 			document.getElementById("online_friends").innerHTML = createFriendsList(page_data.friend_list.online);
 			document.querySelector(".side_bar--body.room").innerHTML = createChatList(page_data.chatting_room_list);
-			document.querySelector(".side_bar--body.notice").innerHTML = createNoticesBox(page_data.notice_data);
 			addOfflineUser(page_data.friend_list.offline);
-		}
-		if(!reload){
-			document.querySelector(".setting--user").innerHTML = page_data.curr_user_data;
-			document.querySelector(".activeSet").value = page_data.present_status;
-			webSocketInitialization(socketPath, 'load')
-			.then(()=>socket.send(JSON.stringify({"message":"user_login"}))
-			)
+			if(!reload){
+				document.querySelector(".side_bar--body.notice").innerHTML = createNoticesBox(page_data.notice_data);
+				document.querySelector(".setting--user").innerHTML = page_data.curr_user_data;
+				document.querySelector(".activeSet").value = page_data.present_status;
+				webSocketInitialization(socketPath, 'load')
+				.then(()=>socket.send(JSON.stringify({"message":"user_login"}))
+				)
+			}
 		}
 		runEvents();
 		});
@@ -243,6 +239,57 @@ function addProfileFile(fileData, used='apply') {
 		}
 	};
 	fileReader.readAsDataURL(fileData.files[0]);
+}
+
+function userEmailConform(email){
+	if (email){
+		fetch("/main/friend_request_api/",{
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"X-CSRFToken": csrfToken, // CSRF 토큰을 헤더에 추가
+			},
+			body : JSON.stringify({"email":email}),
+		})
+		.then(handleResponse)
+		.then(function(data){
+			if (data.message === "request_to_each_other") {
+				swal("서로 친구 신청되어 친구가 추가되었습니다.");
+			} else if (data.message !== "success"){
+				friendRequestSwal(data.message);
+			} else if (data.message === "success"){
+				swal(`${email}\n 위 이메일의 사용자에게 친구 신청을 보냈습니다.`);
+				let noticeNum = data.noti_num;
+				socket.send(JSON.stringify({"message":"add_notice", "noti_num":noticeNum}));
+			}
+		})
+	}
+
+}
+
+function friendRequestSwal(type){
+	let title = ""
+	let content = ""
+	switch(type){
+		case "unsubscribed_email":
+			title = "유효하지 않은 이메일";
+			content = "유효하지 않은 이메일입니다.";
+			break;
+		case "already_executed":
+			content = "이미 친구인 사용자입니다.";
+			break;
+		case "request_duplication":
+			content = "이미 요청이 완료된 사용자입니다.";
+			break;
+	}
+	swal(`${title}`, `${content}`, `error`, {
+		buttons: [`취소`, `재입력`],
+	})
+	.then((isRetry)=>{
+		if (isRetry){
+			openEmailSwal();
+		}
+	})
 }
 
 // user 정보 DB와 비교하여 결과 전달해주는 함수

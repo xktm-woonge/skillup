@@ -69,33 +69,50 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
             message_box_data['direction'] = 'send'
             message_box_data['roomnum'] = text_data_json['room_number']
             await self.send(json.dumps({'message':'send_message', 'data': message_box_data}))
-            await self.comform_conv_user(is_chatbot_conv, text_data_json, self.curr_user, message_box_data)
+            await self.conform_conv_user(is_chatbot_conv, text_data_json, self.curr_user, message_box_data)
         else:
             await dp.message_read(message, text_data_json, self.curr_user)
         
-    async def comform_conv_user(self, ischatbot, data, user, message_box_data):
+    async def conform_conv_user(self, ischatbot, data, user, message_box_data):
+        await self.send_last_message(message_box_data)
         if ischatbot:
             chat_data = await dp.chatbot_conv(user, data)
             await self.send(json.dumps({'message':'receive_mesaage','data': chat_data}))
+            await self.send_last_message(chat_data)
         else :
             message_box_data['direction'] = 'given'
             await self.channel_layer.group_send(
                 self.room_group_name,  # 그룹 이름
                 {'type': 'receive_mesaage','data': message_box_data, 'sender_channel_name': self.channel_name},
             )
+        
+    async def send_last_message(self, data):        
+        curr_user = await dp.just_receive(data['roomnum'])
+        for i in curr_user:
+            try:
+                await connected_users[f"{i}"].send(json.dumps({"message":"last_message", "data":data}))
+            except KeyError:
+                continue
             
                 
     async def receive_mesaage(self, event):
         if self.channel_name != event.get('sender_channel_name'):
             await self.send(text_data=json.dumps({'message':'receive_mesaage', 'data':event['data']}))            
-                    
+            
+                           
 class DataProvider():
     def __init__(self):
         self.send_data = {}
     
     async def message_read(self, message, data, user):
         if message == 'add_notice':
-            self.add_notice_boxs()
+            notice_data, receivers = await self.add_notice_boxs(data)
+            self.send_data = {'message':'friend_request', 'data':notice_data}
+            for i in receivers:
+                try:
+                    await connected_users[f"{i}"].send(json.dumps(self.send_data))
+                except KeyError:
+                    continue
         elif message == 'add_friend':
             self.add_friends_list()
         elif message == 'add_chat_list':
@@ -113,8 +130,14 @@ class DataProvider():
             await self.delete_notice(data, user)
             self.send_data = {'message':'delete_notice','noti_num':data['noti_num']}
         elif message in ['accept_friend', 'reject_friend']:
-            friends = await self.process_friends_request(data, user)
-            self.send_data = {'message':'delete_notice','noti_num':data['noti_num']}
+            friend = await self.process_friends_request(data, user)
+            self.send_data = {'message':message,'noti_num':data['noti_num']}
+            if friend:
+                self.send_data['friends_data'] = await self.add_friends_list(friend)
+                try:
+                    await connected_users[f"{friend}"].send(json.dumps({'message':message,'noti_num':data['noti_num'],'friends_data': await self.add_friends_list(user)}))
+                except KeyError:
+                    pass
         elif message == 'enter_chat_from_friends':
             room_num, is_new_chat = await self.enter_chat_from_friends(data['friend_name'], user)
             self.send_data = {'message':'enter_chat_room_from_friend', 'room_num':room_num, 'is_new_chat':is_new_chat}
@@ -141,11 +164,28 @@ class DataProvider():
             return user.id
         return None
     
-    def add_notice_boxs(self):
-        pass
+    @database_sync_to_async
+    def add_notice_boxs(self, notice_num):
+        receivers = list(NotificationReceivers.objects.filter(notification_id=4).values_list("receiver_id", flat=True))
+        notice = Notifications.objects.get(id=4)
+        content = set_notice_box_data(notice)
+        return content, receivers
     
-    def add_friends_list(self):
-        pass
+    @database_sync_to_async
+    def add_friends_list(self, friend_id):
+        friend_info = user_model.objects.get(id=friend_id)
+        friend_status, friend_data = set_friend_list_data(friend_info)
+        if friend_status:
+            context = {'online': friend_data}
+        else:
+            context = {'offline': friend_data}
+        context['is_online'] = friend_status
+        return context
+    
+    @database_sync_to_async
+    def just_receive(self, roomnum):
+        chat_user = list(ConversationParticipants.objects.filter(conversation_id=roomnum).values_list('user_id', flat=True))
+        return chat_user
     
     @database_sync_to_async
     def add_chat_list(self, room_num, user):
@@ -198,8 +238,8 @@ class DataProvider():
         friend_requester = Notifications.objects.get(id=notice_number).sender_id
         if data['message'] == 'accept_friend':
             print(f"frinends_requester={friend_requester}, user={user}")
-            # Friends.objects.create(friend_id=friend_requester, user_id=user)
-            # Friends.objects.create(friend_id=user, user_id=friend_requester)
+            # make_friends(user, friend_requester)
+            return friend_requester
         else:
             print('거절이야')
         # NotificationReceivers.objects.filter(notification_id=notice_number, receiver_id=user).update(is_conform=True)
@@ -208,14 +248,15 @@ class DataProvider():
     @database_sync_to_async
     def delete_notice(self, data, user):
         notice_number = data['noti_num']
-        NotificationReceivers.objects.filter(notification_id=notice_number, receiver_id=user).update(is_conform=True)
+        # NotificationReceivers.objects.filter(notification_id=notice_number, receiver_id=user).update(is_conform=True)
         
     @database_sync_to_async
     def enter_chatting_room(self, room_num, user):
         messages = Messages.objects.filter(conversation_id=room_num).values_list('id', flat=True)
         for message_id in messages:
             try:
-                MessageReceivers.objects.filter(message_id=message_id, receiver_id=user).update(is_read=True)
+                # MessageReceivers.objects.filter(message_id=message_id, receiver_id=user).update(is_read=True)
+                pass
             except ObjectDoesNotExist:
                 continue
     
@@ -272,7 +313,7 @@ class DataProvider():
         return current_data, is_chatbot_conv
     
     @database_sync_to_async
-    def chatbot_conv(self, curr_user,data):
+    def chatbot_conv(self, curr_user, data):
         answer = chatbot.receive_answer(data['send_text'])
         room_number = data['room_number']
         sended_time = datetime.now()
@@ -283,8 +324,8 @@ class DataProvider():
             'message_text' : answer,
             'timestamp' : sended_time,
         }
-        _, message_box_content = create_message_box(curr_user, data, last_message_time)
-        message_box_content['add_data'] = {'last_message':answer, 'roomnum' :room_number}
+        _, message_box_content = create_message_box(data, last_message_time)
+        message_box_content['roomnum'] = room_number
         return message_box_content
 
     @database_sync_to_async

@@ -22,7 +22,7 @@ function changeSideBar(goto){
 // 채팅방 내 대화 시 소켓 통신 후 실행할 함수
 function addChattingSocketFunction(message){
     if (["send_message", "receive_mesaage"].indexOf(message.message) !== -1){
-        // console.log(message.message);
+        console.log(message.message);
         document.getElementsByClassName("chat--body")[0].innerHTML += addMessageBox(message);
         scrollToBottomInChatting();
     }
@@ -33,16 +33,17 @@ function addChattingSocketFunction(message){
 
 // 채팅방에 들어가 있지 않은 경우 소켓 통신 후 실행할 함수
 function addChatJustReceiveFuntion(message){
-    if(["send_message", "receive_mesaage"].indexOf(message.message) !== -1){
+    if(["last_message"].indexOf(message.message) !== -1){
         let roomnum = message.data["roomnum"];
+        print(message);
         document.getElementById(`room_num_${roomnum}`).querySelector(".room__status").textContent = message.data["message"];
     }
 }
-
 // 알림창 내부 소켓 통신 후 실행할 함수 -- 개발 중
 function addNotiFunction(message){
     if(message.message === "friend_request"){
-
+        document.querySelector(".side_bar--body.notice").innerHTML += createNoticesBox({"1":message.data});
+        setProfilePic();
     }
     else if(message.message === "system"){
 
@@ -50,10 +51,22 @@ function addNotiFunction(message){
     else if(message.message === "receive_message"){
 
     }
-    else if(message.message === "delete_notice"){
+    else if(["delete_notice", "accept_friend", "reject_friend"].indexOf(message.message) !== -1){
         let notiNum = message["noti_num"];
         let deleteElement = document.querySelector(`.notice--group.num_${notiNum}`);
-        deleteElement.remove();
+        if (deleteElement){
+            deleteElement.remove();
+        }
+        if (message.message === "accept_friend"){
+            if(message.friends_data.is_online){
+                document.getElementById("online_friends").innerHTML += createFriendsList({"1":message.friends_data.online});
+            } else {
+                addOfflineUser({"1":message.friends_data.offline}, false);
+            }
+            setProfilePic();
+            changeSideBar("friends");
+            addOpenChattingFromFriendsListEvent();
+        }
     }
 }
 
@@ -254,6 +267,7 @@ function userLogout(){
         }
     })
 }
+
 
 document.getElementById("alert--logout").addEventListener("click", function(e){
     e.preventDefault();

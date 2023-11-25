@@ -3,7 +3,6 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model, logout
 from django.template.loader import get_template
-from django.templatetags.static import static
 from django.utils.safestring import mark_safe
 from datetime import datetime
 from .models import *
@@ -12,50 +11,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 
 user_model = get_user_model()
-
-def notice_pretreatment(data):
-    timestamp = data.created_at.strftime('%Y-%m-%d %H:%M:%S')
-    
-    try:
-        sender_name = user_model.objects.get(id=data.sender_id).name
-    except user_model.DoesNotExist:
-        sender_name = 'system'
-    if data.type in ['system', 'danger']:
-        img_src = static('icon/Notification.svg')
-    else:
-        get_sender_profile_pic = user_model.objects.get(id=data.sender_id).profile_picture
-        img_src = static(f'img/{get_sender_profile_pic}')
-    return timestamp, sender_name, img_src
         
-def set_notice_box_data(notice):
-    timestamp_string, sender_name, img_src = notice_pretreatment(notice)
-    
-    context = {
-        'noti_type' : notice.type,
-        'noti_num' : f'num_{notice.id}',
-        'img_src' : img_src,
-        'content' : notice.content,
-        'title' : sender_name,
-        'created_at' : timestamp_string,
-        'button_type': notice.type,
-    }
-    return context
-
-def set_friend_list_data(friend_info):
-    if friend_info.status == 'offline':
-        show_user_status = False
-    else:
-        show_user_status = friend_info.is_online
-    
-    context = {
-        "name" : friend_info.name,
-        "team" : '',
-        "status" : 'offline' if not friend_info.is_online else friend_info.status,
-        "status_message" : friend_info.status_message if friend_info.status_message and friend_info.status_message != "None" else "",
-        "profile_picture" : friend_info.profile_picture,
-    }
-    return show_user_status, context
-
 def get_notice_list(request):
     notice_contents = {}
     received_notices = NotificationReceivers.objects.filter(receiver=request.user.id, is_conform=False)
@@ -180,6 +136,44 @@ def set_changed_user_info(request):
     except IntegrityError:
         return JsonResponse({'message':'user_name_duplication'})
     
+def request_pretreatment(user, friend):  
+    try:
+        user_request = Notifications.objects.filter(type="friends", sender_id=user).values_list("id", flat=True)
+        for notinum in user_request:
+            NotificationReceivers.objects.get(notification_id=notinum, receiver_id=friend, is_conform=False)
+            return True, notinum
+        return False, ""
+    except ObjectDoesNotExist:
+        return False, ""
+    
+def friend_request(request):
+    if request.method == "POST":
+        user = request.user.id
+        email = json.loads(request.body.decode('utf-8'))["email"]
+        try:
+            requested_friend_id = user_model.objects.get(email=email).id
+            # friends = Friends.objects.filter(user_id=user).values_list("friend_id", flat=True)
+            # if requested_friend_id in friends:
+            #     raise Exception
+        except ObjectDoesNotExist:
+            return JsonResponse({'message':'unsubscribed_email'})
+        except Exception:
+            return JsonResponse({"message":"already_executed"})
+        else :
+            has_user_request, _ = request_pretreatment(user, requested_friend_id)
+            has_friend_request, notinum = request_pretreatment(requested_friend_id, user)
+            
+            if not has_user_request:
+                return JsonResponse({"message":"request_duplication"})
+            elif not has_user_request and has_friend_request:
+                # NotificationReceivers.objects.filter(notification_id=notinum, receiver_id=user).update(is_conform=True)
+                # make_friends(user, requested_friend_id)
+                return JsonResponse({"message":"request_to_each_other"})
+            elif has_user_request and not has_friend_request:
+                last_num = Notifications.objects.filter().last().id + 1
+                # Notifications.objects.create(id=last_num, type='friends', sender_id=user)
+                # NotificationReceivers.objects.create(notification_id=last_num, receiver_id=requested_friend_id)
+                return JsonResponse({'message':'success', 'noti_num':last_num})
 
 def load_chatting_main_page(request):
     if request.method =="GET":

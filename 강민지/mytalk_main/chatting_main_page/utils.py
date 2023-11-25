@@ -1,6 +1,38 @@
 
 from .models import *
+from django.contrib.auth import get_user_model
 from datetime import datetime
+from django.templatetags.static import static
+
+user_model = get_user_model()
+
+def notice_pretreatment(data):
+    timestamp = data.created_at.strftime('%Y-%m-%d %H:%M:%S')
+    try:
+        sender_name = user_model.objects.get(id=data.sender_id).name
+    except user_model.DoesNotExist:
+        sender_name = 'SYSTEM'
+        
+    if data.type in ['system', 'danger']:
+        img_src = static('icon/Notification.svg')
+    else:
+        get_sender_profile_pic = user_model.objects.get(id=data.sender_id).profile_picture
+        img_src = static(f'img/{get_sender_profile_pic}')
+    return timestamp, sender_name, img_src
+
+def set_notice_box_data(notice):
+    timestamp_string, sender_name, img_src = notice_pretreatment(notice)
+    
+    context = {
+        'noti_type' : notice.type,
+        'noti_num' : f'num_{notice.id}',
+        'img_src' : img_src,
+        'content' : notice.content,
+        'title' : sender_name,
+        'created_at' : timestamp_string,
+        'button_type': notice.type,
+    }
+    return context
 
 def create_message_box(data, prev_date):     
     context = {
@@ -17,6 +49,25 @@ def create_message_box(data, prev_date):
             prev_date = data['timestamp']
 
     return prev_date, context
+
+def make_friends(user, friend):
+    Friends.objects.create(friend_id=friend, user_id=user)
+    Friends.objects.create(friend_id=user, user_id=friend)
+
+def set_friend_list_data(friend_info):
+    if friend_info.status == 'offline':
+        show_user_status = False
+    else:
+        show_user_status = friend_info.is_online
+    
+    context = {
+        "name" : friend_info.name,
+        "team" : '',
+        "status" : 'offline' if not friend_info.is_online else friend_info.status,
+        "status_message" : friend_info.status_message if friend_info.status_message and friend_info.status_message != "None" else "",
+        "profile_picture" : friend_info.profile_picture,
+    }
+    return show_user_status, context
 
 def create_chatting_room(user_data, room):
     try:
