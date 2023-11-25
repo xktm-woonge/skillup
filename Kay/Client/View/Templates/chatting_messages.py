@@ -120,10 +120,15 @@ class ChattingInterface(QWidget):
         bottom_layout = QHBoxLayout()
         self.message_input = EnterTextEdit(self)
         self.message_input.setFixedHeight(50)
+        
         send_button = QPushButton()
-        send_icon = QIcon(f'{Path(__file__).parents[1]}/static/icon/Send.svg')  # SVG 이미지 파일 경로
+        send_icon = QIcon(f'{Path(__file__).parents[1]}/static/icon/Send.svg')
         send_button.setIcon(send_icon)
+        send_button.setIconSize(QSize(30, 30))  # 아이콘 크기 설정
+        send_button.setStyleSheet("QPushButton { border: none; border-radius: 20px; }")  # 테두리 제거 및 둥근 테두리 설정
+        send_button.setCursor(Qt.PointingHandCursor)  # 마우스 hover 시 손가락 모양으로 변경
         send_button.clicked.connect(self.send_message)
+
         bottom_layout.addWidget(self.message_input)
         bottom_layout.addWidget(send_button)
 
