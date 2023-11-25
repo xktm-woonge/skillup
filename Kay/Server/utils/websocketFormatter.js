@@ -1,3 +1,5 @@
+// ./utils/websocketFormatter.js
+
 exports.formatWebSocket = function(status, category, message, data) {
     const now = new Date();
     const year = now.getFullYear();

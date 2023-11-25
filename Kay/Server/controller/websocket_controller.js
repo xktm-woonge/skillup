@@ -1,6 +1,7 @@
 // ./controller/websocket_controller.js
 
 const notificationsController = require('./notifications_controller');
+const conversationsController = require('./conversations_controller');
 const socketManager = require('../utils/socketManager');
 const dbManager = require('../model/dbManager');
 const url = require('url');
@@ -36,12 +37,23 @@ exports.initializeWebsocketListeners = function() {
                     // sendFriendResponse 이벤트 처리
                     // 여기서 data 객체는 필요한 정보를 담고 있어야 합니다.
                     // 예를 들어, user_id와 sender_id가 필요합니다.
-                    notificationsController.handleFriendResponse(data.user_id, data.sender_id, data.response, ws, (err) => {
+                    notificationsController.handleFriendResponse(data.info.user_id, data.info.sender_id, data.info.response, ws, (err) => {
                         if (err) {
                             console.error('Error deleting notification:', err);
                             // 필요한 경우 클라이언트에게 오류 메시지를 전송할 수 있습니다.
                         } else {
                             console.log('Notification deleted successfully');
+                            // 필요한 경우 클라이언트에게 성공 메시지를 전송할 수 있습니다.
+                        }
+                    });
+                    break;
+                case 'makeConversation':
+                    conversationsController.handleConversations(data, ws, (err) => {
+                        if (err) {
+                            console.error('Error makeConversation:', err);
+                            // 필요한 경우 클라이언트에게 오류 메시지를 전송할 수 있습니다.
+                        } else {
+                            console.log('makeConversation successfully');
                             // 필요한 경우 클라이언트에게 성공 메시지를 전송할 수 있습니다.
                         }
                     });

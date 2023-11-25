@@ -154,3 +154,41 @@ exports.getUserIdByEmail = function(email, callback) {
     }
   });
 };
+
+// 대화방이 존재하는지 확인합니다.
+exports.getConversationByEmail = function(email, callback) {
+  const sql = `SELECT * FROM Conversations WHERE name = ?`;
+  pool.query(sql, [email], (error, results) => {
+      if (error) {
+          return callback(error, null);
+      }
+      if (results.length > 0) {
+          callback(null, results[0]);
+      } else {
+          callback(null, null);
+      }
+  });
+};
+
+// 새 대화방을 생성합니다.
+exports.createConversation = function(email, callback) {
+  const sql = `INSERT INTO Conversations (name) VALUES (?)`;
+  pool.query(sql, [email], (error, results) => {
+      if (error) {
+          return callback(error, null);
+      }
+      const newConversationId = results.insertId;
+      callback(null, newConversationId);
+  });
+};
+
+// 대화방에 참여자를 추가합니다.
+exports.addParticipantToConversation = function(conversationId, email, callback) {
+  // 우선 email을 통해 userId를 가져옵니다.
+  this.getUserIdByEmail(email, (err, userId) => {
+      if (err) return callback(err, null);
+
+      const sql = `INSERT INTO ConversationParticipants (conversation_id, user_id) VALUES (?, ?)`;
+      pool.query(sql, [conversationId, userId], callback);
+  });
+};

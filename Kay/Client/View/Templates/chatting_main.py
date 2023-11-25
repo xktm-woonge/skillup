@@ -64,9 +64,6 @@ class ChattingWindow(QWidget):
         self.right_area_widget.setGeometry(
             self.sidebar_width + self.middle_width, 0, self.right_width, self.height)
         
-        self.chatting_messages = ChattingInterface()
-        self.right_area_widget.addWidget(self.chatting_messages)
-        
         # 중앙에 표시될 위젯을 위한 레이아웃
         central_layout = QVBoxLayout()
         central_layout.setAlignment(Qt.AlignCenter)  # 레이아웃의 내용을 가운데 정렬
@@ -82,9 +79,9 @@ class ChattingWindow(QWidget):
         central_layout.addWidget(no_message_label)  # 중앙 레이아웃에 위젯 추가
 
         # Right Area에 레이아웃 설정
-        central_widget = QWidget()
-        central_widget.setLayout(central_layout)
-        self.right_area_widget.addWidget(central_widget)
+        self.central_widget = QWidget()
+        self.central_widget.setLayout(central_layout)
+        self.right_area_widget.addWidget(self.central_widget)
         
         self.connect_slot()
         self.sidebar.notification_button.click()
@@ -120,7 +117,7 @@ class ChattingWindow(QWidget):
     @pyqtSlot()
     def show_messages(self):
         # self.clear_middle_areas()
-        self.right_area_widget.setCurrentWidget(self.chatting_messages)
+        self.right_area_widget.setCurrentWidget(self.central_widget)
 
     def enterEvent(self, event):
         self.sidebar.raise_()  # Make sure sidebar is above other widgets

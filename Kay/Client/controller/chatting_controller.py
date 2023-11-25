@@ -42,6 +42,7 @@ class ChattingController(QObject):
 
     def connect_slot(self):
         self.websocket_api.add_friend.connect(self.add_friend)
+        self.websocket_api.call_conversation.connect(self.call_conversation)
         # self.chatting_window.notification_button.clicked.connect(self.show_notifications)
         # self.chatting_window.friend_list_button.clicked.connect(self.show_friend_list)
         # self.chatting_window.chat_window_button.clicked.connect(self.show_chats)
@@ -55,10 +56,17 @@ class ChattingController(QObject):
     #     self.chatting_window.middle_area.addWidget(notifications_list_widget)
     #     # Similarly, add a widget to the right area if needed
 
-    @pyqtSlot()
-    def add_friend(self):
+    @pyqtSlot(dict)
+    def add_friend(self, data):
         pass
         # Similarly, add a widget to the right area if needed
+
+    @pyqtSlot(dict)
+    def call_conversation(self, data):
+        name = data['name']
+        email = data['email']
+        imagePath = data['imagePath']
+        print(name, email, imagePath)
 
     # @pyqtSlot()
     # def show_chats(self):
@@ -155,20 +163,27 @@ class ChattingController(QObject):
             self.chatting_window.friend_list_widget.friends_layout.addWidget(friend_widget)
 
             # 더블 클릭 시그널에 슬롯 연결
-            friend_widget.doubleClicked.connect(self.print_friend_info)
+            friend_widget.doubleClicked.connect(self.make_conversation)
 
     # 더블 클릭 정보를 처리하는 슬롯
-    def print_friend_info(self, name, email, image_path):
+    def make_conversation(self, name, email, image_path):
         print(f"Name: {name}, Email: {email}, Image Path: {image_path}")
+        info = {
+            "name": name,
+            "email": email,
+            "image_path": image_path
+        }
+        message = make_websocket_message("makeConversation", info)
+        self.websocket_api.send_message(message)
 
     def handle_friend_response(self, sender_id, response, widget):
         # 서버에 메시지 전송
-        message = {
-            "event": "sendFriendResponse",
+        info = {
             "user_id": self.user_id,
             "sender_id": sender_id,
             "response": response
         }
+        message = make_websocket_message('sendFriendResponse', info)
         self.websocket_api.send_message(message)
 
         # 위젯 삭제

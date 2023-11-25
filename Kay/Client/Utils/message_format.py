@@ -1,8 +1,7 @@
-import json
 
 
-def create_message(command, info):
-    return json.dumps({
-        "command": command,
+def make_websocket_message(event, info):
+    return {
+        "event": event,
         "info": info
-    })
+    }
