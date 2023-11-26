@@ -201,12 +201,91 @@ exports.createConversation = function(email, callback) {
   });
 };
 
-exports.addParticipantToConversation = function(conversationId, email, callback) {
+exports.addParticipantToConversation = function(conversationId, email, target_email, callback) {
   // 우선 email을 통해 userId를 가져옵니다.
   this.getUserIdByEmail(email, (err, userId) => {
       if (err) return callback(err, null);
 
       const sql = `INSERT INTO ConversationParticipants (conversation_id, user_id) VALUES (?, ?)`;
       pool.query(sql, [conversationId, userId], callback);
+  });
+};
+
+exports.checkAndAddParticipantToConversation = function(conversationId, target_email, callback) {
+  // target_email을 통해 userId를 가져옵니다.
+  this.getUserIdByEmail(target_email, (err, targetUserId) => {
+      if (err) return callback(err);
+
+      // 대화방 참여 여부를 확인합니다.
+      const checkSql = `SELECT * FROM ConversationParticipants WHERE conversation_id = ? AND user_id = ?`;
+      pool.query(checkSql, [conversationId, targetUserId.id], (checkErr, results) => {
+          if (checkErr) return callback(checkErr);
+
+          if (results.length === 0) {
+              // 참여자가 대화방에 없는 경우 참여자를 추가합니다.
+              const addSql = `INSERT INTO ConversationParticipants (conversation_id, user_id) VALUES (?, ?)`;
+              pool.query(addSql, [conversationId, targetUserId.id], callback);
+          } else {
+              // 참여자가 이미 대화방에 있는 경우
+              callback(null, "Participant already exists in the conversation");
+          }
+      });
+  });
+};
+
+exports.getConversationById = function(conversationId, callback) {
+  const sql = `SELECT * FROM Conversations WHERE id = ?`;
+  pool.query(sql, [conversationId], (error, results) => {
+      if (error) return callback(error, null);
+      if (results.length > 0) {
+          callback(null, results[0]);
+      } else {
+          callback(null, null);
+      }
+  });
+};
+
+exports.addMessageToConversation = function(conversationId, senderEmail, messageText, callback) {
+  // senderEmail을 통해 userId를 가져옵니다.
+  this.getUserIdByEmail(senderEmail, (err, userId) => {
+      if (err) return callback(err);
+
+      // 메시지를 Messages 테이블에 추가합니다.
+      const sql = `INSERT INTO Messages (sender_id, conversation_id, message_text) VALUES (?, ?, ?)`;
+      pool.query(sql, [userId.id, conversationId, messageText], callback);
+  });
+};
+
+exports.getUserStatus = function(email, callback) {
+  const sql = `SELECT status FROM Users WHERE email = ?`;
+  pool.query(sql, [email], (error, results) => {
+      if (error) {
+          return callback(error, null);
+      }
+      if (results.length > 0) {
+          callback(null, results[0].status);
+      } else {
+          callback(new Error("No user found with the given email"), null);
+      }
+  });
+};
+
+exports.getConversationByUserId = function(userId, callback) {
+  const sql = `
+      SELECT Conversations.*
+      FROM ConversationParticipants
+      JOIN Conversations ON ConversationParticipants.conversation_id = Conversations.id
+      WHERE ConversationParticipants.user_id = ?
+  `;
+
+  pool.query(sql, [userId], (error, results) => {
+      if (error) {
+          return callback(error, null);
+      }
+      if (results.length > 0) {
+          callback(null, results[0]); // 첫 번째 결과 반환
+      } else {
+          callback(null, null); // 대화방이 없는 경우
+      }
   });
 };

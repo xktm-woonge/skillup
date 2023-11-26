@@ -30,9 +30,11 @@ CREATE TABLE conversations (
 CREATE TABLE ConversationParticipants (
     conversation_id INT,
     user_id INT,
-    PRIMARY KEY(conversation_id, user_id),
+    user_id2 INT,
+    PRIMARY KEY(conversation_id, user_id, user_id2),
     FOREIGN KEY(conversation_id) REFERENCES Conversations(id),
-    FOREIGN KEY(user_id) REFERENCES Users(id)
+    FOREIGN KEY(user_id) REFERENCES Users(id),
+    FOREIGN KEY(user_id2) REFERENCES Users(id)
 );
 
 // 메시지 테이블(Messages)

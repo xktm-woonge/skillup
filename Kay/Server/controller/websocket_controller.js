@@ -59,9 +59,10 @@ exports.initializeWebsocketListeners = function() {
                     });
                     break;
                 case 'sendMessage':
-                    wss.clients.forEach(client => {
-                        if (client.readyState === WebSocket.OPEN) {
-                            client.send(JSON.stringify({ event: 'newMessage', data: data.data }));
+                    conversationsController.handleSendMessage(data, wss, (err) => {
+                        if (err) {
+                            console.error('Error in sendMessage:', err);
+                            // 필요한 경우 오류 메시지 전송
                         }
                     });
                     break;

@@ -71,7 +71,7 @@ class ChattingController(QObject):
     @pyqtSlot(str, str, int)
     def send_message_to_server(self, email, message_text, conversation_id):
         info = {
-            "sender_id": self.user_id,
+            "sender_email": self.user_id,
             "conversation_id": conversation_id,
             "email": email,
             "message_text": message_text
