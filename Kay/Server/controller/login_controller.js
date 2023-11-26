@@ -88,6 +88,19 @@ exports.get_userInfo = function(req, res) {
                           return res.json(responseFormatter.formatResponse('FAIL', '알림 정보를 불러올 수 없습니다.'));
                       }
 
+                      // 프로필 이미지 URL 변경
+                      const profileImageUrl = `http://${serverAddr}:${httpPort}/profile_picture/${userInfo.profile_picture}`;
+                      userInfo['profile_picture'] = profileImageUrl;
+
+                      // 알림의 이미지 경로 수정
+                      if (notifications && notifications.length > 0) {
+                          notifications.forEach(notification => {
+                              if (notification.img) {
+                                  notification.image_path = `http://${serverAddr}:${httpPort}/friends_request/${notification.img}`;
+                              }
+                          });
+                      }
+
                       // 최종적으로 모든 정보를 클라이언트에 전달
                       res.json(responseFormatter.formatResponse('SUCCESS', '정보를 성공적으로 가져왔습니다.', {
                           userInfo, // 사용자의 전체 프로필 정보

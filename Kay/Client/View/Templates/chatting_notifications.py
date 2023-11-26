@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QScrollArea, QPushButt
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QPixmap, QPainter, QPainterPath, QColor, QIcon
 from PyQt5.Qt import QSize
+from datetime import datetime, timezone
 
 try:
     from utils import *
@@ -85,7 +86,8 @@ class NotificationWidget(QWidget):
         self.accept_button.clicked.connect(lambda: self.response_signal.emit(content, "accepted"))
         self.reject_button.clicked.connect(lambda: self.response_signal.emit(content, "rejected"))
         
-        date_label = QLabel(date, base_widget)
+        formatted_date = self.format_datetime(date)
+        date_label = QLabel(formatted_date, base_widget)
         date_label.setObjectName("date_label")
         date_label.setFont(font.NOTOSAN_FONT_MEDIUM)
         
@@ -112,6 +114,15 @@ class NotificationWidget(QWidget):
         main_layout = QVBoxLayout(self)
         main_layout.addWidget(base_widget)
         self.setLayout(main_layout)
+
+    def format_datetime(self, date_str):
+        """ISO 형식의 날짜 및 시간 문자열을 지정된 형식으로 변환합니다."""
+        # 'Z'를 제거하고 문자열을 datetime 객체로 파싱합니다.
+        date_obj = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
+        # UTC 시간을 현지 시간대로 변환합니다.
+        local_date_obj = date_obj.astimezone(timezone.utc).astimezone()
+        # 원하는 형식으로 날짜 및 시간을 포맷팅합니다.
+        return local_date_obj.strftime("%Y-%m-%d %H:%M:%S")
         
     def _getRoundedPixmap(self, source_pixmap):
         """Returns a rounded version of the input pixmap."""

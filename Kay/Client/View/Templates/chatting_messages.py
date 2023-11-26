@@ -146,7 +146,7 @@ class ChattingInterface(QWidget):
         message_text = self.message_input.toPlainText()
         if message_text.strip():  # 메시지가 비어있지 않은 경우에만 처리
             # 현재 시간을 가져옵니다.
-            current_time = QTime.currentTime().toString("HH:mm")
+            current_time = QTime.currentTime().toString("hh:mm AP")
             self.add_message(message_text, current_time, True)
             self.message_input.clear()
             QApplication.processEvents()

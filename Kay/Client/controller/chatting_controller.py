@@ -1,6 +1,6 @@
 # ./controller/chatting_controller.py
 
-from PyQt5.QtCore import Qt, QUrl, QSize, QObject, pyqtSlot
+from PyQt5.QtCore import Qt, QUrl, QSize, QObject, pyqtSlot, QDateTime
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest
 import sys
@@ -174,10 +174,27 @@ class ChattingController(QObject):
             conversation_widget = ChattingInterface(image_path, name, email, conversation_id)
             self.chatting_window.right_area_widget.addWidget(conversation_widget)
 
+            # 메시지를 표시합니다.
+            self.display_messages(conversation_id, conversation_widget)
+
+            conversation_widget.scroll_to_bottom()
+
             self.conversation_index[conversation_id] = i
             conversation_widget.sending_message.connect(self.send_message_to_server)
 
             widget.doubleClicked.connect(self.on_chat_widget_clicked)
+
+    def display_messages(self, conversation_id, conversation_widget):
+        # 해당 대화방의 메시지를 필터링하고 표시합니다.
+        for message in self.messages:
+            if message['conversation_id'] == conversation_id:
+                # 메시지 텍스트와 시간을 추출합니다.
+                message_text = message['message_text']
+                timestamp = message['timestamp']
+                # 시간 형식을 'HH:mm AM/PM' 형태로 변환합니다.
+                formatted_time = QDateTime.fromString(timestamp, Qt.ISODate).toString("hh:mm AP")
+                # 메시지를 대화 인터페이스에 추가합니다.
+                conversation_widget.add_message(message_text, formatted_time, message['sender_id'] == self.userInfo['id'])
 
     @pyqtSlot(int)
     def on_chat_widget_clicked(self, conversation_id):

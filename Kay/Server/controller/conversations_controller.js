@@ -17,7 +17,7 @@ exports.handleConversations = function(data, ws, callback) {
             if (targetUserIdErr) return callback(targetUserIdErr);
 
             // 대화방 존재 여부 확인
-            dbManager.checkConversationExistence(userId, targetUserId, (convExistErr, conversation) => {
+            dbManager.checkConversationExistence_withTargetId(userId, targetUserId, (convExistErr, conversation) => {
                 if (convExistErr) return callback(convExistErr);
 
                 if (conversation) {

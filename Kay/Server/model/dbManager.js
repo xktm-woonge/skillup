@@ -304,6 +304,26 @@ exports.checkConversationExistence = function(conversation_id, userId, callback)
   });
 };
 
+exports.checkConversationExistence_withTargetId = function(userId, subId, callback) {
+  const sql = `
+      SELECT cp.conversation_id
+      FROM ConversationParticipants AS cp
+      WHERE cp.user_id = ? AND cp.sub_id = ?
+  `;
+  pool.query(sql, [userId, subId], (error, results) => {
+      if (error) {
+          return callback(error, null);
+      }
+      if (results.length > 0) {
+          // 대화방이 존재하는 경우
+          callback(null, results[0]);
+      } else {
+          // 대화방이 존재하지 않는 경우
+          callback(null, null);
+      }
+  });
+};
+
 exports.addParticipantToConversation = function(conversationId, userId, subId, callback) {
   const sql = `INSERT INTO ConversationParticipants (conversation_id, user_id, sub_id) VALUES (?, ?, ?)`;
   pool.query(sql, [conversationId, userId, subId], (error, results) => {
