@@ -11,6 +11,7 @@ try:
     from view.templates import ChattingWindow
     from view.templates.chatting_notifications import NotificationWidget
     from view.templates.chatting_friends import FriendWidget
+    from view.templates.chatting_messages import ChattingInterface
     from controller.websocket_connector import WebSocketConnector
 except ImportError:
     sys.path.append(str(Path(__file__).parents[1]))
@@ -18,6 +19,7 @@ except ImportError:
     from view.templates import ChattingWindow
     from view.templates.chatting_notifications import NotificationWidget
     from view.templates.chatting_friends import FriendWidget
+    from view.templates.chatting_messages import ChattingInterface
     from controller.websocket_connector import WebSocketConnector
 
 class ChattingController(QObject):
@@ -28,6 +30,7 @@ class ChattingController(QObject):
         self.friendsInfo = data['friendsInfo']
         self.conversations = data['conversations']
         self.notifications = data['notifications']
+        self.messages = data['messages']
         self.token = token
         self.rest_api = api_thread
         self.websocket_api = WebSocketConnector(f"{WEBSOCKET_URL}/?user_id={self.user_id}")  # 메인 쓰레드에서 인스턴스화
@@ -36,6 +39,7 @@ class ChattingController(QObject):
         self.set_user_info()
         self.display_notifications()
         self.display_friendList()
+        self.add_conversations()
         self.chatting_window.show()
 
         self.connect_slot()
@@ -49,13 +53,6 @@ class ChattingController(QObject):
         # self.chatting_window.profile_setting_button.clicked.connect(self.show_profile_settings)
         # self.websocket_api.new_notification.connect(self.add_notifications)
 
-    # @pyqtSlot()
-    # def show_notifications(self):
-    #     self._clear_middle_right_areas()
-    #     notifications_list_widget = NotificationsListWidget()
-    #     self.chatting_window.middle_area.addWidget(notifications_list_widget)
-    #     # Similarly, add a widget to the right area if needed
-
     @pyqtSlot(dict)
     def add_friend(self, data):
         pass
@@ -65,8 +62,16 @@ class ChattingController(QObject):
     def call_conversation(self, data):
         name = data['name']
         email = data['email']
-        imagePath = data['imagePath']
-        print(name, email, imagePath)
+        image_path = data['imagePath']
+        isNewConversation = data['isNewConversation']
+
+        if isNewConversation:
+            conversation_widget = ChattingInterface(image_path, name, email)
+            self.chatting_window.right_area_widget.addWidget(conversation_widget)
+            self.conversation_index[email] = len(self.conversation_index) + 1
+
+        # 더블클릭한 창 표시
+        self.chatting_window.right_area_widget.setCurrentIndex(self.conversation_index[email])
 
     # @pyqtSlot()
     # def show_chats(self):
@@ -164,6 +169,19 @@ class ChattingController(QObject):
 
             # 더블 클릭 시그널에 슬롯 연결
             friend_widget.doubleClicked.connect(self.make_conversation)
+
+    def add_conversations(self):
+        self.conversation_index = {}
+
+        for i, conversation in enumerate(self.conversations, start=1):
+            name = conversation['name']
+            email = conversation['email']
+            image_path = f'{Path(__file__).parents[1]}/view/static/img/base_profile-removebg-preview.png'
+
+            conversation_widget = ChattingInterface(image_path, name, email)
+            self.chatting_window.right_area_widget.addWidget(conversation_widget)
+
+            self.conversation_index[email] = i
 
     # 더블 클릭 정보를 처리하는 슬롯
     def make_conversation(self, name, email, image_path):
