@@ -30,7 +30,6 @@ class ChattingController(QObject):
         self.friendsInfo = data['friendsInfo']
         self.conversations = data['conversations']
         self.notifications = data['notifications']
-        self.messages = data['messages']
         self.token = token
         self.rest_api = api_thread
         self.websocket_api = WebSocketConnector(f"{WEBSOCKET_URL}/?user_id={self.user_id}")  # 메인 쓰레드에서 인스턴스화
@@ -47,11 +46,6 @@ class ChattingController(QObject):
     def connect_slot(self):
         self.websocket_api.add_friend.connect(self.add_friend)
         self.websocket_api.call_conversation.connect(self.call_conversation)
-        # self.chatting_window.notification_button.clicked.connect(self.show_notifications)
-        # self.chatting_window.friend_list_button.clicked.connect(self.show_friend_list)
-        # self.chatting_window.chat_window_button.clicked.connect(self.show_chats)
-        # self.chatting_window.profile_setting_button.clicked.connect(self.show_profile_settings)
-        # self.websocket_api.new_notification.connect(self.add_notifications)
 
     @pyqtSlot(dict)
     def add_friend(self, data):
@@ -60,44 +54,30 @@ class ChattingController(QObject):
 
     @pyqtSlot(dict)
     def call_conversation(self, data):
+        conversation_id = data['conversationId']
         name = data['name']
         email = data['email']
         image_path = data['imagePath']
         isNewConversation = data['isNewConversation']
 
         if isNewConversation:
-            conversation_widget = ChattingInterface(image_path, name, email)
+            conversation_widget = ChattingInterface(image_path, name, email, conversation_id)
             self.chatting_window.right_area_widget.addWidget(conversation_widget)
-            self.conversation_index[email] = len(self.conversation_index) + 1
+            self.conversation_index[conversation_id] = len(self.conversation_index) + 1
 
         # 더블클릭한 창 표시
-        self.chatting_window.right_area_widget.setCurrentIndex(self.conversation_index[email])
+        self.chatting_window.right_area_widget.setCurrentIndex(self.conversation_index[conversation_id])
 
-    # @pyqtSlot()
-    # def show_chats(self):
-    #     self._clear_middle_right_areas()
-    #     chat_list_widget = ChatListWidget()
-    #     self.chatting_window.middle_area.addWidget(chat_list_widget)
-    #     # Similarly, add a widget to the right area if needed
-
-    # @pyqtSlot()
-    # def show_profile_settings(self):
-    #     self._clear_middle_right_areas()
-    #     profile_setting_widget = ProfileSettingWidget()
-    #     self.chatting_window.middle_area.addWidget(profile_setting_widget)
-    #     # Similarly, add a widget to the right area if needed
-    
-    # @pyqtSlot(dict)
-    # def add_notifications(self, data):
-    #     # 데이터에서 필요한 정보 추출
-    #     image_path = './view/static/img/sidebar_notification_icon'
-    #     title = "친구 추가 요청"
-    #     content = data['sender_id']
-    #     date = data["created_at"]
-
-    #     # NotificationWidget 생성 및 추가
-    #     notification = NotificationWidget(image_path, title, content, date)
-    #     self.chatting_window.notifications_list_widget.notifications_layout.addWidget(notification)
+    @pyqtSlot(str, str, int)
+    def send_message_to_server(self, email, message_text, conversation_id):
+        info = {
+            "sender_id": self.user_id,
+            "conversation_id": conversation_id,
+            "email": email,
+            "message_text": message_text
+        }
+        message = make_websocket_message("sendMessage", info)
+        self.websocket_api.send_message(message)
     
     def _clear_middle_areas(self):
         # Clear widgets in middle_area and right_area
@@ -174,19 +154,21 @@ class ChattingController(QObject):
         self.conversation_index = {}
 
         for i, conversation in enumerate(self.conversations, start=1):
-            name = conversation['name']
-            email = conversation['email']
+            conversation_id = conversation['conversation_id']
+            email = conversation['name']
+            name = conversation['conversation_name']
             image_path = f'{Path(__file__).parents[1]}/view/static/img/base_profile-removebg-preview.png'
 
-            conversation_widget = ChattingInterface(image_path, name, email)
+            conversation_widget = ChattingInterface(image_path, name, email, conversation_id)
             self.chatting_window.right_area_widget.addWidget(conversation_widget)
 
-            self.conversation_index[email] = i
+            self.conversation_index[conversation_id] = i
+            conversation_widget.sending_message.connect(self.send_message_to_server)
 
     # 더블 클릭 정보를 처리하는 슬롯
     def make_conversation(self, name, email, image_path):
-        print(f"Name: {name}, Email: {email}, Image Path: {image_path}")
         info = {
+            "user_email": self.userInfo['email'],
             "name": name,
             "email": email,
             "image_path": image_path

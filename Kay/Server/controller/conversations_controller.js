@@ -5,7 +5,8 @@ const dbManager = require('../model/dbManager');
 const websocketFormatter = require('../utils/websocketFormatter');
 
 exports.handleConversations = function(data, ws, callback) {
-    const email = data.info.email;
+    const user_email = data.info.user_email;
+    const target_email = data.info.email;
     const name = data.info.name;
     const imagePath = data.info.image_path;
 
@@ -14,25 +15,24 @@ exports.handleConversations = function(data, ws, callback) {
         conversationId: null,
         isNewConversation: false,
         name: name,
-        email: email,
+        email: target_email,
         imagePath: imagePath
     };
 
     // 대화방이 존재하는지 확인합니다.
-    dbManager.getConversationByEmail(email, (err, conversation) => {
+    dbManager.getConversationByEmail(user_email, target_email, (err, conversation) => {
         if (err) return callback(err);
 
         if (conversation) {
             // 대화방이 이미 존재하는 경우
             response.conversationId = conversation.id;
-            response.isNewConversation = false;
         } else {
             // 대화방이 존재하지 않는 경우
-            dbManager.createConversation(email, (createErr, newConversationId) => {
+            dbManager.createConversation(target_email, (createErr, newConversationId) => {
                 if (createErr) return callback(createErr);
 
                 // 대화방 참여자를 추가합니다.
-                dbManager.addParticipantToConversation(newConversationId, email, (addErr) => {
+                dbManager.addParticipantToConversation(newConversationId, user_email, (addErr) => {
                     if (addErr) return callback(addErr);
 
                     response.conversationId = newConversationId;

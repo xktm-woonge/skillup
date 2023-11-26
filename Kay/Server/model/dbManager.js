@@ -65,11 +65,19 @@ exports.getFriendsByUserId = function(user_id, callback) {
 
 // 대화 목록 및 대화 내용 가져오기
 exports.getConversationsByUserId = function(user_id, callback) {
-  const query = `SELECT * FROM Conversations
-                 JOIN ConversationParticipants ON Conversations.id = ConversationParticipants.conversation_id
-                 JOIN Messages ON Conversations.id = Messages.conversation_id
-                 WHERE ConversationParticipants.user_id = ?`;
-  pool.query(query, [user_id], callback);
+  const query = `
+    SELECT Conversations.*, Users.name AS conversation_name
+    FROM ConversationParticipants
+    JOIN Conversations ON ConversationParticipants.conversation_id = Conversations.id
+    JOIN Users ON Conversations.name = Users.email
+    WHERE ConversationParticipants.user_id = ?
+  `;
+  pool.query(query, [user_id], (error, results) => {
+    if (error) {
+      return callback(error, null);
+    }
+    callback(null, results);
+  });
 };
 
 // 자신과 친구들의 정보 가져오기
@@ -155,18 +163,29 @@ exports.getUserIdByEmail = function(email, callback) {
   });
 };
 
-// 대화방이 존재하는지 확인합니다.
-exports.getConversationByEmail = function(email, callback) {
-  const sql = `SELECT * FROM Conversations WHERE name = ?`;
-  pool.query(sql, [email], (error, results) => {
-      if (error) {
-          return callback(error, null);
-      }
-      if (results.length > 0) {
-          callback(null, results[0]);
-      } else {
-          callback(null, null);
-      }
+exports.getConversationByEmail = function(user_email, target_email, callback) {
+  // user_email을 통해 userId를 가져옵니다.
+  this.getUserIdByEmail(user_email, (err, userId) => {
+      if (err) return callback(err, null);
+
+      // userId를 사용하여 대화방 참여자가 있는 대화방을 찾습니다.
+      const sql = `
+          SELECT Conversations.* FROM ConversationParticipants 
+          JOIN Conversations ON ConversationParticipants.conversation_id = Conversations.id
+          WHERE ConversationParticipants.user_id = ? AND Conversations.name = ?
+      `;
+      pool.query(sql, [userId, target_email], (error, results) => {
+          if (error) {
+              return callback(error, null);
+          }
+          if (results.length > 0) {
+              // 대화방이 존재하는 경우
+              callback(null, results[0]);
+          } else {
+              // 대화방이 존재하지 않는 경우
+              callback(null, null);
+          }
+      });
   });
 };
 
@@ -182,7 +201,6 @@ exports.createConversation = function(email, callback) {
   });
 };
 
-// 대화방에 참여자를 추가합니다.
 exports.addParticipantToConversation = function(conversationId, email, callback) {
   // 우선 email을 통해 userId를 가져옵니다.
   this.getUserIdByEmail(email, (err, userId) => {

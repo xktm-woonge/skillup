@@ -81,13 +81,14 @@ class MessageBubble(QWidget):
 
 class ChattingInterface(QWidget):
     # This signal can be emitted when a new message is received
-    new_message = pyqtSignal(str, str, bool)
+    sending_message = pyqtSignal(str, str, int)
 
-    def __init__(self, profile_image_path, name, email):
+    def __init__(self, profile_image_path, name, email, conversation_id):
         super().__init__()
         self.profile_image_path = profile_image_path
         self.name = name
         self.email = email
+        self.conversation_id = conversation_id
         self.initUI()
 
     def initUI(self):
@@ -150,7 +151,7 @@ class ChattingInterface(QWidget):
             self.message_input.clear()
             QApplication.processEvents()
             self.scroll_to_bottom()
-            self.new_message.emit(message_text, current_time, True)
+            self.sending_message.emit(self.email, message_text, self.conversation_id)
 
             # 입력창에 포커스를 되돌립니다.
             self.message_input.setFocus()
@@ -198,7 +199,7 @@ if __name__ == '__main__':
     email = 'hong@gildong.com'
     
     # ChattingInterface 인스턴스 생성
-    chatting_interface = ChattingInterface(profile_image_path, name, email)
+    chatting_interface = ChattingInterface(profile_image_path, name, email, 1)
     
     # 테스트 메시지 추가
     chatting_interface.add_message('안녕하세요, 채팅 테스트 중입니다.', '10:45 AM', False)
