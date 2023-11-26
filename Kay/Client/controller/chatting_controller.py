@@ -11,6 +11,7 @@ try:
     from view.templates import ChattingWindow
     from view.templates.chatting_notifications import NotificationWidget
     from view.templates.chatting_friends import FriendWidget
+    from view.templates.chatting_list import ChatWidget
     from view.templates.chatting_messages import ChattingInterface
     from controller.websocket_connector import WebSocketConnector
 except ImportError:
@@ -19,6 +20,7 @@ except ImportError:
     from view.templates import ChattingWindow
     from view.templates.chatting_notifications import NotificationWidget
     from view.templates.chatting_friends import FriendWidget
+    from view.templates.chatting_list import ChatWidget
     from view.templates.chatting_messages import ChattingInterface
     from controller.websocket_connector import WebSocketConnector
 
@@ -61,9 +63,14 @@ class ChattingController(QObject):
         isNewConversation = data['isNewConversation']
 
         if isNewConversation:
+            widget = ChatWidget(name, email, image_path, conversation_id)
+            self.chatting_window.chatting_list_widget.add_friend(widget)
+
             conversation_widget = ChattingInterface(image_path, name, email, conversation_id)
             self.chatting_window.right_area_widget.addWidget(conversation_widget)
             self.conversation_index[conversation_id] = len(self.conversation_index) + 1
+
+            widget.doubleClicked.connect(self.on_chat_widget_clicked)
 
         # 더블클릭한 창 표시
         self.chatting_window.right_area_widget.setCurrentIndex(self.conversation_index[conversation_id])
@@ -159,11 +166,23 @@ class ChattingController(QObject):
             name = conversation['conversation_name']
             image_path = f'{Path(__file__).parents[1]}/view/static/img/base_profile-removebg-preview.png'
 
+            widget = ChatWidget(name, email, image_path, conversation_id)
+            self.chatting_window.chatting_list_widget.add_friend(widget)
+
             conversation_widget = ChattingInterface(image_path, name, email, conversation_id)
             self.chatting_window.right_area_widget.addWidget(conversation_widget)
 
             self.conversation_index[conversation_id] = i
             conversation_widget.sending_message.connect(self.send_message_to_server)
+
+            widget.doubleClicked.connect(self.on_chat_widget_clicked)
+
+    @pyqtSlot(int)
+    def on_chat_widget_clicked(self, conversation_id):
+        # conversation_id를 사용하여 right_area_widget에서 해당 대화 위젯을 찾아서 활성화
+        if conversation_id in self.conversation_index:
+            index = self.conversation_index[conversation_id]
+            self.chatting_window.right_area_widget.setCurrentIndex(index)  
 
     # 더블 클릭 정보를 처리하는 슬롯
     def make_conversation(self, name, email, image_path):

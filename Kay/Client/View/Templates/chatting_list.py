@@ -15,10 +15,11 @@ except ImportError:
     from utils import *
 
 class ChatWidget(QWidget):
-    doubleClicked = pyqtSignal(str, str, str)
+    doubleClicked = pyqtSignal(int)
 
-    def __init__(self, name, email, image_path, parent=None):
+    def __init__(self, name, email, image_path, conversation_id, parent=None):
         super(ChatWidget, self).__init__(parent)
+        self.conversation_id = conversation_id
         self.setObjectName("ChatWidget")
         self.image_path = image_path
 
@@ -68,7 +69,7 @@ class ChatWidget(QWidget):
         return super().eventFilter(source, event)
     
     def mouseDoubleClickEvent(self, event):
-        self.doubleClicked.emit(self.name_label.text(), self.email_label.text(), self.image_path)
+        self.doubleClicked.emit(self.conversation_id)
 
 
 class ChatListWidget(QWidget):
@@ -135,8 +136,7 @@ class ChatListWidget(QWidget):
             qss = file.read()
             self.setStyleSheet(qss)
 
-    def add_friend(self, name, email, image_path):
-        widget = ChatWidget(name, email, image_path)
+    def add_friend(self, widget):
         self.chatting_list_layout.addWidget(widget)
 
 
