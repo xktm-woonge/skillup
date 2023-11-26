@@ -209,22 +209,6 @@ exports.createConversation = function(name, callback) {
   });
 };
 
-exports.addParticipantToConversation = function(conversationId, email, target_email, callback) {
-  // email을 통해 userId 가져오기
-  this.getUserIdByEmail(email, (err, userId) => {
-    if (err) return callback(err, null);
-
-    // target_email을 통해 subId 가져오기
-    this.getUserIdByEmail(target_email, (err2, subId) => {
-      if (err2) return callback(err2, null);
-
-      // 대화방 참여자를 추가합니다.
-      const sql = `INSERT INTO ConversationParticipants (conversation_id, user_id, sub_id) VALUES (?, ?, ?)`;
-      pool.query(sql, [conversationId, userId.id, subId.id], callback);
-    });
-  });
-};
-
 exports.checkAndAddParticipantToConversation = function(conversationId, target_email, callback) {
   // target_email을 통해 userId를 가져옵니다.
   this.getUserIdByEmail(target_email, (err, targetUserId) => {
@@ -259,15 +243,11 @@ exports.getConversationById = function(conversationId, callback) {
   });
 };
 
-exports.addMessageToConversation = function(conversationId, senderEmail, messageText, callback) {
-  // senderEmail을 통해 userId를 가져옵니다.
-  this.getUserIdByEmail(senderEmail, (err, userId) => {
-      if (err) return callback(err);
+exports.addMessageToConversation = function(conversationId, senderUserId, messageText, callback) {
 
       // 메시지를 Messages 테이블에 추가합니다.
       const sql = `INSERT INTO Messages (sender_id, conversation_id, message_text) VALUES (?, ?, ?)`;
-      pool.query(sql, [userId.id, conversationId, messageText], callback);
-  });
+      pool.query(sql, [senderUserId, conversationId, messageText], callback);
 };
 
 exports.getUserStatus = function(email, callback) {
@@ -304,13 +284,13 @@ exports.getConversationByUserId = function(userId, callback) {
   });
 };
 
-exports.checkConversationExistence = function(userId, subId, callback) {
+exports.checkConversationExistence = function(conversation_id, userId, callback) {
   const sql = `
       SELECT cp.conversation_id
       FROM ConversationParticipants AS cp
-      WHERE (cp.user_id = ? AND cp.sub_id = ?) OR (cp.user_id = ? AND cp.sub_id = ?)
+      WHERE cp.conversation_id = ? AND cp.user_id = ?
   `;
-  pool.query(sql, [userId, subId, subId, userId], (error, results) => {
+  pool.query(sql, [conversation_id, userId], (error, results) => {
       if (error) {
           return callback(error, null);
       }
@@ -323,6 +303,7 @@ exports.checkConversationExistence = function(userId, subId, callback) {
       }
   });
 };
+
 
 
 exports.addParticipantToConversation = function(conversationId, userId, subId, callback) {

@@ -64,33 +64,49 @@ function sendResponse(ws, status, message, data) {
 }
 
 
-
 exports.handleSendMessage = function(data, wss, callback) {
     const sender_email = data.info.sender_email;
     const conversation_id = data.info.conversation_id;
     const target_email = data.info.email;
     const message_text = data.info.message_text;
 
-    // 대상 사용자의 대화방 존재 여부를 확인하고, 없으면 생성합니다.
-    dbManager.checkAndCreateConversation(conversation_id, [sender_email, target_email], (checkErr, updatedConversationId) => {
-        if (checkErr) return callback(checkErr);
+    // sender_email을 통해 sender의 userId를 가져옵니다.
+    dbManager.getUserIdByEmail(sender_email, (err, senderUserId) => {
+        if (err) return callback(err);
 
         // 메시지를 데이터베이스에 저장합니다.
-        dbManager.addMessageToConversation(updatedConversationId, sender_email, message_text, (addErr) => {
-            if (addErr) return callback(addErr);
+        dbManager.addMessageToConversation(conversation_id, senderUserId, message_text, (addMessageErr) => {
+            if (addMessageErr) return callback(addMessageErr);
 
-            // 대상 사용자의 상태를 확인합니다.
-            dbManager.getUserStatus(target_email, (statusErr, targetStatus) => {
-                if (statusErr) return callback(statusErr);
+            // target_email을 통해 상대방의 userId를 가져옵니다.
+            dbManager.getUserIdByEmail(target_email, (getUserErr, targetUserId) => {
+                if (getUserErr) return callback(getUserErr);
 
-                if (targetStatus === 'online') {
-                    // 상대방이 온라인 상태인 경우 메시지를 전송합니다.
-                    wss.clients.forEach(client => {
-                        if (client.user_email === target_email && client.readyState === WebSocket.OPEN) {
-                            client.send(JSON.stringify({ event: 'newMessage', data: { conversationId: updatedConversationId, sender_email, message_text }}));
+                // 대화방 존재 여부 확인
+                dbManager.checkConversationExistence(conversation_id, targetUserId, (checkErr, exists) => {
+                    if (checkErr) return callback(checkErr);
+
+                    if (!exists) {
+                        // 대화방이 존재하지 않는 경우, 새로운 대화방 참여자를 추가합니다.
+                        dbManager.addParticipantToConversation(conversation_id, targetUserId, senderUserId, (addParticipantErr) => {
+                            if (addParticipantErr) return callback(addParticipantErr);
+                        });
+                    }
+
+                    // 상대방의 상태 확인
+                    dbManager.getUserStatus(target_email, (statusErr, targetStatus) => {
+                        if (statusErr) return callback(statusErr);
+
+                        if (targetStatus === 'online') {
+                            // 상대방이 온라인 상태인 경우, 메시지를 전송합니다.
+                            wss.clients.forEach(client => {
+                                if (client.user_email === target_email && client.readyState === WebSocket.OPEN) {
+                                    client.send(JSON.stringify({ event: 'newMessage', data: { conversationId: conversation_id, sender_email, message_text }}));
+                                }
+                            });
                         }
                     });
-                }
+                });
             });
         });
     });
