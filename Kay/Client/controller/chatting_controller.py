@@ -177,8 +177,6 @@ class ChattingController(QObject):
             # 메시지를 표시합니다.
             self.display_messages(conversation_id, conversation_widget)
 
-            conversation_widget.scroll_to_bottom()
-
             self.conversation_index[conversation_id] = i
             conversation_widget.sending_message.connect(self.send_message_to_server)
 
