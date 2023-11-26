@@ -9,62 +9,59 @@ exports.handleConversations = function(data, ws, callback) {
     const name = data.info.name;
     const imagePath = data.info.image_path;
 
-    let response = {
-        conversationId: null,
-        isNewConversation: false,
-        name: name,
-        email: target_email,
-        imagePath: imagePath
-    };
-
-    // user_email을 통해 userId를 찾습니다.
+    // 두 사용자의 userId 조회
     dbManager.getUserIdByEmail(user_email, (userIdErr, userId) => {
         if (userIdErr) return callback(userIdErr);
 
-        // userId를 사용하여 대화방 참여 여부를 확인합니다.
-        dbManager.getConversationByUserId(userId, (convErr, conversation) => {
-            if (convErr) return callback(convErr);
+        dbManager.getUserIdByEmail(target_email, (targetUserIdErr, targetUserId) => {
+            if (targetUserIdErr) return callback(targetUserIdErr);
 
-            if (conversation) {
-                // 대화방이 이미 존재하는 경우
-                response = {
-                    conversationId: conversation.id,
-                    isNewConversation: false,
-                    name: name,
-                    email: target_email,
-                    imagePath: imagePath
-                };
-            } else {
-                // 대화방이 존재하지 않는 경우
-                dbManager.createConversation('chatting_name', (createErr, newConversationId) => {
-                    if (createErr) return callback(createErr);
+            // 대화방 존재 여부 확인
+            dbManager.checkConversationExistence(userId, targetUserId, (convExistErr, conversation) => {
+                if (convExistErr) return callback(convExistErr);
 
-                    // 대화방 참여자를 추가합니다.
-                    dbManager.addParticipantToConversation(newConversationId, user_email, target_email, (addErr) => {
-                        if (addErr) return callback(addErr);
+                if (conversation) {
+                    // 대화방이 존재하는 경우
+                    const response = {
+                        conversationId: conversation.id,
+                        isNewConversation: false,
+                        name: name,
+                        email: target_email,
+                        imagePath: imagePath
+                    };
 
-                        response = {
-                            conversationId: newConversationId,
-                            isNewConversation: true,
-                            name: name,
-                            email: target_email,
-                            imagePath: imagePath
-                        };
+                    // 클라이언트에게 응답 전송
+                    sendResponse(ws, 'SUCCESS', 'Existing conversation found.', response);
+                } else {
+                    // 대화방이 존재하지 않는 경우, 새 대화방 생성
+                    dbManager.createConversation('chatting_name', (createErr, newConversationId) => {
+                        if (createErr) return callback(createErr);
+
+                        dbManager.addParticipantToConversation(newConversationId, userId, targetUserId, (addErr) => {
+                            if (addErr) return callback(addErr);
+
+                            const response = {
+                                conversationId: newConversationId,
+                                isNewConversation: true,
+                                name: name,
+                                email: target_email,
+                                imagePath: imagePath
+                            };
+
+                            // 클라이언트에게 응답 전송
+                            sendResponse(ws, 'SUCCESS', 'New conversation created successfully.', response);
+                        });
                     });
-                });
-            }
-
-            // 클라이언트에게 응답을 전송합니다.
-            const formattedResponse = websocketFormatter.formatWebSocket(
-                'SUCCESS',
-                'conversations',
-                response.isNewConversation ? 'New conversation created successfully.' : 'Existing conversation found.',
-                response
-            );
-            ws.send(JSON.stringify(formattedResponse));
+                }
+            });
         });
     });
 };
+
+function sendResponse(ws, status, message, data) {
+    const formattedResponse = websocketFormatter.formatWebSocket(status, 'conversations', message, data);
+    ws.send(JSON.stringify(formattedResponse));
+}
 
 
 

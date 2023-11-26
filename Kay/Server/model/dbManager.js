@@ -66,11 +66,16 @@ exports.getFriendsByUserId = function(user_id, callback) {
 // 대화 목록 및 대화 내용 가져오기
 exports.getConversationsByUserId = function(user_id, callback) {
   const query = `
-    SELECT Conversations.*, Users.name AS conversation_name
-    FROM ConversationParticipants
-    JOIN Conversations ON ConversationParticipants.conversation_id = Conversations.id
-    JOIN Users ON Conversations.name = Users.email
-    WHERE ConversationParticipants.user_id = ?
+    SELECT 
+        cp.conversation_id,
+        cp.user_id,
+        cp.sub_id,
+        c.*,
+        u.name AS conversation_name
+    FROM ConversationParticipants AS cp
+    JOIN Conversations AS c ON cp.conversation_id = c.id
+    JOIN Users AS u ON cp.sub_id = u.id
+    WHERE cp.user_id = ?
   `;
   pool.query(query, [user_id], (error, results) => {
     if (error) {
@@ -190,9 +195,9 @@ exports.getConversationByEmail = function(user_email, target_email, callback) {
 };
 
 // 새 대화방을 생성합니다.
-exports.createConversation = function(email, callback) {
+exports.createConversation = function(name, callback) {
   const sql = `INSERT INTO Conversations (name) VALUES (?)`;
-  pool.query(sql, [email], (error, results) => {
+  pool.query(sql, [name], (error, results) => {
       if (error) {
           return callback(error, null);
       }
@@ -202,12 +207,18 @@ exports.createConversation = function(email, callback) {
 };
 
 exports.addParticipantToConversation = function(conversationId, email, target_email, callback) {
-  // 우선 email을 통해 userId를 가져옵니다.
+  // email을 통해 userId 가져오기
   this.getUserIdByEmail(email, (err, userId) => {
-      if (err) return callback(err, null);
+    if (err) return callback(err, null);
 
-      const sql = `INSERT INTO ConversationParticipants (conversation_id, user_id) VALUES (?, ?)`;
-      pool.query(sql, [conversationId, userId], callback);
+    // target_email을 통해 subId 가져오기
+    this.getUserIdByEmail(target_email, (err2, subId) => {
+      if (err2) return callback(err2, null);
+
+      // 대화방 참여자를 추가합니다.
+      const sql = `INSERT INTO ConversationParticipants (conversation_id, user_id, sub_id) VALUES (?, ?, ?)`;
+      pool.query(sql, [conversationId, userId.id, subId.id], callback);
+    });
   });
 };
 
@@ -287,5 +298,36 @@ exports.getConversationByUserId = function(userId, callback) {
       } else {
           callback(null, null); // 대화방이 없는 경우
       }
+  });
+};
+
+exports.checkConversationExistence = function(userId, subId, callback) {
+  const sql = `
+      SELECT cp.conversation_id
+      FROM ConversationParticipants AS cp
+      WHERE (cp.user_id = ? AND cp.sub_id = ?) OR (cp.user_id = ? AND cp.sub_id = ?)
+  `;
+  pool.query(sql, [userId, subId, subId, userId], (error, results) => {
+      if (error) {
+          return callback(error, null);
+      }
+      if (results.length > 0) {
+          // 대화방이 존재하는 경우
+          callback(null, results[0]);
+      } else {
+          // 대화방이 존재하지 않는 경우
+          callback(null, null);
+      }
+  });
+};
+
+
+exports.addParticipantToConversation = function(conversationId, userId, subId, callback) {
+  const sql = `INSERT INTO ConversationParticipants (conversation_id, user_id, sub_id) VALUES (?, ?, ?)`;
+  pool.query(sql, [conversationId, userId, subId], (error, results) => {
+      if (error) {
+          return callback(error);
+      }
+      callback(null, results);
   });
 };
