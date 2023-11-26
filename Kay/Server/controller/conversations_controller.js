@@ -23,7 +23,7 @@ exports.handleConversations = function(data, ws, callback) {
                 if (conversation) {
                     // 대화방이 존재하는 경우
                     const response = {
-                        conversationId: conversation.id,
+                        conversationId: conversation.conversation_id,
                         isNewConversation: false,
                         name: name,
                         email: target_email,

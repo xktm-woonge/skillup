@@ -162,11 +162,12 @@ class ChattingController(QObject):
 
         for i, conversation in enumerate(self.conversations, start=1):
             conversation_id = conversation['conversation_id']
-            email = conversation['name']
+            email = conversation['sub_email']
+            conversation_name = conversation['conversation_name']
             name = conversation['conversation_name']
             image_path = f'{Path(__file__).parents[1]}/view/static/img/base_profile-removebg-preview.png'
 
-            widget = ChatWidget(name, email, image_path, conversation_id)
+            widget = ChatWidget(conversation_name, email, image_path, conversation_id)
             self.chatting_window.chatting_list_widget.add_friend(widget)
 
             conversation_widget = ChattingInterface(image_path, name, email, conversation_id)

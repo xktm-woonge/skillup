@@ -71,10 +71,12 @@ exports.getConversationsByUserId = function(user_id, callback) {
         cp.user_id,
         cp.sub_id,
         c.*,
-        u.name AS conversation_name
+        u.name AS conversation_name,
+        sub_user.email AS sub_email 
     FROM ConversationParticipants AS cp
     JOIN Conversations AS c ON cp.conversation_id = c.id
     JOIN Users AS u ON cp.sub_id = u.id
+    JOIN Users AS sub_user ON cp.sub_id = sub_user.id 
     WHERE cp.user_id = ?
   `;
   pool.query(query, [user_id], (error, results) => {
@@ -84,6 +86,7 @@ exports.getConversationsByUserId = function(user_id, callback) {
     callback(null, results);
   });
 };
+
 
 // 자신과 친구들의 정보 가져오기
 exports.getFriendsInfoByUserId = function(userId, callback) {
