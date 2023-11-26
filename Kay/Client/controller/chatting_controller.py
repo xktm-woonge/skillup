@@ -32,6 +32,7 @@ class ChattingController(QObject):
         self.friendsInfo = data['friendsInfo']
         self.conversations = data['conversations']
         self.notifications = data['notifications']
+        self.messages = data['messages']
         self.token = token
         self.rest_api = api_thread
         self.websocket_api = WebSocketConnector(f"{WEBSOCKET_URL}/?user_id={self.user_id}")  # 메인 쓰레드에서 인스턴스화

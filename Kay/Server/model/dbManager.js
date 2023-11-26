@@ -304,13 +304,28 @@ exports.checkConversationExistence = function(conversation_id, userId, callback)
   });
 };
 
-
-
 exports.addParticipantToConversation = function(conversationId, userId, subId, callback) {
   const sql = `INSERT INTO ConversationParticipants (conversation_id, user_id, sub_id) VALUES (?, ?, ?)`;
   pool.query(sql, [conversationId, userId, subId], (error, results) => {
       if (error) {
           return callback(error);
+      }
+      callback(null, results);
+  });
+};
+
+exports.getMessagesByUserId = function(userId, callback) {
+  const sql = `
+      SELECT Messages.*
+      FROM Messages
+      JOIN ConversationParticipants ON Messages.conversation_id = ConversationParticipants.conversation_id
+      WHERE ConversationParticipants.user_id = ?
+      ORDER BY Messages.timestamp
+  `;
+
+  pool.query(sql, [userId], (error, results) => {
+      if (error) {
+          return callback(error, null);
       }
       callback(null, results);
   });

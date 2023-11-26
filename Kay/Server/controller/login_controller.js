@@ -58,60 +58,47 @@ exports.get_userInfo = function(req, res) {
 
   // 사용자의 id를 기반으로 정보 가져오기
   dbManager.getUserByEmail(userEmail, (error, userInfo) => {
-    if (error || !userInfo) {
-      return res.json(responseFormatter.formatResponse('FAIL', '사용자 정보를 불러올 수 없습니다.'));
-    }
-
-    const userId = userInfo.id; // 사용자의 id
-
-    // 친구 정보 가져오기
-    dbManager.getFriendsInfoByUserId(userId, (error, friendsInfo) => {
-      if (error) {
-        return res.json(responseFormatter.formatResponse('FAIL', '친구 목록을 불러올 수 없습니다.'));
+      if (error || !userInfo) {
+          return res.json(responseFormatter.formatResponse('FAIL', '사용자 정보를 불러올 수 없습니다.'));
       }
 
-      // 친구 목록의 프로필 이미지 경로를 수정합니다.
-      if (friendsInfo && friendsInfo.length > 0) {
-        friendsInfo.forEach(friend => {
-          if (friend.profile_picture) {
-            friend.profile_picture = `http://${serverAddr}:${httpPort}/profile_picture/${friend.profile_picture}`;
-          }
-        });
-      }
+      const userId = userInfo.id; // 사용자의 id
 
-      // 대화 목록 및 대화 내용 가져오기
-      dbManager.getConversationsByUserId(userId, (error, conversations) => {
-        if (error) {
-          return res.json(responseFormatter.formatResponse('FAIL', '대화 목록을 불러올 수 없습니다.'));
-        }
-
-        // 사용자의 알림 정보 가져오기
-        dbManager.getNotificationsForUser(userId, (error, notifications) => {
+      // 친구 정보 가져오기
+      dbManager.getFriendsInfoByUserId(userId, (error, friendsInfo) => {
           if (error) {
-            return res.json(responseFormatter.formatResponse('FAIL', '알림 정보를 불러올 수 없습니다.'));
+              return res.json(responseFormatter.formatResponse('FAIL', '친구 목록을 불러올 수 없습니다.'));
           }
 
-          // 프로필 이미지를 URL로 변경
-          const profileImageUrl = `http://${serverAddr}:${httpPort}/profile_picture/${userInfo.profile_picture}`;
-          userInfo['profile_picture'] = profileImageUrl
-
-          // notifications 배열을 순회하면서 각 알림의 이미지 경로를 수정합니다.
-          if (notifications && notifications.length > 0) {
-            notifications.forEach(notification => {
-              if (notification.img) {
-                notification.image_path = `http://${serverAddr}:${httpPort}/friends_request/${notification.img}`;
+          // 대화 목록 및 대화 내용 가져오기
+          dbManager.getConversationsByUserId(userId, (convError, conversations) => {
+              if (convError) {
+                  return res.json(responseFormatter.formatResponse('FAIL', '대화 목록을 불러올 수 없습니다.'));
               }
-            });
-          }
 
-          res.json(responseFormatter.formatResponse('SUCCESS', '정보를 성공적으로 가져왔습니다.', {
-            userInfo, // 사용자의 전체 프로필 정보
-            friendsInfo, // 친구의 전체 정보
-            conversations, // 대화 목록 및 대화 내용
-            notifications  // 사용자의 알림 정보
-          }));
-        });
+              // 메시지 내용 가져오기
+              dbManager.getMessagesByUserId(userId, (msgError, messages) => {
+                  if (msgError) {
+                      return res.json(responseFormatter.formatResponse('FAIL', '메시지 내용을 불러올 수 없습니다.'));
+                  }
+
+                  // 사용자의 알림 정보 가져오기
+                  dbManager.getNotificationsForUser(userId, (notifError, notifications) => {
+                      if (notifError) {
+                          return res.json(responseFormatter.formatResponse('FAIL', '알림 정보를 불러올 수 없습니다.'));
+                      }
+
+                      // 최종적으로 모든 정보를 클라이언트에 전달
+                      res.json(responseFormatter.formatResponse('SUCCESS', '정보를 성공적으로 가져왔습니다.', {
+                          userInfo, // 사용자의 전체 프로필 정보
+                          friendsInfo, // 친구의 전체 정보
+                          conversations, // 대화 목록 및 대화 내용
+                          messages, // 메시지 정보
+                          notifications // 사용자의 알림 정보
+                      }));
+                  });
+              });
+          });
       });
-    });
   });
 };
