@@ -1,6 +1,6 @@
 # ./view/templates/friend_list_widget.py
 
-from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QScrollArea, QApplication
+from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QScrollArea, QApplication, QDialog, QLineEdit
 from PyQt5.QtCore import Qt, pyqtSignal, QSize, QEvent
 from PyQt5.QtGui import QPixmap, QPainter, QImage, qGray
 from pathlib import Path
@@ -11,6 +11,55 @@ try:
 except ImportError:
     sys.path.append(str(Path(__file__).parents[2]))
     from utils import *
+
+
+class AddFriendDialog(QDialog):
+    friend_added_signal = pyqtSignal(str)
+
+    def __init__(self, parent=None):
+        super(AddFriendDialog, self).__init__(parent)
+        
+        # '?' 버튼 제거 및 닫기 버튼만 남김
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+
+        self.setWindowTitle("친구 추가")
+        self.setFixedSize(280, 120)  # 창 크기 조정
+
+        self.layout = QVBoxLayout(self)
+
+        # 이름 입력 필드
+        self.name_input = QLineEdit(self)
+        self.name_input.setFixedHeight(40)  # 높이 조정
+        self.layout.addWidget(self.name_input)
+
+        # 버튼 레이아웃
+        button_layout = QHBoxLayout()
+        self.add_button = QPushButton("추가", self)
+        self.cancel_button = QPushButton("취소", self)
+
+        # 버튼 높이 조정
+        self.add_button.setFixedHeight(40)
+        self.cancel_button.setFixedHeight(40)
+        
+        # 버튼 스타일 설정
+        self.add_button.setStyleSheet("QPushButton { border: 1px solid black; }")
+        self.cancel_button.setStyleSheet("QPushButton { border: 1px solid black; }")
+
+        button_layout.addWidget(self.add_button)
+        button_layout.addWidget(self.cancel_button)
+        self.layout.addLayout(button_layout)
+
+        # 시그널 연결
+        self.add_button.clicked.connect(self.add_friend)
+        self.cancel_button.clicked.connect(self.close)
+
+    def add_friend(self):
+        name = self.name_input.text()
+        if name:
+            self.friend_added_signal.emit(name)
+        self.close()
+
+
 
 class FriendWidget(QWidget):
     # 사용자 정의 신호 생성, 필요한 경우 사용
@@ -83,6 +132,8 @@ class FriendWidget(QWidget):
         self.doubleClicked.emit(self.name_label.text(), self.email_label.text(), self.image_path)
 
 class FriendListWidget(QWidget):
+    new_friend_added = pyqtSignal(str)
+
     def __init__(self, parent=None):
         super(FriendListWidget, self).__init__(parent)
         
@@ -116,6 +167,7 @@ class FriendListWidget(QWidget):
         self.add_button.setFixedSize(*self.add_button_size)
         self.add_button.setProperty('icon_path', add_icon_path)
         self.add_button.setObjectName('add_button')
+        self.add_button.clicked.connect(self.show_add_friend_dialog)
 
         header_layout.addWidget(header_label)
         # header_layout.addWidget(self.toggle_slider)
@@ -144,6 +196,11 @@ class FriendListWidget(QWidget):
 
         self.setLayout(layout)
         self._setStyle()
+
+    def show_add_friend_dialog(self):
+        self.dialog = AddFriendDialog(self)
+        self.dialog.friend_added_signal.connect(self.new_friend_added.emit)
+        self.dialog.show()
         
     def clear_friends(self):
         for i in reversed(range(self.friends_layout.count())): 
