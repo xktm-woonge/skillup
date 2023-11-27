@@ -114,10 +114,10 @@ exports.handleFriendResponse = function(user_email, sender_email, action, socket
                             senderInfo['profile_picture'] = profileImageUrl
 
                             // 성공 응답 및 사용자 정보 반환
-                            socket.send(JSON.stringify(websocketFormatter.formatWebSocket('SUCCESS', 'notifications', 'friendResponseSuccess', { senderInfo })));
-                            const targetSocket = websocketConnectionsManager.getConnection(user_email);
+                            socket.send(JSON.stringify(websocketFormatter.formatWebSocket('SUCCESS', 'notifications', 'friendResponseSuccess', senderInfo )));
+                            const targetSocket = websocketConnectionsManager.getConnection(sender_email);
                                 if (targetSocket) {
-                                    targetSocket.send(JSON.stringify(websocketFormatter.formatWebSocket('SUCCESS', 'notifications', 'friendResponseSuccess', { senderInfo })));
+                                    targetSocket.send(JSON.stringify(websocketFormatter.formatWebSocket('SUCCESS', 'notifications', 'friendResponseSuccess', senderInfo)));
                                 }
                         });
                     });

@@ -11,6 +11,7 @@ try:
     from view.templates import ChattingWindow
     from view.templates.chatting_notifications import NotificationWidget
     from view.templates.chatting_friends import FriendWidget
+    from view.templates.chatting_friends import FriendListWidget
     from view.templates.chatting_list import ChatWidget
     from view.templates.chatting_messages import ChattingInterface
     from controller.websocket_connector import WebSocketConnector
@@ -20,6 +21,7 @@ except ImportError:
     from view.templates import ChattingWindow
     from view.templates.chatting_notifications import NotificationWidget
     from view.templates.chatting_friends import FriendWidget
+    from view.templates.chatting_friends import FriendListWidget
     from view.templates.chatting_list import ChatWidget
     from view.templates.chatting_messages import ChattingInterface
     from controller.websocket_connector import WebSocketConnector
@@ -69,8 +71,17 @@ class ChattingController(QObject):
 
     @pyqtSlot(dict)
     def add_friend(self, data):
-        pass
-        # Similarly, add a widget to the right area if needed
+        name = data['name']
+        email = data['email']
+        # image_path = friendInfo['profile_picture']
+        image_path = f'{Path(__file__).parents[1]}/view/static/img/base_profile-removebg-preview.png'
+        status = data['status']
+
+        friend_widget = FriendWidget(name, email, image_path, status)
+        self.chatting_window.friend_list_widget.friends_layout.addWidget(friend_widget)
+
+        # 더블 클릭 시그널에 슬롯 연결
+        friend_widget.doubleClicked.connect(self.make_conversation)
 
     @pyqtSlot(dict)
     def call_conversation(self, data):
