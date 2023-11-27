@@ -52,6 +52,7 @@ class ChattingController(QObject):
         self.websocket_api.add_friend.connect(self.add_friend)
         self.websocket_api.call_conversation.connect(self.call_conversation)
         self.websocket_api.friend_request.connect(self.friend_request)
+        self.websocket_api.new_message.connect(self.recieved_new_message)
         self.chatting_window.friend_list_widget.new_friend_added.connect(self.handle_new_friend_added)
 
     @pyqtSlot(dict)
@@ -68,6 +69,10 @@ class ChattingController(QObject):
 
         notification_widget.response_signal.connect(
             lambda sender_id, response: self.handle_friend_response(sender_id, response, notification_widget))
+        
+    @pyqtSlot(dict)
+    def recieved_new_message(self, data):
+        pass
 
     @pyqtSlot(dict)
     def add_friend(self, data):
@@ -98,6 +103,8 @@ class ChattingController(QObject):
             conversation_widget = ChattingInterface(image_path, name, email, conversation_id)
             self.chatting_window.right_area_widget.addWidget(conversation_widget)
             self.conversation_index[conversation_id] = len(self.conversation_index) + 1
+
+            conversation_widget.sending_message.connect(self.send_message_to_server)
 
             widget.doubleClicked.connect(self.on_chat_widget_clicked)
 

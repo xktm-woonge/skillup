@@ -2,6 +2,7 @@
 
 const dbManager = require('../model/dbManager');
 const websocketFormatter = require('../utils/websocketFormatter');
+const websocketConnectionsManager = require('../utils/websocketConnectionsManager');
 
 exports.handleConversations = function(data, ws, callback) {
     const user_email = data.info.user_email;
@@ -98,12 +99,12 @@ exports.handleSendMessage = function(data, wss, callback) {
                         if (statusErr) return callback(statusErr);
 
                         if (targetStatus === 'online') {
+                            data = { conversationId: conversation_id, sender_email, message_text }
                             // 상대방이 온라인 상태인 경우, 메시지를 전송합니다.
-                            wss.clients.forEach(client => {
-                                if (client.user_email === target_email && client.readyState === WebSocket.OPEN) {
-                                    client.send(JSON.stringify({ event: 'newMessage', data: { conversationId: conversation_id, sender_email, message_text }}));
+                            const targetSocket = websocketConnectionsManager.getConnection(target_email);
+                                if (targetSocket) {
+                                    targetSocket.send(JSON.stringify(websocketFormatter.formatWebSocket('SUCCESS', 'messages', 'newMessage', data)));
                                 }
-                            });
                         }
                     });
                 });

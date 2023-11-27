@@ -18,6 +18,7 @@ class WebSocketConnector(QObject):
     add_friend = pyqtSignal(dict)
     call_conversation = pyqtSignal(dict)
     friend_request = pyqtSignal(dict)
+    new_message = pyqtSignal(dict)
     
     def __init__(self, url):
         super().__init__()
@@ -33,6 +34,8 @@ class WebSocketConnector(QObject):
             self.call_conversation.emit(data['data'])
         elif data['category'] == 'notifications' and data['message'] == 'friendRequest':
             self.friend_request.emit(data['data'])
+        elif data['category'] == 'messages':
+            self.new_message.emit(data['data'])
 
     def send_message(self, message):
         self.realtime_communication.send_message(message)
