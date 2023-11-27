@@ -3,6 +3,7 @@
 const notificationsController = require('./notifications_controller');
 const conversationsController = require('./conversations_controller');
 const socketManager = require('../utils/socketManager');
+const websocketConnectionsManager = require('../utils/websocketConnectionsManager');
 const dbManager = require('../model/dbManager');
 const url = require('url');
 
@@ -23,6 +24,7 @@ exports.initializeWebsocketListeners = function() {
         
         if (user_id) {
             console.log('A user connected with user_id:', user_id);
+            websocketConnectionsManager.addConnection(user_id, ws);
         } else {
             console.log('A user connected, but user_id is missing.');
         }
@@ -79,6 +81,7 @@ exports.initializeWebsocketListeners = function() {
 
         ws.on('close', () => {
             console.log('User disconnected', user_id);
+            websocketConnectionsManager.removeConnection(user_id);
             // 연결이 끊어지면 사용자 상태를 offline으로 변경
             dbManager.updateUserStatus(user_id, 'offline', (error, results) => {
                 if (error) {

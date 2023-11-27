@@ -1,8 +1,7 @@
 // ./controller/notifications_controller.js
 
 const dbManager = require('../model/dbManager');
-const websocketController = require('./websocket_controller');
-const responseFormatter = require('../utils/responseFormatter');
+const websocketConnectionsManager = require('../utils/websocketConnectionsManager');
 const config = require('../config/config.js');
 const websocketFormatter = require('../utils/websocketFormatter');
 
@@ -55,7 +54,11 @@ exports.handleFriendRequest = function(user_email, sender_email, socket) {
                                     created_at: new Date().toISOString() // 현재 시간을 ISO 형식으로 설정
                                 };
 
-                                socket.send(JSON.stringify(websocketFormatter.formatWebSocket('SUCCESS', 'notifications', 'friendRequest', notificationData)));
+                                // 대상 사용자의 웹소켓 연결 찾기
+                                const targetSocket = websocketConnectionsManager.getConnection(user_email);
+                                if (targetSocket) {
+                                    targetSocket.send(JSON.stringify(websocketFormatter.formatWebSocket('SUCCESS', 'notifications', 'friendRequest', notificationData)));
+                                }
                             }
                         });
                     });
@@ -112,6 +115,10 @@ exports.handleFriendResponse = function(user_email, sender_email, action, socket
 
                             // 성공 응답 및 사용자 정보 반환
                             socket.send(JSON.stringify(websocketFormatter.formatWebSocket('SUCCESS', 'notifications', 'friendResponseSuccess', { senderInfo })));
+                            const targetSocket = websocketConnectionsManager.getConnection(user_email);
+                                if (targetSocket) {
+                                    targetSocket.send(JSON.stringify(websocketFormatter.formatWebSocket('SUCCESS', 'notifications', 'friendResponseSuccess', { senderInfo })));
+                                }
                         });
                     });
                 }
