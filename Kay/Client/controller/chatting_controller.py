@@ -49,6 +49,7 @@ class ChattingController(QObject):
     def connect_slot(self):
         self.websocket_api.add_friend.connect(self.add_friend)
         self.websocket_api.call_conversation.connect(self.call_conversation)
+        self.websocket_api.friend_request.connect(self.friend_request)
         self.chatting_window.friend_list_widget.new_friend_added.connect(self.handle_new_friend_added)
 
     @pyqtSlot(dict)
@@ -76,6 +77,21 @@ class ChattingController(QObject):
 
         # 더블클릭한 창 표시
         self.chatting_window.right_area_widget.setCurrentIndex(self.conversation_index[conversation_id])
+
+    @pyqtSlot(dict)
+    def friend_request(self, data):
+        image_path = './view/static/img/sidebar_notification_icon'
+        title = "친구 추가 요청"
+        content = data['sender_email']
+        date = data["created_at"]
+        
+        notification_widget = NotificationWidget(image_path, title, content, date)
+        self.chatting_window.notifications_list_widget.notifications_layout.addWidget(notification_widget)
+
+        self.notification_widgets[content] = notification_widget
+
+        notification_widget.response_signal.connect(
+            lambda sender_id, response: self.handle_friend_response(sender_id, response, notification_widget))
 
     @pyqtSlot(str, str, int)
     def send_message_to_server(self, email, message_text, conversation_id):

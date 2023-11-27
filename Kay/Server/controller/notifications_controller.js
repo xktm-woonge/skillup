@@ -55,7 +55,7 @@ exports.handleFriendRequest = function(user_email, sender_email, socket) {
                                     created_at: new Date().toISOString() // 현재 시간을 ISO 형식으로 설정
                                 };
 
-                                socket.send(JSON.stringify(websocketFormatter.formatWebSocket('SUCCESS', 'newFriendRequest', notificationData)));
+                                socket.send(JSON.stringify(websocketFormatter.formatWebSocket('SUCCESS', 'notifications', 'friendRequest', notificationData)));
                             }
                         });
                     });
