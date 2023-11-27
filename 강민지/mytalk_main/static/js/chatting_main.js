@@ -124,8 +124,7 @@ function runEvents(){
     settingUserEditing();
     addUserStatusEvent();
     addDeleteNoticeEvent();
-    addFriendEvent("accept");
-    addFriendEvent("reject");
+    addFriendEvent();
     addOpenChattingFromFriendsListEvent();
 }
 
@@ -192,7 +191,10 @@ function loadChattingMessageData(room_num, reload=false) {
 			webSocketInitialization(socketPath + `${room_num}/`, "enter_chat_room")
 			.then(function(){
 				socket.send(JSON.stringify({"message": "enter_chatting_room", "room_number": room_num}));
-				document.querySelector(`#room_num_${room_num}`).classList.remove("new");
+				try{
+					document.querySelector(`#room_num_${room_num}`).classList.remove("new");
+				} 
+				catch{}
 			});
 		}
 	})
@@ -254,7 +256,7 @@ function userEmailConform(email){
 		.then(handleResponse)
 		.then(function(data){
 			if (data.message === "request_to_each_other") {
-				swal("서로 친구 신청되어 친구가 추가되었습니다.");
+				socket.send(JSON.stringify({"message": "accept_friend", "noti_num": data.noti_num}));
 			} else if (data.message !== "success"){
 				friendRequestSwal(data.message);
 			} else if (data.message === "success"){

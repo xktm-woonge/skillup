@@ -37,17 +37,18 @@ def get_friend_list(request):
 
 def get_chatting_room_list(request):
     chatting_list_contents = {}
-    chat_lists = ConversationParticipants.objects.filter(user_id=request.user.id).values_list('conversation_id', flat=True)
+    user = request.user.id
+    chat_lists = ConversationParticipants.objects.filter(user_id=user).values_list('conversation_id', flat=True)
     
     if chat_lists:
         for chat in chat_lists:
-            conv_room = ConversationParticipants.objects.filter(conversation_id=chat)
-            for room, i in zip(conv_room.values(), range(conv_room.count())):
-                user_data = user_model.objects.get(id=room['user_id'])
-                if user_data.id != request.user.id:
-                    chatting_list_contents[f'{i}'] = create_chatting_room(user_data, room['conversation_id'])
-                    chatting_list_contents[f'{i}']['get_new'] = check_new_message(request.user.id, chat)
-                    
+            conv_room = ConversationParticipants.objects.filter(conversation_id=chat).exclude(user_id=user).first()
+            room_type = Conversations.objects.get(id=chat).type
+            
+            user_data = user_model.objects.get(id=conv_room.user_id)
+            chatting_list_contents[f'{chat}'] = create_chatting_room(user_data, conv_room.conversation_id, room_type, user)
+            chatting_list_contents[f'{chat}']['get_new'] = check_new_message(user, chat)
+                        
     return chatting_list_contents
 
 def get_curr_user_data(request):
@@ -71,8 +72,11 @@ def conv_user_data(user, roomnum):
         last_reply_time = Messages.objects.filter(conversation_id=roomnum).exclude(sender_id=user).last().timestamp.strftime("%Y-%m-%d %H:%M:%S")
     except AttributeError:
         last_reply_time = ''
+    
+    room_type = Conversations.objects.get(id=roomnum).type
         
-    if Conversations.objects.get(id=roomnum).type == 'private':
+    if room_type == 'private':
+        room_name = conv_user.name
         conv_status = 'offline'
         if conv_user.is_online :
             if conv_user.status == 'online':
@@ -81,15 +85,23 @@ def conv_user_data(user, roomnum):
                 conv_status = 'away'
     else:
         conv_status = ''
+        room_user = list(ConversationParticipants.objects.filter(conversation_id=roomnum).exclude(user_id=user).values_list("user_id", flat=True))
+        room_name = []
+        for i in room_user:
+            user_name = user_model.objects.get(id=i).name
+            room_name.append(user_name)
+        room_name = ', '.join(room_name)
+        
                     
     conv_user_content = {
-        'conv_user' : conv_user.name,
+        'conv_user' : room_name,
         'conv_status' : conv_status,
         'conv_pic' : conv_user.profile_picture,
         'last_reply_time' : last_reply_time,
         'room_number' : roomnum,
+        'type' : room_type,
     }
-    return conv_user_content            
+    return conv_user_content
         
  
 def get_message_data(request):
@@ -152,9 +164,9 @@ def friend_request(request):
         email = json.loads(request.body.decode('utf-8'))["email"]
         try:
             requested_friend_id = user_model.objects.get(email=email).id
-            # friends = Friends.objects.filter(user_id=user).values_list("friend_id", flat=True)
-            # if requested_friend_id in friends:
-            #     raise Exception
+            friends = Friends.objects.filter(user_id=user).values_list("friend_id", flat=True)
+            if requested_friend_id in friends:
+                raise Exception
         except ObjectDoesNotExist:
             return JsonResponse({'message':'unsubscribed_email'})
         except Exception:
@@ -163,16 +175,14 @@ def friend_request(request):
             has_user_request, _ = request_pretreatment(user, requested_friend_id)
             has_friend_request, notinum = request_pretreatment(requested_friend_id, user)
             
-            if not has_user_request:
+            if has_user_request:
                 return JsonResponse({"message":"request_duplication"})
             elif not has_user_request and has_friend_request:
-                # NotificationReceivers.objects.filter(notification_id=notinum, receiver_id=user).update(is_conform=True)
-                # make_friends(user, requested_friend_id)
-                return JsonResponse({"message":"request_to_each_other"})
-            elif has_user_request and not has_friend_request:
+                return JsonResponse({"message":"request_to_each_other",'noti_num':notinum})
+            elif not has_user_request and not has_friend_request:
                 last_num = Notifications.objects.filter().last().id + 1
-                # Notifications.objects.create(id=last_num, type='friends', sender_id=user)
-                # NotificationReceivers.objects.create(notification_id=last_num, receiver_id=requested_friend_id)
+                Notifications.objects.create(id=last_num, type='friends', sender_id=user)
+                NotificationReceivers.objects.create(notification_id=last_num, receiver_id=requested_friend_id)
                 return JsonResponse({'message':'success', 'noti_num':last_num})
 
 def load_chatting_main_page(request):

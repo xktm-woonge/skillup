@@ -44,7 +44,7 @@ alerts.forEach(el => {
 			}).then((value) => {
 				if (value) {
 				// 데이터처리 웹소켓 추가
-				swal(`안녕히 가세요...`);
+				swal(`지금 버전에서는 탈퇴 기능을 지원하지 않습니다.`);
 				}
 			});
 		} else if(typeName == "Delete_all") {
@@ -57,20 +57,26 @@ alerts.forEach(el => {
 				deleteNoticeAll();
 				}
 			});
-		} else if(typeName == "Done_all"){
-			swal("전체 수락", "친구 요청을 전체 수락하시겠습니까?", "warning", {
-				buttons: ["취소", "네"],
-				dangerMode: true,
+		} else if (typeName == "Accept_all") {
+			userCount = document.querySelectorAll(".notice--group.friends").length;
+			swal("전체 수락", `${userCount}명의 친구 신청을 수락하시겠습니까?`, {
+			  buttons: ["취소", "네"],
 			}).then((value) => {
 				if (value) {
-					swal(`전체 수락하였습니다.`);
+					swal(`수락했습니다.`);
 					acceptFriendAll();
 				}
 			});
+		} else if (typeName == "Accept") {
+			swal("친구 신청 수락 완료");
+		} else if (typeName == "Add_comment") {
+			changeSideBar("friends");
+			checkboxToggle();
+		} else {
+			swal("typeName");
 		}
 	})
 })
-
 function deleteNoticeAll(){
   const notices = document.querySelectorAll(".notice--group:not(.friends)");
 	notices.forEach(function(notice){
