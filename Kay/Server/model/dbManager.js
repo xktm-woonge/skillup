@@ -2,11 +2,11 @@
 
 const mysql = require('mysql');
 const config = require('../config/config.js');
-const serverAddr = config.serverAddr;
+const sqlAddr = config.sqlAddr;
 
 const pool = mysql.createPool({
   connectionLimit: 10,
-  host: serverAddr,
+  host: sqlAddr,
   user: 'root',
   password: '0000',
   database: 'chatting'
@@ -131,12 +131,12 @@ exports.getNotificationsForUser = function(user_id, callback) {
   pool.query(sql, [user_id], callback);
 };
 
-exports.insertFriendRequestNotification = function(senderId, receiverId, callback) {
+exports.insertFriendRequestNotification = function(userId, senderId, callback) {
   const sql = `
-      INSERT INTO Notifications (user_id, type, content, sender_id) 
-      VALUES (?, 'FRIEND_REQUEST', 'New friend request from user '?, ?)
+      INSERT INTO Notifications (user_id, sender_id) 
+      VALUES (?, ?)
   `;
-  pool.query(sql, [receiverId, senderId, senderId], callback);
+  pool.query(sql, [userId, senderId], callback);
 };
 
 exports.deleteNotification = function(user_id, sender_id, callback) {
