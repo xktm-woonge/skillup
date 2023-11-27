@@ -36,10 +36,17 @@
 }
 
 %profile {
-  width: var(--imgSize);
-  height: var(--imgSize);
+  $imgSize: var(--imgSize);
+  $shadow: 6px;
+  width: $imgSize;
+  height: $imgSize;
   position: relative;
   border-radius: var(--br-radius);
+  &.group {
+    width: calc($imgSize - $shadow); height: calc($imgSize - $shadow); 
+    box-shadow: $shadow $shadow 0 var(--Success-500);
+    border-radius: calc(var(--br-radius) * 0.83);
+  }
 }
 
 %activeDotsHoverBorder {

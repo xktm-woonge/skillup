@@ -36,7 +36,7 @@ class Notifications(models.Model):
         ('SYSTEM', 'system'),
         ('DANGER', 'danger'),
         ('FRIENDS', 'friends'),
-        ('TEAM', 'team'),
+        ('GROUP', 'group'),
         ('NORMAL', 'normal'),
     ]
     type = models.CharField(max_length=20, choices=TYPE_CHOICES)

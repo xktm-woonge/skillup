@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='notifications',
             name='type',
-            field=models.CharField(choices=[('SYSTEM', 'system'), ('DANGER', 'danger'), ('FRIENDS', 'friends'), ('TEAM', 'team'), ('NORMAL', 'normal')], max_length=20),
+            field=models.CharField(choices=[('SYSTEM', 'system'), ('DANGER', 'danger'), ('FRIENDS', 'friends'), ('GROUP', 'group'), ('NORMAL', 'normal')], max_length=20),
         ),
     ]

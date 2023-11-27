@@ -69,20 +69,32 @@ def set_friend_list_data(friend_info):
     }
     return show_user_status, context
 
-def create_chatting_room(user_data, room):
+def create_chatting_room(user_data, room, room_type, user):
     try:
         final_message = Messages.objects.filter(conversation_id=room).last().message_text
     except AttributeError:
         final_message = ''
     show_user_status = 'offline' if not user_data.is_online else user_data.status
     
+    if room_type == "private":
+        room_name = user_data.name
+    else :
+        room_user = list(ConversationParticipants.objects.filter(conversation_id=room).exclude(user_id=user).values_list("user_id", flat=True))
+        room_name = []
+        for i in room_user:
+            user_name = user_model.objects.get(id=i).name
+            room_name.append(user_name)
+        room_name = ', '.join(room_name)
+        
+    
     context = {
-        'conv_user_name' : user_data.name, 
+        'conv_user_name' : room_name, 
         'conv_final_message' : final_message,
         'conv_picture' : user_data.profile_picture,
         'user_status' : show_user_status,
         'room_num' : room,
         'team' : '',
+        'type' : room_type,
     } 
     return context
 

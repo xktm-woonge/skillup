@@ -35,15 +35,20 @@ function addChattingSocketFunction(message){
 function addChatJustReceiveFuntion(message){
     if(["last_message"].indexOf(message.message) !== -1){
         let roomnum = message.data["roomnum"];
-        print(message);
         document.getElementById(`room_num_${roomnum}`).querySelector(".room__status").textContent = message.data["message"];
+        if (!message.is_sender){
+            document.querySelector(`#room_num_${roomnum}`).classList.add("new");
+        }
     }
 }
 // 알림창 내부 소켓 통신 후 실행할 함수 -- 개발 중
 function addNotiFunction(message){
     if(message.message === "friend_request"){
+        print(message.message)
         document.querySelector(".side_bar--body.notice").innerHTML += createNoticesBox({"1":message.data});
         setProfilePic();
+        addFriendEvent();
+        swal("알림", "친구 요청이 도착하였습니다.", "info")
     }
     else if(message.message === "system"){
 
@@ -66,6 +71,7 @@ function addNotiFunction(message){
             setProfilePic();
             changeSideBar("friends");
             addOpenChattingFromFriendsListEvent();
+            swal("친구가 추가되었습니다.");
         }
     }
 }
@@ -83,6 +89,7 @@ function addChatUserInfoReloadFunction(message){
 }
 function addChatListFunction(message){
     if(message.message === "add_chat_list"){
+        let currRoomNum = message.data.room_num;
         document.querySelector(".side_bar--body.room").innerHTML += createChatList({"1":message.data});
     }
 }
@@ -186,14 +193,18 @@ function addDeleteNoticeEvent(){
 }
 
 // 친구 요청 버튼 Click 시 실행 될 함수
-function addFriendEvent(actionType) {
-    document.querySelectorAll(".actions__" + actionType).forEach(function (element) {
-        element.addEventListener("click", function () {
-            let parentClassList = this.parentElement.parentElement.classList;
-            let friendNotiNum = findNumInClassName(parentClassList);
-            socket.send(JSON.stringify({"message": `${actionType}_friend`, "noti_num": friendNotiNum}));
+function addFriendEvent() {
+    const actionType = ['accept', 'reject'];
+    actionType.forEach(function(action){
+        document.querySelectorAll(".actions__" + action).forEach(function (element) {
+            element.addEventListener("click", function () {
+                let parentClassList = this.parentElement.parentElement.classList;
+                let friendNotiNum = findNumInClassName(parentClassList);
+                socket.send(JSON.stringify({"message": `${action}_friend`, "noti_num": friendNotiNum}));
+            });
         });
-    });
+    })
+    
 }
 
 // 친구 목록 Double Click 시 실행될 함수

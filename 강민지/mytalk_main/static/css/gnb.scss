@@ -11,6 +11,7 @@
   z-index: 99;
   background-color: var(--background);
   @extend %boxShadow;
+  #version {display: none}
   .btn {
     @include flexBox(space-between);
     width: 100%;
@@ -25,8 +26,19 @@
       img { filter: var(--filter-white-bgP)}
     }
     &::after {@extend %body1; width: 100%; text-align: left; white-space: nowrap;}
+    &.hasNoti::before {
+      content: '';
+      display: inline-block;
+      background: var(--Danger-700);
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      position: absolute;
+      left: var(--padding);
+      top: var(--padding);
+    }
   }
-  &:hover, &.active {
+  &:hover {
     width: 200px;
     border-radius: var(--br-radius);
     .btn {
@@ -36,8 +48,8 @@
       &--Chat::after {content: '채팅';}
       &--User::after {content: '설정';}
     }
-    &::after{
-      content: "v 1.0.0";
+    #version {
+      display: block;
       padding: var(--padding);
       position: absolute;
       bottom: 0;
@@ -144,16 +156,14 @@
     @extend %boxShadow;
     &.system .notice--type { background-color:var(--Semi-Darker); img {filter: invert(100%); padding: 12px;}}
     &.danger .notice--type { background-color:var(--Danger-500); img {filter: invert(100%); padding: 12px;}}
-    &.team {
-      .notice--type img {
-        $shadow: 6px;
-        width: calc(100% - $shadow); height: calc(100% - $shadow); 
-        box-shadow: $shadow $shadow 0 var(--Success-500);
-        border-radius: calc(var(--br-radius) * 0.83);
-      }
+    &.group .notice--type img {
+      $shadow: 6px;
+      width: calc(100% - $shadow); height: calc(100% - $shadow); 
+      box-shadow: $shadow $shadow 0 var(--Success-500);
+      border-radius: calc(var(--br-radius) * 0.83);
     }
     &.normal .notice--box__title, 
-    &.team .notice--box__title {
+    &.group .notice--box__title {
       p { @include ellipseBox;max-width:76%}
       &::after {
         content: "의 새 메세지";
@@ -200,7 +210,7 @@
       flex-direction: column;
       gap: calc(var(--gap) / 2);
       height: 100%;
-      button {
+      > * {
         @include flexBox();
         @extend %body2;
         border-radius: calc(var(--br-radius) / 2);
@@ -276,6 +286,7 @@
   side_bar chatting_room view 
 ****************************************************/
 .room {
+  gap: 0;
   padding: 0 !important;
   &--box {
     display: grid;
@@ -319,10 +330,10 @@
       max-width: 20px; 
       margin-right:8px;
     }
-    //&::after {
-    //  content: '이미지';
-    //  display: block;
-    //}
+    &.hasImg::after {
+      content: '이미지';
+      display: block;
+    }
   }
 }
 
