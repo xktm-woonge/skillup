@@ -49,6 +49,7 @@ class ChattingController(QObject):
     def connect_slot(self):
         self.websocket_api.add_friend.connect(self.add_friend)
         self.websocket_api.call_conversation.connect(self.call_conversation)
+        self.chatting_window.friend_list_widget.new_friend_added.connect(self.handle_new_friend_added)
 
     @pyqtSlot(dict)
     def add_friend(self, data):
@@ -92,6 +93,14 @@ class ChattingController(QObject):
         for i in reversed(range(self.chatting_window.middle_area.count())): 
             self.chatting_window.middle_area.itemAt(i).widget().setParent(None)
         # Do the same for the right area
+
+    def handle_new_friend_added(self, friend_email):
+        info = {
+            'user_email': friend_email,
+            'sender_email': self.userInfo['email']
+        }
+        message = make_websocket_message("sendFriendRequest", info)
+        self.websocket_api.send_message(message)
         
     def set_user_info(self):
         # 프로필 사진 설정

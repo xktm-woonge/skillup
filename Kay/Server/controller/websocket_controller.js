@@ -31,7 +31,7 @@ exports.initializeWebsocketListeners = function() {
             let data = JSON.parse(message);
             switch (data.event) {
                 case 'sendFriendRequest':
-                    notificationsController.handleFriendRequest(data, user_id, ws);
+                    notificationsController.handleFriendRequest(data.info.user_email, data.info.sender_email, ws);
                     break;
                 case 'sendFriendResponse':
                     // sendFriendResponse 이벤트 처리
