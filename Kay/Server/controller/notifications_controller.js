@@ -10,28 +10,61 @@ const serverAddr = config.serverAddr;
 const httpPort = config.httpPort;
 
 
-exports.handleFriendRequest = function(data, senderId, socket) {
-    const receiverId = data.friendId; // The ID of the user to whom the friend request is being sent
-
-    // Insert the friend request into the Notifications table
-    dbManager.insertFriendRequestNotification(senderId, receiverId, (error) => {
-        if (error) {
-            console.error("Error inserting friend request notification:", error);
-            return socket.emit('friendRequestError', 'Failed to send friend request.');
+exports.handleFriendRequest = function(user_email, sender_email, socket) {
+    // 먼저 사용자와 발신자의 ID를 조회
+    dbManager.getUserIdByEmail(user_email, (error, userId) => {
+        if (error || !userId) {
+            console.error("Error finding user ID:", error);
+            socket.send(JSON.stringify(websocketFormatter.formatWebSocket('FAIL', 'notifications', 'userLookupError')));
+            return;
         }
 
-        // Send the friend request as a realtime notification to the receiving user
-        const notification = {
-            type: 'FRIEND_REQUEST',
-            content: 'You have received a new friend request!',
-            sender_id: senderId
-        };
-        websocketController.sendRealtimeMessage(receiverId, notification);
+        dbManager.getUserIdByEmail(sender_email, (error, senderId) => {
+            if (error || !senderId) {
+                console.error("Error finding sender ID:", error);
+                socket.send(JSON.stringify(websocketFormatter.formatWebSocket('FAIL', 'notifications', 'senderLookupError')));
+                return;
+            }
 
-        // socket.emit 대신 socket.send 사용
-        socket.send(JSON.stringify({ event: 'friendRequestSuccess', message: 'Friend request sent successfully.' }));
+            // notifications 테이블에서 해당 항목 조회
+            dbManager.checkNotificationExists(userId, senderId, (checkErr, exists) => {
+                if (checkErr) {
+                    console.error("Error checking notification existence:", checkErr);
+                    return;
+                }
+
+                if (!exists) {
+                    // notifications 테이블에 데이터 추가
+                    dbManager.insertFriendRequestNotification(userId, senderId, (insertErr) => {
+                        if (insertErr) {
+                            console.error("Error inserting friend request notification:", insertErr);
+                            return;
+                        }
+
+                        // 사용자가 온라인 상태인지 확인
+                        dbManager.getUserStatus(user_email, (statusErr, userStatus) => {
+                            if (statusErr) {
+                                console.error("Error getting user status:", statusErr);
+                                return;
+                            }
+
+                            if (userStatus === 'online') {
+                                // 온라인 상태일 경우 사용자에게 알림 전송
+                                const notificationData = {
+                                    sender_email: sender_email,
+                                    created_at: new Date().toISOString() // 현재 시간을 ISO 형식으로 설정
+                                };
+
+                                socket.send(JSON.stringify(websocketFormatter.formatWebSocket('SUCCESS', 'newFriendRequest', notificationData)));
+                            }
+                        });
+                    });
+                }
+            });
+        });
     });
 };
+
 
 exports.handleFriendResponse = function(user_email, sender_email, action, socket) {
     // 먼저 사용자와 발신자의 ID를 조회

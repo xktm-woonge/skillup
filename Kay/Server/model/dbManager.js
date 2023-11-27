@@ -350,3 +350,16 @@ exports.getMessagesByUserId = function(userId, callback) {
       callback(null, results);
   });
 };
+
+exports.checkNotificationExists = function(userId, senderId, callback) {
+  const sql = `
+      SELECT * FROM Notifications
+      WHERE user_id = ? AND sender_id = ?
+  `;
+  pool.query(sql, [userId, senderId], (error, results) => {
+      if (error) {
+          return callback(error, null);
+      }
+      callback(null, results.length > 0);
+  });
+};
