@@ -125,7 +125,8 @@ class ChattingController(QObject):
             "sender_id": self.userInfo['id'],
             "conversation_id": conversation_id,
             "email": email,
-            "message_text": message_text
+            "message_text": message_text,
+            "imagePath": f'{Path(__file__).parents[1]}/view/static/img/base_profile-removebg-preview.png'
         }
         message = make_websocket_message("sendMessage", info)
         self.websocket_api.send_message(message)

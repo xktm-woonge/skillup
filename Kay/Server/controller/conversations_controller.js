@@ -71,6 +71,7 @@ exports.handleSendMessage = function(data, wss, callback) {
     const conversation_id = data.info.conversation_id;
     const target_email = data.info.email;
     const message_text = data.info.message_text;
+    const imagePath = data.info.imagePath
 
     // sender_email을 통해 sender의 userId를 가져옵니다.
     dbManager.addMessageToConversation(conversation_id, senderUserId, message_text, (addMessageErr, newMessage) => {
