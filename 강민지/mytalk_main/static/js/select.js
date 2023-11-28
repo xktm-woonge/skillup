@@ -15,7 +15,7 @@ startBtn.addEventListener("click", function(){
 	} else {
 		let userNames = []
 		chatConv.forEach((user)=>{
-			if (user.id == "TED"){
+			if (["TED", "ChatGPT"].indexOf(user.id) !== -1){
 				swal("", "CHATBOT과는 그룹 채팅을 할 수 없습니다.", "warning");
 				user.checked = false;
 				is_send = false;

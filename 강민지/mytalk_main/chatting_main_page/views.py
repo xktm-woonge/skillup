@@ -14,11 +14,13 @@ user_model = get_user_model()
         
 def get_notice_list(request):
     notice_contents = {}
-    received_notices = NotificationReceivers.objects.filter(receiver=request.user.id, is_conform=False)
+    received_notices = NotificationReceivers.objects.filter(receiver=request.user.id, is_conform=False).order_by('-received_at')
     if received_notices :
         for receicved, i in zip(received_notices.values(), range(received_notices.count())):
             notice = Notifications.objects.get(id=receicved['notification_id'])
+            timestamp_string = receicved['received_at'].strftime('%Y-%m-%d %H:%M:%S')
             notice_contents[f'{i}'] = set_notice_box_data(notice)
+            notice_contents[f'{i}']['received_at'] = timestamp_string
     return notice_contents
 
 def get_friend_list(request):
@@ -38,17 +40,18 @@ def get_friend_list(request):
 def get_chatting_room_list(request):
     chatting_list_contents = {}
     user = request.user.id
-    chat_lists = ConversationParticipants.objects.filter(user_id=user).values_list('conversation_id', flat=True)
+    chat_sort_list = list(Conversations.objects.order_by("-last_chat_at").values_list("id", flat=True))
+    chat_lists = list(ConversationParticipants.objects.filter(user_id=user).values_list('conversation_id', flat=True))
+    chat_lists = [value for value in chat_sort_list if value in chat_lists]
     
     if chat_lists:
-        for chat in chat_lists:
+        for chat, i in zip(chat_lists, range(len(chat_lists))):
             conv_room = ConversationParticipants.objects.filter(conversation_id=chat).exclude(user_id=user).first()
             room_type = Conversations.objects.get(id=chat).type
             
             user_data = user_model.objects.get(id=conv_room.user_id)
-            chatting_list_contents[f'{chat}'] = create_chatting_room(user_data, conv_room.conversation_id, room_type, user)
-            chatting_list_contents[f'{chat}']['get_new'] = check_new_message(user, chat)
-                        
+            chatting_list_contents[f'{i}'] = create_chatting_room(user_data, conv_room.conversation_id, room_type, user)
+            chatting_list_contents[f'{i}']['get_new'] = check_new_message(user, chat)
     return chatting_list_contents
 
 def get_curr_user_data(request):

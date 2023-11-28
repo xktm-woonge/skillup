@@ -29,7 +29,38 @@ function handleResponse(response) {
 	}
 }
 
+function hasNew(){
+	const notices = document.querySelectorAll(".notice--group");
+	const chat = document.querySelectorAll(".room--box.new");
+	if (notices.length == 0){
+		document.getElementById("notices").classList.remove("hasNoti");
+	} else {
+		document.getElementById("notices").classList.add("hasNoti")
+	}
+	if (chat.length == 0){
+		document.getElementById("chat").classList.remove("hasNoti");
+	} else {
+		document.getElementById("chat").classList.add("hasNoti")
+	}
+}
 
+function chatListTime(){
+	const chatList = document.querySelectorAll(".room__time");
+	chatList.forEach((time)=>{
+		let lastChatTime = new Date(time.getAttribute("datetime"));
+		if (!isNaN(lastChatTime)){
+			let currentTime = new Date();
+			if(lastChatTime.getFullYear() == currentTime.getFullYear()
+				&& lastChatTime.getMonth() == currentTime.getMonth()
+				&& lastChatTime.getDate() == currentTime.getDate()){
+				time.textContent = `${lastChatTime.getHours()}:${lastChatTime.getMinutes()}`
+			} else{
+				time.textContent = `${lastChatTime.getFullYear()}-${lastChatTime.getMonth()+1}-${lastChatTime.getDate()}`;
+			}
+		}
+		
+	})
+}
 
 /** 프로필 사진 설정 */
 // 각 tag에 저장되어 있는 dataset의 파일을 불러온다.
@@ -119,6 +150,27 @@ function addOfflineUser(data, load=true){
 	offlinePoint.innerHTML += createFriendsList(data);
 }
 
+function sortNotices(is_new=false){
+	const noticeBody = document.querySelector(".side_bar--body.notice");
+	const noticesNotFriend = document.querySelectorAll(".notice--group:not(.friends)");
+	noticesNotFriend.forEach(notice=>notice.remove());
+	noticesNotFriend.forEach(notice => noticeBody.appendChild(notice));
+}
+
+function sortChatList(is_new=false, roomNum=''){
+	const chatListBoby = document.querySelector(".side_bar--body.room");
+	var chatNotNew, chatYetRead;
+	if(is_new){
+		chatNotNew = document.querySelectorAll(`.room--box:not(#room_num_${roomNum})`);
+		print(chatNotNew);
+		chatNotNew.forEach(chat=>chat.remove());
+		chatNotNew.forEach(chat=>chatListBoby.appendChild(chat));
+	}
+	chatYetRead = document.querySelectorAll(".room--box:not(.new)");
+	chatYetRead.forEach(chat=>chat.remove());
+	chatYetRead.forEach(chat=>chatListBoby.appendChild(chat));
+}
+
 function runEvents(){
     setProfilePic();
     settingUserEditing();
@@ -126,6 +178,8 @@ function runEvents(){
     addDeleteNoticeEvent();
     addFriendEvent();
     addOpenChattingFromFriendsListEvent();
+	sortNotices();
+	sortChatList();
 }
 
 /** 현재 사용자 데이터 로드 함수 */
@@ -144,6 +198,7 @@ function loadCurrUserData(reload=false) {
 				document.querySelector(".side_bar--body.notice").innerHTML = createNoticesBox(page_data.notice_data);
 				document.querySelector(".setting--user").innerHTML = page_data.curr_user_data;
 				document.querySelector(".activeSet").value = page_data.present_status;
+				setInterval(()=>{hasNew();chatListTime();}, 100);
 				webSocketInitialization(socketPath, 'load')
 				.then(()=>socket.send(JSON.stringify({"message":"user_login"}))
 				)
@@ -193,6 +248,7 @@ function loadChattingMessageData(room_num, reload=false) {
 				socket.send(JSON.stringify({"message": "enter_chatting_room", "room_number": room_num}));
 				try{
 					document.querySelector(`#room_num_${room_num}`).classList.remove("new");
+					sortChatList();
 				} 
 				catch{}
 			});
@@ -223,7 +279,7 @@ function userResponseTime(){
 	}
 	lastResponseTime.textContent = differenceString + " 전 응답";
 	} else{
-		lastResponseTime.textContent = "";
+		lastResponseTime.textContent = "아직 응답 전입니다.";
 	}			
 }
 
@@ -263,6 +319,7 @@ function userEmailConform(email){
 				swal(`${email}\n 위 이메일의 사용자에게 친구 신청을 보냈습니다.`);
 				let noticeNum = data.noti_num;
 				socket.send(JSON.stringify({"message":"add_notice", "noti_num":noticeNum}));
+				sortNotices();
 			}
 		})
 	}

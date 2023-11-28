@@ -75,7 +75,7 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
     async def conform_conv_user(self, ischatbot, data, user, message_box_data):
         await self.send_last_message(message_box_data, user)
         if ischatbot:
-            chat_data = await dp.chatbot_conv(user, data)
+            chat_data = await dp.chatbot_conv(data, user)
             await self.send(json.dumps({'message':'receive_mesaage','data': chat_data}))
             await self.send_last_message(chat_data, user)
         else :
@@ -179,9 +179,11 @@ class DataProvider():
     
     @database_sync_to_async
     def add_notice_boxs(self, notice_num):
-        receivers = list(NotificationReceivers.objects.filter(notification_id=notice_num).values_list("receiver_id", flat=True))
+        notice_data = NotificationReceivers.objects.filter(notification_id=notice_num)
+        receivers = list(notice_data.values_list("receiver_id", flat=True))
         notice = Notifications.objects.get(id=notice_num)
         content = set_notice_box_data(notice)
+        content['received_at'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         return content, receivers
     
     @database_sync_to_async
@@ -249,7 +251,7 @@ class DataProvider():
         friend_id = user_model.objects.get(name=friend_name).id
         part_chat_id = ConversationParticipants.objects.filter(user_id=user).values_list('conversation_id', flat=True)
         
-        if friend_id == 3:
+        if friend_id in [3]:
             is_chatbot = True
             chatbot_room_list = Conversations.objects.filter(is_chatbot=is_chatbot).values_list('id', flat=True)
             room_num_list = set(part_chat_id) & set(chatbot_room_list)
@@ -264,9 +266,10 @@ class DataProvider():
                 room_num = room_num_list.pop()
         else:
             room_num = self.make_new_room(user, [friend_id], is_chatbot, 'private')
+            chatbot_name = user_model.get(id=friend_id).name
             is_new_chat = True
             if is_chatbot:
-                text = '당신의 챗팅 친구 TED입니다. 무엇이 궁금하세요?'
+                text = f'당신의 채팅 친구 {chatbot_name}입니다. 무엇이 궁금하세요?'
                 Messages.objects.create(message_text=text, conversation_id=room_num, sender_id=friend_id)
                 last_message_id = Messages.objects.filter(sender_id=friend_id).last().id
                 MessageReceivers.objects.create(message_id=last_message_id, receiver_id=user)
@@ -338,6 +341,7 @@ class DataProvider():
             for receiver in receviers.values():
                 MessageReceivers.objects.create(message_id=message_id, receiver_id=receiver['user_id'])
         current_message_time = Messages.objects.filter(conversation_id=room_number).last().timestamp
+        Conversations.objects.filter(id=room_number).update(last_chat_at=current_message_time)
         
         current_data = {
             'message': send_message,
@@ -353,14 +357,18 @@ class DataProvider():
         return current_data, is_chatbot_conv
     
     @database_sync_to_async
-    def chatbot_conv(self, curr_user, data):
-        answer = chatbot.receive_answer(data['send_text'])
+    def chatbot_conv(self, data, user):
         room_number = data['room_number']
+        chatbot_id = ConversationParticipants.objects.filter(conversation_id=room_number).exclude(user_id=user).first().user_id
+        if chatbot_id == 3:
+            answer = chatbot.receive_answer(data['send_text'])
+        else:
+            answer = chatbot.chatGPT_answer(data['send_text'])
         sended_time = datetime.now()
-        last_message_time = Messages.objects.filter(conversation_id=data['room_number']).last().timestamp
+        last_message_time = Messages.objects.filter(conversation_id=room_number).last().timestamp
         Messages.objects.create(message_text=answer, conversation_id=room_number, sender_id=3, timestamp=sended_time)
         data = {
-            'sender_id' : 3,
+            'sender_id' : chatbot_id,
             'message_text' : answer,
             'timestamp' : sended_time,
         }

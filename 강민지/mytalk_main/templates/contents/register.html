@@ -26,7 +26,7 @@
         </form>
         <form method="post" id="register_cert_num" class="">
           {% csrf_token %}
-          <input type="number" name="cert_num" placeholder="000000" max="999999" min="0" onKeyDown="if(this.value.length==6)return false;" />
+          <input type="number" name="cert_num" placeholder="000000" max="999999" min="0">
           <input type="submit" name="cert_num" value="인증" class="btn btn--small">
         </form>
         <form method="post" id="send_user_info">

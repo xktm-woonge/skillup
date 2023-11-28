@@ -6,7 +6,7 @@ const NOTICE_BOX = `
     <div class="notice--box">
       <div class="notice--box__title"><p>{{title}}</p></div>
       <div class="notice--box__content">{{content}}</div>
-      <div class="notice--box__time">{{created_at}}</div>
+      <div class="notice--box__time">{{received_at}}</div>
     </div>
     {{button_type}}
 </div>
@@ -36,7 +36,7 @@ const CHAT_LIST = `
     <div class="room--detail">
         <input type="hidden">
         <div class="room__name">{{conv_user_name}} <span>{{team}}</span> </div>
-        <div class="room__status">{{conv_final_message}}</div>
+        <div class="room__status">{{conv_final_message}} <time class="room__time" datetime="{{time}}">{{time}}</time></div>
     </div>
 </li>
 `;

@@ -29,13 +29,13 @@
     &.hasNoti::before {
       content: '';
       display: inline-block;
-      background: var(--Danger-700);
+      background: var(--Danger-300);
       width: 6px;
       height: 6px;
       border-radius: 50%;
       position: absolute;
-      left: var(--padding);
-      top: var(--padding);
+      left: var(--inputPadding);
+      top: var(--inputPadding);
     }
   }
   &:hover {
@@ -153,7 +153,19 @@
     padding: var(--inputPadding);
     background: var(--white);
     border-radius: var(--br-radius);
+    max-height: 100vh;
     @extend %boxShadow;
+    &.deleted{
+      max-height: 50px;
+      overflow: auto;
+      scroll-behavior: hidden;
+      z-index: -1;
+      transition-duration: .3s;
+      transition-timing-function: ease;
+      &::-webkit-scrollbar{
+        display: none;
+      }
+    }
     &.system .notice--type { background-color:var(--Semi-Darker); img {filter: invert(100%); padding: 12px;}}
     &.danger .notice--type { background-color:var(--Danger-500); img {filter: invert(100%); padding: 12px;}}
     &.group .notice--type img {
@@ -171,7 +183,28 @@
         @extend %body2;
       }
     }
+    &.friends {
+      & .notice--box{
+        &__title{
+          p { @include ellipseBox;max-width:76%}
+          &::after {
+            content:"님의 친구 요청";
+            display: inline;
+            @extend %body2;
+          }
+        }
+        &__content {
+          div
+          &::after {
+            content: "님의 친구 요청이 도착했습니다. \A수락하시겠습니까?";
+            white-space: pre;
+            display: inline;
+          }
+        }
+      }
+    }
   }
+    
   &--type {
     width: var(--imgSize);
     height: var(--imgSize);
@@ -297,15 +330,15 @@
     cursor: pointer;
     &:hover{ @extend %activeDotsHoverBorder; }
     &.new {
-      .room__name::after {
+      .room__time::before {
         content: '';
-        background-color: var(--Danger-700);
+        background-color: var(--Danger-300);
         display: inline-block;
         //padding: calc(var(--gap) / 2);
-        $size: 6px;
+        $size: 8px;
         width: $size; height: $size;
         border-radius: 50%;
-        margin-left: $size;
+        margin-right: $size;
       }
       .room__status {
         font-weight: bold;
@@ -324,6 +357,7 @@
     span { @extend %sideInnerTeam; }
   }
   &__status {
+    position: relative;
     @include ellipseBox();
     @extend %body2;
     img { 
@@ -334,6 +368,12 @@
       content: '이미지';
       display: block;
     }
+  }
+  &__time {
+    position: absolute;
+    right: 0;
+    @extend %caption;
+    color: var(--gray-80);
   }
 }
 

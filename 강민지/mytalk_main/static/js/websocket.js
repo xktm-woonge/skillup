@@ -35,7 +35,13 @@ function addChattingSocketFunction(message){
 function addChatJustReceiveFuntion(message){
     if(["last_message"].indexOf(message.message) !== -1){
         let roomnum = message.data["roomnum"];
-        document.getElementById(`room_num_${roomnum}`).querySelector(".room__status").textContent = message.data["message"];
+        const thisRoom = document.getElementById(`room_num_${roomnum}`);
+        const timeSet = thisRoom.querySelector(".room__time");
+        timeSet.setAttribute('datetime', new Date());
+        thisRoom.querySelector(".room__status").textContent = message.data["message"];
+        thisRoom.querySelector(".room__status").appendChild(timeSet);
+        sortChatList(true, roomnum);
+        chatListTime();
         if (!message.is_sender){
             document.querySelector(`#room_num_${roomnum}`).classList.add("new");
         }
@@ -60,7 +66,8 @@ function addNotiFunction(message){
         let notiNum = message["noti_num"];
         let deleteElement = document.querySelector(`.notice--group.num_${notiNum}`);
         if (deleteElement){
-            deleteElement.remove();
+            deleteElement.classList.add("deleted");
+            setTimeout(() => deleteElement.remove(), 300);
         }
         if (message.message === "accept_friend"){
             if(message.friends_data.is_online){
@@ -91,6 +98,7 @@ function addChatListFunction(message){
     if(message.message === "add_chat_list"){
         let currRoomNum = message.data.room_num;
         document.querySelector(".side_bar--body.room").innerHTML += createChatList({"1":message.data});
+        sortChatList(true, currRoomNum);
     }
 }
 

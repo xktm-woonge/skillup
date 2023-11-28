@@ -4,7 +4,7 @@ from django.core.mail import send_mail
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
-from chatting_main_page.models import Friends
+from chatting_main_page.models import Friends, NotificationReceivers
 import random
 
 user_model = get_user_model()
@@ -79,7 +79,9 @@ def add_user(request):
                 else:
                     break
             user_model.objects.create_user(email=request.session['email'], password=request.session['password'],name=random_user_name)
-            add_friends_chatbot(user_model.objects.get(email=request.session['email']).id)
+            user = user_model.objects.get(email=request.session['email']).id
+            add_friends_chatbot(user)
+            NotificationReceivers.objects.create(notification_id=2, receiver_id=user)
             return JsonResponse({'message':'Success'})
         else:
             return JsonResponse({'message':'Error', 'error':'cert_error'})
@@ -97,3 +99,7 @@ def make_random_user_name():
 def add_friends_chatbot(user_id):
     chatbot_ted_id = user_model.objects.get(name='TED').id
     Friends.objects.create(friend_id=chatbot_ted_id, user_id=user_id)
+    # chatbot_id = user_model.objects.filter(is_staff=True, is_superuser=False).values_list('id', flat=True)
+    # for i in chatbot_id:
+    #     Friends.objects.create(friend_id=i, user_id=user_id)
+    

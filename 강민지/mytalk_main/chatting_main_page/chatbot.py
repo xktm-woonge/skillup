@@ -1,4 +1,5 @@
 from keras.models import load_model
+# import openai
 import numpy as np
 import pandas as pd
 import numpy as np
@@ -17,7 +18,10 @@ class Chatbot():
 
         with open(f'{file_path}/QnA_words_to_csv_1000.csv', 'r', newline='') as f:
             for i in csv.reader(f):
-                self.words += i   
+                self.words += i
+        # openai.api_key = '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'
+        # self.openai = openai
+
         
     def preprocess_user_input(self, question, words):
         bag = [0 for _ in range(len(words))]
@@ -38,3 +42,11 @@ class Chatbot():
         results_index = np.argmax(result)
         response = self.answers[results_index]
         return response
+    
+    # def chatGPT_answer(self, question):
+    #     response = self.openai.Completion.create(
+    #         engine="text-davinci-003",
+    #         prompt=question,
+    #         temperature=0.7,
+    #         max_tokens=150)
+    #     return response.choices[0].text.strip()

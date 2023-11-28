@@ -15,6 +15,7 @@ class Conversations(models.Model):
     name = models.CharField(max_length=255, null=True, default=None)
     created_at = models.DateTimeField(auto_now_add=True)
     is_chatbot = models.BooleanField(default=False)
+    last_chat_at = models.DateTimeField(auto_now_add=True)
 
 class ConversationParticipants(models.Model):
     conversation = models.ForeignKey(Conversations, on_delete=models.CASCADE)
@@ -48,3 +49,4 @@ class NotificationReceivers(models.Model):
     receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     notification = models.ForeignKey(Notifications, on_delete=models.CASCADE)
     is_conform = models.BooleanField(default=False)
+    received_at = models.DateTimeField(auto_now_add=True)

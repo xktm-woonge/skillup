@@ -102,6 +102,7 @@ function confirmCurrentEmail() {
           confirmEmailCertification();
         } else {
           alert("이메일이 변경되었습니다. 인증 번호를 재전송 해주세요.");
+          disabledCertNum();
         }
       })
       .catch(function (error) {
@@ -246,3 +247,9 @@ window.addEventListener("DOMContentLoaded", function (e) {
     });
   });
 });
+
+function disabledCertNum(){
+  const certInput = document.querySelector("#register_cert_num");
+  certInput.classList.remove("active");
+  certInput.querySelector("input[type='number']").value = '';
+}

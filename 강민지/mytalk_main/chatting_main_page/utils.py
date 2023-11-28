@@ -7,7 +7,6 @@ from django.templatetags.static import static
 user_model = get_user_model()
 
 def notice_pretreatment(data):
-    timestamp = data.created_at.strftime('%Y-%m-%d %H:%M:%S')
     try:
         sender_name = user_model.objects.get(id=data.sender_id).name
     except user_model.DoesNotExist:
@@ -18,18 +17,16 @@ def notice_pretreatment(data):
     else:
         get_sender_profile_pic = user_model.objects.get(id=data.sender_id).profile_picture
         img_src = static(f'img/{get_sender_profile_pic}')
-    return timestamp, sender_name, img_src
+    return sender_name, img_src
 
 def set_notice_box_data(notice):
-    timestamp_string, sender_name, img_src = notice_pretreatment(notice)
-    
+    sender_name, img_src = notice_pretreatment(notice)
     context = {
         'noti_type' : notice.type,
         'noti_num' : f'num_{notice.id}',
         'img_src' : img_src,
-        'content' : notice.content,
+        'content' : notice.content if not notice.type == "friends" else sender_name,
         'title' : sender_name,
-        'created_at' : timestamp_string,
         'button_type': notice.type,
     }
     return context
@@ -71,9 +68,13 @@ def set_friend_list_data(friend_info):
 
 def create_chatting_room(user_data, room, room_type, user):
     try:
-        final_message = Messages.objects.filter(conversation_id=room).last().message_text
+        last_message = Messages.objects.filter(conversation_id=room).last()
+        final_message = last_message.message_text
+        final_message_time = last_message.timestamp
+        
     except AttributeError:
         final_message = ''
+        final_message_time = ''
     show_user_status = 'offline' if not user_data.is_online else user_data.status
     
     if room_type == "private":
@@ -95,6 +96,7 @@ def create_chatting_room(user_data, room, room_type, user):
         'room_num' : room,
         'team' : '',
         'type' : room_type,
+        'time': final_message_time,
     } 
     return context
 

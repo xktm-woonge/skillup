@@ -26,11 +26,11 @@
   font-weight: 400;
 }
 
-.setting--options .option.withdraw .option--text, .setting .user__team, .setting .user__email, .room__status, .friends__status, .notice--btn.actions > *, .notice--btn .actions > *, .notice--box, .notice--group.normal .notice--box__title::after, .notice--group.group .notice--box__title::after, .side_bar--header__dropdown li {
+.setting--options .option.withdraw .option--text, .setting .user__team, .setting .user__email, .room__status, .friends__status, .notice--btn.actions > *, .notice--btn .actions > *, .notice--box, .notice--group.friends .notice--box__title::after, .notice--group.normal .notice--box__title::after, .notice--group.group .notice--box__title::after, .side_bar--header__dropdown li {
   font-size: 14px;
 }
 
-.setting .editToggle, .friends--group__title, .notice--box__time, #gnb:hover #version, .room__name span, .friends__name span {
+.setting .editToggle, .room__time, .friends--group__title, .notice--box__time, #gnb:hover #version, .room__name span, .friends__name span {
   font-size: 12px;
   font-weight: 400;
   line-height: 14px; /* 100% */
@@ -77,13 +77,13 @@
 #gnb .btn.hasNoti::before {
   content: "";
   display: inline-block;
-  background: var(--Danger-700);
+  background: var(--Danger-300);
   width: 6px;
   height: 6px;
   border-radius: 50%;
   position: absolute;
-  left: var(--padding);
-  top: var(--padding);
+  left: var(--inputPadding);
+  top: var(--inputPadding);
 }
 #gnb:hover {
   width: 200px;
@@ -230,6 +230,18 @@
   padding: var(--inputPadding);
   background: var(--white);
   border-radius: var(--br-radius);
+  max-height: 100vh;
+}
+.notice--group.deleted {
+  max-height: 50px;
+  overflow: auto;
+  scroll-behavior: hidden;
+  z-index: -1;
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
+}
+.notice--group.deleted::-webkit-scrollbar {
+  display: none;
 }
 .notice--group.system .notice--type {
   background-color: var(--Semi-Darker);
@@ -261,6 +273,23 @@
 }
 .notice--group.normal .notice--box__title::after, .notice--group.group .notice--box__title::after {
   content: "의 새 메세지";
+  display: inline;
+}
+.notice--group.friends .notice--box__title p {
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  max-width: 76%;
+}
+.notice--group.friends .notice--box__title::after {
+  content: "님의 친구 요청";
+  display: inline;
+}
+div .notice--group.friends .notice--box__content::after {
+  content: "님의 친구 요청이 도착했습니다. \a수락하시겠습니까?";
+  white-space: pre;
   display: inline;
 }
 .notice--type {
@@ -409,14 +438,14 @@
   padding: var(--padding);
   cursor: pointer;
 }
-.room--box.new .room__name::after {
+.room--box.new .room__time::before {
   content: "";
-  background-color: var(--Danger-700);
+  background-color: var(--Danger-300);
   display: inline-block;
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  margin-left: 6px;
+  margin-right: 8px;
 }
 .room--box.new .room__status {
   font-weight: bold;
@@ -440,6 +469,7 @@
   position: relative;
 }
 .room__status {
+  position: relative;
   display: -webkit-box;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -453,6 +483,11 @@
 .room__status.hasImg::after {
   content: "이미지";
   display: block;
+}
+.room__time {
+  position: absolute;
+  right: 0;
+  color: var(--gray-80);
 }
 
 /***************************************************
