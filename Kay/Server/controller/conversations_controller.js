@@ -121,7 +121,7 @@ exports.handleSendMessage = function(data, wss, callback) {
                                 conversation_id: conversation_id,
                                 message_text: message_text,
                                 is_user: false,
-                                created_at: newMessage.created_at // 새로 삽입된 메시지의 생성 시간
+                                created_at: newMessage.timestamp // 새로 삽입된 메시지의 생성 시간
                             };
                                 if (targetSocket) {
                                     targetSocket.send(JSON.stringify(websocketFormatter.formatWebSocket('SUCCESS', 'messages', 'newMessage', data)));
