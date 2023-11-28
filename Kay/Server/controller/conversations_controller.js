@@ -67,7 +67,7 @@ function sendResponse(ws, status, message, data) {
 
 exports.handleSendMessage = function(data, wss, callback) {
     const name = data.info.name;
-    const sender_email = data.info.sender_email;
+    const senderUserId = data.info.sender_id;
     const conversation_id = data.info.conversation_id;
     const target_email = data.info.email;
     const message_text = data.info.message_text;
