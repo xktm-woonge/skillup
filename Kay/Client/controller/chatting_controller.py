@@ -122,7 +122,7 @@ class ChattingController(QObject):
     def send_message_to_server(self, email, message_text, conversation_id):
         info = {
             "name": self.userInfo['name'],
-            "sender_email": self.user_id,
+            "sender_email": self.user_id['id'],
             "conversation_id": conversation_id,
             "email": email,
             "message_text": message_text
