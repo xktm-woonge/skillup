@@ -244,15 +244,27 @@ exports.getConversationById = function(conversationId, callback) {
 };
 
 exports.addMessageToConversation = function(conversationId, senderUserId, messageText, callback) {
-  // 메시지를 Messages 테이블에 추가합니다.
-  const sql = `INSERT INTO Messages (sender_id, conversation_id, message_text) VALUES (?, ?, ?); SELECT * FROM Messages WHERE id = LAST_INSERT_ID()`;
-  pool.query(sql, [senderUserId, conversationId, messageText], (error, results) => {
-      if (error) {
-          return callback(error);
+  // 먼저 메시지를 Messages 테이블에 삽입합니다.
+  const insertSql = `INSERT INTO Messages (sender_id, conversation_id, message_text) VALUES (?, ?, ?)`;
+  pool.query(insertSql, [senderUserId, conversationId, messageText], (insertError, insertResults) => {
+      if (insertError) {
+          return callback(insertError);
       }
-      // 마지막으로 삽입된 메시지의 정보를 반환합니다.
-      const lastInsertedMessage = results[1][0]; // 결과 구조에 따라 조정 필요
-      callback(null, lastInsertedMessage);
+
+      // 마지막으로 삽입된 메시지의 ID를 가져옵니다.
+      const lastInsertedId = insertResults.insertId;
+
+      // 마지막으로 삽입된 메시지의 정보를 조회합니다.
+      const selectSql = `SELECT * FROM Messages WHERE id = ?`;
+      pool.query(selectSql, [lastInsertedId], (selectError, selectResults) => {
+          if (selectError) {
+              return callback(selectError);
+          }
+
+          // 마지막으로 삽입된 메시지의 정보를 반환합니다.
+          const lastInsertedMessage = selectResults[0];
+          callback(null, lastInsertedMessage);
+      });
   });
 };
 
