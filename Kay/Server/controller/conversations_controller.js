@@ -118,7 +118,7 @@ exports.handleSendMessage = function(data, wss, callback) {
                             };
 
                             const data = {
-                                conversationId: conversation_id,
+                                conversation_id: conversation_id,
                                 message_text: message_text,
                                 is_user: false,
                                 created_at: newMessage.created_at // 새로 삽입된 메시지의 생성 시간
