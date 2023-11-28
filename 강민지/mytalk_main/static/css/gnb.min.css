@@ -155,7 +155,6 @@
   opacity: 0;
   visibility: hidden;
   flex-direction: column;
-  width: -moz-fit-content;
   width: fit-content;
   position: absolute;
   top: calc(var(--gnbSize) - var(--padding) / 2);
@@ -212,6 +211,7 @@
   padding: var(--gap) var(--gap) calc(var(--gnbSize) + 10px);
   -webkit-user-select: none;
   -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
 }
 .side_bar--body.setting {
@@ -397,7 +397,7 @@ div .notice--group.friends .notice--box__content::after {
   content: url(../icon/Add_comment.svg);
   height: var(--padding);
 }
-.friends--profile::before {
+.friends--profile:not(.group)::before {
   content: "";
   position: absolute;
   top: -4px;
@@ -450,7 +450,7 @@ div .notice--group.friends .notice--box__content::after {
 .room--box.new .room__status {
   font-weight: bold;
 }
-.room--profile::before {
+.room--profile:not(.group)::before {
   content: "";
   position: absolute;
   top: -4px;

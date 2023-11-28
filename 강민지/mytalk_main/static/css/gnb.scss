@@ -295,7 +295,7 @@
       }
     }
   }
-  &--profile { 
+  &--profile:not(.group) { 
     @include activeDot();
   }
   &--detail {
@@ -345,7 +345,7 @@
       }
     }
   }
-  &--profile {
+  &--profile:not(.group) {
     @include activeDot();
   }
   &__name {

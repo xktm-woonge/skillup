@@ -366,7 +366,9 @@ class DataProvider():
             answer = chatbot.chatGPT_answer(data['send_text'])
         sended_time = datetime.now()
         last_message_time = Messages.objects.filter(conversation_id=room_number).last().timestamp
-        Messages.objects.create(message_text=answer, conversation_id=room_number, sender_id=3, timestamp=sended_time)
+        current_message_number = Messages.objects.filter(conversation_id=room_number).last().id + 1
+        Messages.objects.create(id=current_message_number, message_text=answer, conversation_id=room_number, sender_id=3, timestamp=sended_time)
+        MessageReceivers.objects.create(message_id=current_message_number, receiver_id=user, is_read=True)
         data = {
             'sender_id' : chatbot_id,
             'message_text' : answer,
