@@ -76,10 +76,6 @@ exports.handleSendMessage = function(data, wss, callback) {
     dbManager.addMessageToConversation(conversation_id, senderUserId, message_text, (addMessageErr, newMessage) => {
         if (addMessageErr) return callback(addMessageErr);
 
-        // 메시지를 데이터베이스에 저장합니다.
-        dbManager.addMessageToConversation(conversation_id, senderUserId, message_text, (addMessageErr) => {
-            if (addMessageErr) return callback(addMessageErr);
-
             // target_email을 통해 상대방의 userId를 가져옵니다.
             dbManager.getUserIdByEmail(target_email, (getUserErr, targetUserId) => {
                 if (getUserErr) return callback(getUserErr);
@@ -130,6 +126,5 @@ exports.handleSendMessage = function(data, wss, callback) {
                     });
                 });
             });
-        });
     });
 };

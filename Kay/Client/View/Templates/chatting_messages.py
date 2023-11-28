@@ -176,9 +176,12 @@ class ChattingInterface(QWidget):
         
         # 메시지 레이아웃을 메시지 위젯에 추가합니다.
         self.messages_layout.addLayout(message_layout)
-
+        
         # 이벤트 처리를 강제로 실행하여 위젯을 업데이트합니다.
         QApplication.processEvents()
+        
+        # 스크롤을 최하단으로 이동하는 작업을 일정 시간 후에 실행
+        QTimer.singleShot(100, self.scroll_to_bottom)  # 100ms 후에 실행
         
         # 스크롤을 아래로 이동합니다.
         self.scroll_to_bottom()
