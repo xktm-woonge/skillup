@@ -244,10 +244,16 @@ exports.getConversationById = function(conversationId, callback) {
 };
 
 exports.addMessageToConversation = function(conversationId, senderUserId, messageText, callback) {
-
-      // 메시지를 Messages 테이블에 추가합니다.
-      const sql = `INSERT INTO Messages (sender_id, conversation_id, message_text) VALUES (?, ?, ?)`;
-      pool.query(sql, [senderUserId, conversationId, messageText], callback);
+  // 메시지를 Messages 테이블에 추가합니다.
+  const sql = `INSERT INTO Messages (sender_id, conversation_id, message_text) VALUES (?, ?, ?); SELECT * FROM Messages WHERE id = LAST_INSERT_ID()`;
+  pool.query(sql, [senderUserId, conversationId, messageText], (error, results) => {
+      if (error) {
+          return callback(error);
+      }
+      // 마지막으로 삽입된 메시지의 정보를 반환합니다.
+      const lastInsertedMessage = results[1][0]; // 결과 구조에 따라 조정 필요
+      callback(null, lastInsertedMessage);
+  });
 };
 
 exports.getUserStatus = function(email, callback) {

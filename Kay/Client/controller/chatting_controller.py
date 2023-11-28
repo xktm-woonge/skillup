@@ -72,7 +72,14 @@ class ChattingController(QObject):
         
     @pyqtSlot(dict)
     def recieved_new_message(self, data):
-        pass
+        conversation_id = data['conversation_id']
+        message = data['message_text']
+        is_user = data['is_user']
+        created_at = data['created_at']
+        
+        formatted_time = QDateTime.fromString(created_at, Qt.ISODate).toString("hh:mm AP")
+
+        self.conversation_index[conversation_id].add_message(message, formatted_time, is_user)
 
     @pyqtSlot(dict)
     def add_friend(self, data):
@@ -109,11 +116,12 @@ class ChattingController(QObject):
             widget.doubleClicked.connect(self.on_chat_widget_clicked)
 
         # 더블클릭한 창 표시
-        self.chatting_window.right_area_widget.setCurrentIndex(self.conversation_index[conversation_id])
+        self.chatting_window.right_area_widget.setCurrentWidget(self.conversation_index[conversation_id])
 
     @pyqtSlot(str, str, int)
     def send_message_to_server(self, email, message_text, conversation_id):
         info = {
+            "name": self.userInfo['name'],
             "sender_email": self.user_id,
             "conversation_id": conversation_id,
             "email": email,
@@ -220,7 +228,7 @@ class ChattingController(QObject):
             # 메시지를 표시합니다.
             self.display_messages(conversation_id, conversation_widget)
 
-            self.conversation_index[conversation_id] = i
+            self.conversation_index[conversation_id] = conversation_widget
             conversation_widget.sending_message.connect(self.send_message_to_server)
 
             widget.doubleClicked.connect(self.on_chat_widget_clicked)
@@ -242,7 +250,7 @@ class ChattingController(QObject):
         # conversation_id를 사용하여 right_area_widget에서 해당 대화 위젯을 찾아서 활성화
         if conversation_id in self.conversation_index:
             index = self.conversation_index[conversation_id]
-            self.chatting_window.right_area_widget.setCurrentIndex(index)  
+            self.chatting_window.right_area_widget.setCurrentWidget(index)  
 
     # 더블 클릭 정보를 처리하는 슬롯
     def make_conversation(self, name, email, image_path):

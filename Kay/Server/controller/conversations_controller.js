@@ -66,14 +66,15 @@ function sendResponse(ws, status, message, data) {
 
 
 exports.handleSendMessage = function(data, wss, callback) {
+    const name = data.info.name;
     const sender_email = data.info.sender_email;
     const conversation_id = data.info.conversation_id;
     const target_email = data.info.email;
     const message_text = data.info.message_text;
 
     // sender_email을 통해 sender의 userId를 가져옵니다.
-    dbManager.getUserIdByEmail(sender_email, (err, senderUserId) => {
-        if (err) return callback(err);
+    dbManager.addMessageToConversation(conversation_id, senderUserId, message_text, (addMessageErr, newMessage) => {
+        if (addMessageErr) return callback(addMessageErr);
 
         // 메시지를 데이터베이스에 저장합니다.
         dbManager.addMessageToConversation(conversation_id, senderUserId, message_text, (addMessageErr) => {
@@ -99,9 +100,29 @@ exports.handleSendMessage = function(data, wss, callback) {
                         if (statusErr) return callback(statusErr);
 
                         if (targetStatus === 'online') {
-                            data = { conversationId: conversation_id, sender_email, message_text }
                             // 상대방이 온라인 상태인 경우, 메시지를 전송합니다.
                             const targetSocket = websocketConnectionsManager.getConnection(target_email);
+
+                            if (!exists) {
+                                // 대화방이 존재하지 않는 경우, 새로운 대화방 참여자를 추가합니다.
+                                const response = {
+                                conversationId: conversation_id,
+                                isNewConversation: true,
+                                name: name,
+                                email: target_email,
+                                imagePath: imagePath
+                                };
+                                if (targetSocket) {
+                                    sendResponse(targetSocket, 'SUCCESS', 'New conversation created successfully.', response);
+                                };
+                            };
+
+                            const data = {
+                                conversationId: conversation_id,
+                                message_text: message_text,
+                                is_user: false,
+                                created_at: newMessage.created_at // 새로 삽입된 메시지의 생성 시간
+                            };
                                 if (targetSocket) {
                                     targetSocket.send(JSON.stringify(websocketFormatter.formatWebSocket('SUCCESS', 'messages', 'newMessage', data)));
                                 }
