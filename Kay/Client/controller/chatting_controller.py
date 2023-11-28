@@ -109,7 +109,7 @@ class ChattingController(QObject):
 
             conversation_widget = ChattingInterface(image_path, name, email, conversation_id)
             self.chatting_window.right_area_widget.addWidget(conversation_widget)
-            self.conversation_index[conversation_id] = len(self.conversation_index) + 1
+            self.conversation_index[conversation_id] = conversation_widget
 
             conversation_widget.sending_message.connect(self.send_message_to_server)
 
