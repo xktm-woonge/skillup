@@ -70,6 +70,7 @@ exports.handleSendMessage = function(data, wss, callback) {
     const senderUserId = data.info.sender_id;
     const conversation_id = data.info.conversation_id;
     const target_email = data.info.email;
+    const user_email = data.info.sender_email;
     const message_text = data.info.message_text;
     const imagePath = data.info.imagePath
 
@@ -106,7 +107,7 @@ exports.handleSendMessage = function(data, wss, callback) {
                                 conversationId: conversation_id,
                                 isNewConversation: true,
                                 name: name,
-                                email: target_email,
+                                email: user_email,
                                 imagePath: imagePath
                                 };
                                 if (targetSocket) {

@@ -43,6 +43,7 @@ class ChattingWindow(QWidget):
 
         self.sidebar = Sidebar(self)
         self.sidebar.setGeometry(0, 0, self.sidebar_width, self.height)
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowMaximizeButtonHint)
 
         # Middle Area
         self.middle_area_widget = QStackedWidget(self)
