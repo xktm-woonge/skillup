@@ -38,6 +38,12 @@
   line-height: 14px; /* 100% */
 }
 
+@font-face {
+  font-family: "NanumSquareNeo-Variable";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/NanumSquareNeo-Variable.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
 :root {
   --background: #FAFAFA;
   --gray: #8E8E8E;
@@ -99,6 +105,9 @@ input {
   border-radius: var(--br-radius);
   border: 0;
   padding: var(--inputPadding);
+}
+input::-moz-placeholder {
+  color: var(--gray-80);
 }
 input::placeholder {
   color: var(--gray-80);

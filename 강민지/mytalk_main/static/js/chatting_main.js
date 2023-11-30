@@ -1,5 +1,6 @@
 // DOM 요소 캐시
 const sideBarTabs = Array.from(document.getElementsByClassName("side_bar--tab"));
+const audioContainer = document.querySelector('#audioContainer');
 var currRoomNum = 0;
 
 /** 쿠키에서 csrf Token 가져오기 */
@@ -60,6 +61,14 @@ function chatListTime(){
 		}
 		
 	})
+}
+function playNotificationSound() {
+	audioContainer.volume = 0.5;
+	audioContainer.currentTime = 0;
+	audioContainer.play();
+	setTimeout(function() {
+		audioContainer.pause();
+	}, 1000); 
 }
 
 /** 프로필 사진 설정 */
@@ -180,6 +189,7 @@ function runEvents(){
     addOpenChattingFromFriendsListEvent();
 	sortNotices();
 	sortChatList();
+	TBDAlert();
 }
 
 /** 현재 사용자 데이터 로드 함수 */
@@ -441,3 +451,14 @@ function settingUserEditing() {
 
 
 const friendsBoxes = document.querySelectorAll(".friends--box");
+function TBDAlert(){
+	const TBDs = document.querySelectorAll(".TBD");
+	print(TBDs);
+	TBDs.forEach(tbd=>{
+		tbd.addEventListener("click", function(e){
+			e.preventDefault();
+			swal("", "현재 버전에서는 지원하지 않는 기능입니다.", "info");
+			playNotificationSound();
+		})
+	})
+}

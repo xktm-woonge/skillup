@@ -71,7 +71,8 @@ function confirmEmailCertification() {
           disableFormInputs("register_cert_num");
           alert("인증번호 확인이 완료되었습니다.");
         } else {
-          alert("인증번호 확인에 실패했습니다.");
+          alert("인증번호 확인에 실패했습니다. 인증 번호를 재전송 해주세요.");
+          disabledCertNum();
         }
       })
       .catch(function (error) {

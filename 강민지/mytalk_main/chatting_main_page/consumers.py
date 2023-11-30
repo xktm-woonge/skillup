@@ -266,7 +266,7 @@ class DataProvider():
                 room_num = room_num_list.pop()
         else:
             room_num = self.make_new_room(user, [friend_id], is_chatbot, 'private')
-            chatbot_name = user_model.get(id=friend_id).name
+            chatbot_name = user_model.object.get(id=friend_id).name
             is_new_chat = True
             if is_chatbot:
                 text = f'당신의 채팅 친구 {chatbot_name}입니다. 무엇이 궁금하세요?'

@@ -323,7 +323,7 @@
   padding: 0 !important;
   &--box {
     display: grid;
-    grid-template-columns: var(--imgSize) 1fr;
+    grid-template-columns: var(--imgSize) minmax( calc(100% - var(--imgSize) - var(--gap)), 1fr );
     gap: var(--gap);
     width: 100%;
     padding: var(--padding);
@@ -357,9 +357,13 @@
     span { @extend %sideInnerTeam; }
   }
   &__status {
-    position: relative;
-    @include ellipseBox();
-    @extend %body2;
+    @include flexBox(space-between);
+    gap: var(--gap);
+    p {
+      position: relative;
+      @include ellipseBox();
+      @extend %body2;
+    }
     img { 
       max-width: 20px; 
       margin-right:8px;
@@ -370,10 +374,10 @@
     }
   }
   &__time {
-    position: absolute;
-    right: 0;
     @extend %caption;
     color: var(--gray-80);
+    width: 100%;
+    text-align: right;
   }
 }
 

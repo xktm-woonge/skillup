@@ -36,7 +36,7 @@ const CHAT_LIST = `
     <div class="room--detail">
         <input type="hidden">
         <div class="room__name">{{conv_user_name}} <span>{{team}}</span> </div>
-        <div class="room__status">{{conv_final_message}} <time class="room__time" datetime="{{time}}">{{time}}</time></div>
+        <div class="room__status"><p>{{conv_final_message}}</p> <time class="room__time" datetime="{{time}}">{{time}}</time></div>
     </div>
 </li>
 `;

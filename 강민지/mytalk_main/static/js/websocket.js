@@ -38,12 +38,14 @@ function addChatJustReceiveFuntion(message){
         const thisRoom = document.getElementById(`room_num_${roomnum}`);
         const timeSet = thisRoom.querySelector(".room__time");
         timeSet.setAttribute('datetime', new Date());
-        thisRoom.querySelector(".room__status").textContent = message.data["message"];
+        thisRoom.querySelector(".room__status p").textContent = message.data["message"];
         thisRoom.querySelector(".room__status").appendChild(timeSet);
         sortChatList(true, roomnum);
         chatListTime();
         if (!message.is_sender){
             document.querySelector(`#room_num_${roomnum}`).classList.add("new");
+            swal("📨새로운 메세지가 있습니다!");
+            playNotificationSound();
         }
     }
 }
@@ -54,7 +56,8 @@ function addNotiFunction(message){
         document.querySelector(".side_bar--body.notice").innerHTML += createNoticesBox({"1":message.data});
         setProfilePic();
         addFriendEvent();
-        swal("알림", "친구 요청이 도착하였습니다.", "info")
+        swal("알림", "친구 요청이 도착하였습니다.", "info");
+        playNotificationSound();
     }
     else if(message.message === "system"){
 
@@ -79,6 +82,7 @@ function addNotiFunction(message){
             changeSideBar("friends");
             addOpenChattingFromFriendsListEvent();
             swal("친구가 추가되었습니다.");
+            playNotificationSound();
         }
     }
 }

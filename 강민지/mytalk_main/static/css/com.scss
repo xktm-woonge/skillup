@@ -1,6 +1,12 @@
 @import "reset.css";
 @import "_mixin.scss";
 @import url(//fonts.googleapis.com/earlyaccess/notosanskr.css);
+@font-face {
+    font-family: 'NanumSquareNeo-Variable';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/NanumSquareNeo-Variable.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
 
 :root{
   --background: #FAFAFA;
@@ -35,6 +41,7 @@
 
 * {
   font-family: 'Noto Sans KR', sans-serif;
+  //font-family: 'NanumSquareNeo-Variable';
   box-sizing: border-box;
   @extend %body1;
   color: var(--black);
