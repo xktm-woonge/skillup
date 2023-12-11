@@ -44,7 +44,9 @@ function addChatJustReceiveFuntion(message){
         chatListTime();
         if (!message.is_sender){
             document.querySelector(`#room_num_${roomnum}`).classList.add("new");
-            swal("📨새로운 메세지가 있습니다!");
+            if(!document.querySelector("#gnb .btn--Chat").classList.contains("active")){
+                swal("📨새로운 메세지가 있습니다!");
+            }
             playNotificationSound();
         }
     }

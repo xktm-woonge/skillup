@@ -1,44 +1,44 @@
 {% load static %}
-  {% include 'common/Head.html' %}
-  <title>LOGIN</title>
+    {% include 'common/Head.html' %}
+    <title>LOGIN</title>
 </head>
 
 <body class="page_view">
-  
-  <!--{ include 'common/GNB.html' %}-->
+    
+    <!--{ include 'common/GNB.html' %}-->
 
-  <div class="main_view login">
+    <div class="main_view login">
 
-    <div class="login--box">
+        <div class="login--box">
 
-      <div class="login--header">
-        <h2 class="form--title">로그인</h2>
-      </div>
+        <div class="login--header">
+            <h2 class="form--title">로그인</h2>
+        </div>
 
-      <form method="post" id="send_login_user_info" class="login--form">
-        {% csrf_token %}
-        <input type="text" name='email' placeholder="Email">
-        <label for="vision" class="vision">
-          <input type="password" name='password' placeholder="Password">
-          <input type="checkbox" id="vision" hidden>
-          <img src="{% static 'icon/Visibility-off.svg'%}" alt="" class="vision__icon active">
-          <img src="{% static 'icon/Visibility.svg'%}" alt="" class="vision__icon deactive">
-        </label>
-        <!--<div class="button_box">-->
-        <input type="submit" value="로그인" name="login" class="btn btn--login">
-        <input type="button" value="회원가입" name="register" class="btn btn--register" onclick="location.href='{% url 'register_page:register' %}'">
-      </form>
+        <form method="post" id="send_login_user_info" class="login--form">
+            {% csrf_token %}
+            <input type="text" name='email' placeholder="Email">
+            <label for="vision" class="vision">
+            <input type="password" name='password' placeholder="Password">
+            <input type="checkbox" id="vision" hidden>
+            <img src="{% static 'icon/Visibility-off.svg'%}" alt="" class="vision__icon active">
+            <img src="{% static 'icon/Visibility.svg'%}" alt="" class="vision__icon deactive">
+            </label>
+            <!--<div class="button_box">-->
+            <input type="submit" value="로그인" name="login" class="btn btn--login">
+            <input type="button" value="회원가입" name="register" class="btn btn--register" onclick="location.href='{% url 'register_page:register' %}'">
+        </form>
 
-      <div class="form--footer">
-        <a href="#" class="TBD">PW 찾기 </a>
-        <a href="#" class="TBD">관리자 문의 </a>
-      </div>
+        <div class="form--footer">
+            <a href="#" class="TBD">PW 찾기 </a>
+            <a href="#" class="TBD">관리자 문의 </a>
+        </div>
+
+        </div>
 
     </div>
 
-  </div>
-
-  <script src="{% static 'js/login.js' %}"></script>
+    <script src="{% static 'js/login.js' %}"></script>
 </body>
 
 </html>

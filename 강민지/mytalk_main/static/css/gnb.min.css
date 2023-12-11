@@ -155,7 +155,6 @@
   opacity: 0;
   visibility: hidden;
   flex-direction: column;
-  width: -moz-fit-content;
   width: fit-content;
   position: absolute;
   top: calc(var(--gnbSize) - var(--padding) / 2);
@@ -212,6 +211,7 @@
   padding: var(--gap) var(--gap) calc(var(--gnbSize) + 10px);
   -webkit-user-select: none;
   -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
 }
 .side_bar--body.setting {
@@ -492,7 +492,6 @@ div .notice--group.friends .notice--box__content::after {
 }
 .room__time {
   color: var(--gray-80);
-  width: 100%;
   text-align: right;
 }
 

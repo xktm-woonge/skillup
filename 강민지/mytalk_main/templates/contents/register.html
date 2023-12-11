@@ -1,62 +1,62 @@
-{% load static %}
-  {% include 'common/Head.html' %}
-  <title>REGISTER</title>
-</head>
+    {% load static %}
+        {% include 'common/Head.html' %}
+        <title>REGISTER</title>
+    </head>
 
-<body class="page_view">
+    <body class="page_view">
 
-  <!--{ include 'common/GNB.html' %}-->
+        <!--{ include 'common/GNB.html' %}-->
 
-  <div class="main_view register">
+        <div class="main_view register">
 
-    <div class="register_form register--box">
+            <div class="register_form register--box">
 
-      <div class="register--header">
-        <a class="btn--back" onclick="goBack()">
-          <img src="{% static 'icon/Arrow-left.svg'%}" alt="Back Icon" class="back_img">
-        </a>
-        <h2 class="form--title">회원가입</h2>
-      </div>
+                <div class="register--header">
+                    <a class="btn--back" onclick="goBack()">
+                    <img src="{% static 'icon/Arrow-left.svg'%}" alt="Back Icon" class="back_img">
+                    </a>
+                    <h2 class="form--title">회원가입</h2>
+                </div>
 
-      <div class="register--form">
-        <form method="post" id="register_email">
-          {% csrf_token %}
-          <input type="email" name="email" placeholder="Email" class="email_input">
-          <input type="submit" name="email_cert" value="인증발송" class="btn btn--small">
-        </form>
-        <form method="post" id="register_cert_num" class="">
-          {% csrf_token %}
-          <input type="number" name="cert_num" placeholder="000000" max="999999" min="0">
-          <input type="submit" name="cert_num" value="인증" class="btn btn--small">
-        </form>
-        <form method="post" id="send_user_info">
-          {% csrf_token %}
-          <label for="vision" class="vision">
-            <input type="password" name="password" id="regi_pw_input" placeholder="Password" class="password_input input_none" onkeyup='pwCheck();pwIsSame();'>
-            <input type="checkbox" id="vision" hidden>
-            <img src="{% static 'icon/Visibility-off.svg'%}" alt="" class="vision__icon active">
-            <img src="{% static 'icon/Visibility.svg'%}" alt="" class="vision__icon deactive">
-          </label>
-          <input type="password" name="password_check" id="regi_pw_conf_input" placeholder="Password Confirm" class="password_confirm_input input_none" onkeyup="pwIsSame();">
-          <ul class="pw_checker">
-            <li id="pw_len" class="checker checker_none">8~16자 사이의 길이를 가진 비밀번호</li>
-            <li id="pw_reg" class="checker checker_none">대문자, 소문자, 숫자, 특수기호를 각 1개 이상 포함</li>
-            <li id="pw_same" class="checker checker_none">비밀번호 확인 일치</li>
-          </ul>
-          <input type="submit" value="회원가입" name="requset_register" class="btn btn--register">
-        </form>
-      </div>
+                <div class="register--form">
+                    <form method="post" id="register_email">
+                        {% csrf_token %}
+                        <input type="email" name="email" placeholder="Email" class="email_input">
+                        <input type="submit" name="email_cert" value="인증발송" class="btn btn--small">
+                    </form>
+                    <form method="post" id="register_cert_num" class="">
+                        {% csrf_token %}
+                        <input type="number" name="cert_num" placeholder="000000" max="999999" min="0">
+                        <input type="submit" name="cert_num" value="인증" class="btn btn--small">
+                    </form>
+                    <form method="post" id="send_user_info">
+                        {% csrf_token %}
+                        <label for="vision" class="vision">
+                            <input type="password" name="password" id="regi_pw_input" placeholder="Password" class="password_input input_none" onkeyup='pwCheck();pwIsSame();'>
+                            <input type="checkbox" id="vision" hidden>
+                            <img src="{% static 'icon/Visibility-off.svg'%}" alt="" class="vision__icon active">
+                            <img src="{% static 'icon/Visibility.svg'%}" alt="" class="vision__icon deactive">
+                        </label>
+                        <input type="password" name="password_check" id="regi_pw_conf_input" placeholder="Password Confirm" class="password_confirm_input input_none" onkeyup="pwIsSame();">
+                        <ul class="pw_checker">
+                            <li id="pw_len" class="checker checker_none">8~16자 사이의 길이를 가진 비밀번호</li>
+                            <li id="pw_reg" class="checker checker_none">대문자, 소문자, 숫자, 특수기호를 각 1개 이상 포함</li>
+                            <li id="pw_same" class="checker checker_none">비밀번호 확인 일치</li>
+                        </ul>
+                        <input type="submit" value="회원가입" name="requset_register" class="btn btn--register">
+                    </form>
+                </div>
 
-      <div class="form--footer">
-        <a href="#" class="find_id_pw TBD">PW 찾기 </a>
-        <a href="#" class="inquiry_manager TBD">관리자 문의 </a>
-      </div>
-      
-    </div>
+                <div class="form--footer">
+                    <a href="#" class="find_id_pw TBD">PW 찾기 </a>
+                    <a href="#" class="inquiry_manager TBD">관리자 문의 </a>
+                </div>
+                
+            </div>
 
-  </div>
+        </div>
 
-  <script src="{% static 'js/register.js' %}"></script>
-</body>
+        <script src="{% static 'js/register.js' %}"></script>
+    </body>
 
 </html>

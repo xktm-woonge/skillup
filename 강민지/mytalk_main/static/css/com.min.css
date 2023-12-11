@@ -106,9 +106,6 @@ input {
   border: 0;
   padding: var(--inputPadding);
 }
-input::-moz-placeholder {
-  color: var(--gray-80);
-}
 input::placeholder {
   color: var(--gray-80);
 }

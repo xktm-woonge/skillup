@@ -40,7 +40,7 @@ def send_email_certification(request, email):
     '''
     from_email = 'endgameteam@gmail.com'
     recipient_email_list = [email]
-    # send_mail(subject, message, from_email, recipient_email_list)
+    send_mail(subject, message, from_email, recipient_email_list)
     request.session['email'] = email
     print(request.session['email'])
     request.session['certification_number'] = random_number

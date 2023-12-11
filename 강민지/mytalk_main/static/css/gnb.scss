@@ -376,7 +376,7 @@
   &__time {
     @extend %caption;
     color: var(--gray-80);
-    width: 100%;
+    // width: 100%;
     text-align: right;
   }
 }
